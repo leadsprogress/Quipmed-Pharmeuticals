@@ -38,7 +38,9 @@ export function HeaderClient({ categories }: Props) {
         </Link>
 
         <div className="hidden flex-1 md:block">
-          <Search className="mx-auto max-w-xl" />
+          <Suspense fallback={null}>
+            <Search className="mx-auto max-w-xl" />
+          </Suspense>
         </div>
 
         <div className="ml-auto flex items-center gap-5">
@@ -50,7 +52,9 @@ export function HeaderClient({ categories }: Props) {
       </div>
 
       <div className="container pb-3 md:hidden">
-        <Search />
+        <Suspense fallback={null}>
+          <Search />
+        </Suspense>
       </div>
 
       <MegaMenu categories={categories} />

@@ -324,7 +324,7 @@ export interface Order {
   transactions?: (number | Transaction)[] | null;
   status?: OrderStatus;
   amount?: number | null;
-  currency?: 'USD' | null;
+  currency?: 'INR' | null;
   accessToken?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -353,8 +353,24 @@ export interface Product {
     hasNextPage?: boolean;
     totalDocs?: number;
   };
-  priceInUSDEnabled?: boolean | null;
-  priceInUSD?: number | null;
+  priceInINREnabled?: boolean | null;
+  priceInINR?: number | null;
+  /**
+   * Active ingredient / salt composition, e.g. "DAPAGLIFLOZIN 5 MG"
+   */
+  composition?: string | null;
+  /**
+   * e.g. "10*10" (strips per box)
+   */
+  packing?: string | null;
+  /**
+   * e.g. "Tablet", "Injection" — optional
+   */
+  packType?: string | null;
+  /**
+   * Temporary hotlinked mock image URL — shown when no real photo is uploaded to the gallery above. Paste any image URL, or leave blank.
+   */
+  imageUrl?: string | null;
   relatedProducts?: (number | Product)[] | null;
   meta?: {
     title?: string | null;
@@ -495,6 +511,10 @@ export interface Page {
     | ThreeItemGridBlock
     | BannerBlock
     | FormBlock
+    | CategoryShowcaseBlock
+    | TrustBarBlock
+    | PromoTilesBlock
+    | HealthHighlightsBlock
   )[];
   meta?: {
     title?: string | null;
@@ -577,6 +597,10 @@ export interface ArchiveBlock {
 export interface Category {
   id: number;
   title: string;
+  /**
+   * Square icon/photo shown in the "Shop by category" grid on the homepage.
+   */
+  icon?: (number | null) | Media;
   slug: string;
   updatedAt: string;
   createdAt: string;
@@ -804,6 +828,71 @@ export interface Textarea {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CategoryShowcaseBlock".
+ */
+export interface CategoryShowcaseBlock {
+  heading?: string | null;
+  subheading?: string | null;
+  categories?: (number | Category)[] | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'categoryShowcase';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TrustBarBlock".
+ */
+export interface TrustBarBlock {
+  items?:
+    | {
+        title: string;
+        subtitle?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'trustBar';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PromoTilesBlock".
+ */
+export interface PromoTilesBlock {
+  tiles?:
+    | {
+        heading: string;
+        subheading?: string | null;
+        tone?: ('primary' | 'secondary' | 'accent') | null;
+        linkLabel?: string | null;
+        linkUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'promoTiles';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HealthHighlightsBlock".
+ */
+export interface HealthHighlightsBlock {
+  heading?: string | null;
+  cards?:
+    | {
+        title: string;
+        excerpt?: string | null;
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'healthHighlights';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "variants".
  */
 export interface Variant {
@@ -815,8 +904,8 @@ export interface Variant {
   product: number | Product;
   options: (number | VariantOption)[];
   inventory?: number | null;
-  priceInUSDEnabled?: boolean | null;
-  priceInUSD?: number | null;
+  priceInINREnabled?: boolean | null;
+  priceInINR?: number | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -860,7 +949,7 @@ export interface Transaction {
   order?: (number | null) | Order;
   cart?: (number | null) | Cart;
   amount?: number | null;
-  currency?: 'USD' | null;
+  currency?: 'INR' | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -883,7 +972,7 @@ export interface Cart {
   purchasedAt?: string | null;
   status?: ('active' | 'purchased' | 'abandoned') | null;
   subtotal?: number | null;
-  currency?: 'USD' | null;
+  currency?: 'INR' | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1154,6 +1243,10 @@ export interface PagesSelect<T extends boolean = true> {
         threeItemGrid?: T | ThreeItemGridBlockSelect<T>;
         banner?: T | BannerBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        categoryShowcase?: T | CategoryShowcaseBlockSelect<T>;
+        trustBar?: T | TrustBarBlockSelect<T>;
+        promoTiles?: T | PromoTilesBlockSelect<T>;
+        healthHighlights?: T | HealthHighlightsBlockSelect<T>;
       };
   meta?:
     | T
@@ -1287,10 +1380,72 @@ export interface FormBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CategoryShowcaseBlock_select".
+ */
+export interface CategoryShowcaseBlockSelect<T extends boolean = true> {
+  heading?: T;
+  subheading?: T;
+  categories?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TrustBarBlock_select".
+ */
+export interface TrustBarBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        title?: T;
+        subtitle?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PromoTilesBlock_select".
+ */
+export interface PromoTilesBlockSelect<T extends boolean = true> {
+  tiles?:
+    | T
+    | {
+        heading?: T;
+        subheading?: T;
+        tone?: T;
+        linkLabel?: T;
+        linkUrl?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HealthHighlightsBlock_select".
+ */
+export interface HealthHighlightsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  cards?:
+    | T
+    | {
+        title?: T;
+        excerpt?: T;
+        tag?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
   title?: T;
+  icon?: T;
   slug?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1492,8 +1647,8 @@ export interface VariantsSelect<T extends boolean = true> {
   product?: T;
   options?: T;
   inventory?: T;
-  priceInUSDEnabled?: T;
-  priceInUSD?: T;
+  priceInINREnabled?: T;
+  priceInINR?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -1549,8 +1704,12 @@ export interface ProductsSelect<T extends boolean = true> {
   enableVariants?: T;
   variantTypes?: T;
   variants?: T;
-  priceInUSDEnabled?: T;
-  priceInUSD?: T;
+  priceInINREnabled?: T;
+  priceInINR?: T;
+  composition?: T;
+  packing?: T;
+  packType?: T;
+  imageUrl?: T;
   relatedProducts?: T;
   meta?:
     | T

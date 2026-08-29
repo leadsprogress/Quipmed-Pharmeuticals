@@ -17,7 +17,7 @@ import { isAdmin } from '@/access/isAdmin'
 import { isDocumentOwner } from '@/access/isDocumentOwner'
 
 const generateTitle: GenerateTitle<Product | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Payload Ecommerce Template` : 'Payload Ecommerce Template'
+  return doc?.title ? `${doc.title} | Amulya Medicals` : 'Amulya Medicals'
 }
 
 const generateURL: GenerateURL<Product | Page> = ({ doc }) => {
@@ -83,6 +83,18 @@ export const plugins: Plugin[] = [
       customerOnlyFieldAccess,
       isAdmin,
       isDocumentOwner,
+    },
+    currencies: {
+      defaultCurrency: 'INR',
+      supportedCurrencies: [
+        {
+          code: 'INR',
+          decimals: 2,
+          label: 'Indian Rupee',
+          symbol: '₹',
+          symbolDisplay: 'symbol',
+        },
+      ],
     },
     customers: {
       slug: 'users',

@@ -48,7 +48,7 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
     variants: true,
     enableVariants: true,
     gallery: true,
-    priceInUSD: true,
+    priceInINR: true,
     inventory: true,
     meta: true,
   },
@@ -142,6 +142,35 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
         {
           fields: [
             ...defaultCollection.fields,
+            {
+              name: 'composition',
+              type: 'text',
+              admin: {
+                description: 'Active ingredient / salt composition, e.g. "DAPAGLIFLOZIN 5 MG"',
+              },
+            },
+            {
+              name: 'packing',
+              type: 'text',
+              admin: {
+                description: 'e.g. "10*10" (strips per box)',
+              },
+            },
+            {
+              name: 'packType',
+              type: 'text',
+              admin: {
+                description: 'e.g. "Tablet", "Injection" — optional',
+              },
+            },
+            {
+              name: 'imageUrl',
+              type: 'text',
+              admin: {
+                description:
+                  'Temporary hotlinked mock image URL — shown when no real photo is uploaded to the gallery above. Paste any image URL, or leave blank.',
+              },
+            },
             {
               name: 'relatedProducts',
               type: 'relationship',

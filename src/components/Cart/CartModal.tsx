@@ -78,12 +78,12 @@ export function CartModal() {
                       : undefined
 
                   let image = firstGalleryImage || metaImage
-                  let price = product.priceInUSD
+                  let price = product.priceInINR
 
                   const isVariant = Boolean(variant) && typeof variant === 'object'
 
                   if (isVariant) {
-                    price = variant?.priceInUSD
+                    price = variant?.priceInINR
 
                     const imageVariant = product.gallery?.find((item) => {
                       if (!item.variantOption) return false
@@ -115,8 +115,8 @@ export function CartModal() {
                           className="z-30 flex flex-row space-x-4"
                           href={`/products/${(item.product as Product)?.slug}`}
                         >
-                          <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
-                            {image?.url && (
+                          <div className="relative flex h-16 w-16 cursor-pointer items-center justify-center overflow-hidden rounded-md border border-border bg-muted text-muted-foreground">
+                            {image?.url ? (
                               <Image
                                 alt={image?.alt || product?.title || ''}
                                 className="h-full w-full object-cover"
@@ -124,6 +124,8 @@ export function CartModal() {
                                 src={image.url}
                                 width={94}
                               />
+                            ) : (
+                              <i className="fa-solid fa-capsules text-lg" />
                             )}
                           </div>
 

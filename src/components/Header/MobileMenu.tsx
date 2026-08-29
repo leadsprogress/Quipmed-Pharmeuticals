@@ -1,8 +1,7 @@
 'use client'
 
-import type { Header } from '@/payload-types'
+import type { Category } from '@/payload-types'
 
-import { CMSLink } from '@/components/Link'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -18,11 +17,18 @@ import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+import { MEGA_MENU_GROUPS } from './megaMenuGroups'
+
 interface Props {
-  menu: Header['navItems']
+  categories: Category[]
 }
 
-export function MobileMenu({ menu }: Props) {
+export function MobileMenu({ categories }: Props) {
+  const groups = MEGA_MENU_GROUPS.map((g) => ({
+    label: g.label,
+    categories: categories.filter((c) => g.categoryTitles.includes(c.title)),
+  })).filter((g) => g.categories.length > 0)
+
   const { user } = useAuth()
 
   const pathname = usePathname()
@@ -58,16 +64,26 @@ export function MobileMenu({ menu }: Props) {
           <SheetDescription />
         </SheetHeader>
 
-        <div className="py-4">
-          {menu?.length ? (
-            <ul className="flex w-full flex-col">
-              {menu.map((item) => (
-                <li className="py-2" key={item.id}>
-                  <CMSLink {...item.link} appearance="link" />
-                </li>
-              ))}
-            </ul>
-          ) : null}
+        <div className="flex flex-col gap-5 py-4">
+          {groups.map((group) => (
+            <div key={group.label}>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {group.label}
+              </p>
+              <ul className="flex flex-col">
+                {group.categories.map((category) => (
+                  <li key={category.id} className="py-1.5">
+                    <Link href={`/shop?category=${category.id}`} className="text-sm">
+                      {category.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          <Link href="/shop" className="text-sm font-semibold text-primary">
+            All Products
+          </Link>
         </div>
 
         {user ? (

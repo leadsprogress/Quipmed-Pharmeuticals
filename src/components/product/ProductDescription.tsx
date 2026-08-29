@@ -82,7 +82,7 @@ export function ProductDescription({ product }: { product: Product }) {
         </Suspense>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div id="main-add-to-cart" className="flex items-center justify-between">
         <Suspense fallback={null}>
           <AddToCart product={product} />
         </Suspense>

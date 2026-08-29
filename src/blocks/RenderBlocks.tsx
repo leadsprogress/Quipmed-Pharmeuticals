@@ -2,6 +2,10 @@ import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CarouselBlock } from '@/blocks/Carousel/Component'
+import { CategoryShowcaseBlock } from '@/blocks/CategoryShowcase/Component'
+import { TrustBarBlock } from '@/blocks/TrustBar/Component'
+import { PromoTilesBlock } from '@/blocks/PromoTiles/Component'
+import { HealthHighlightsBlock } from '@/blocks/HealthHighlights/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
@@ -20,6 +24,10 @@ const blockComponents = {
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
   threeItemGrid: ThreeItemGridBlock,
+  categoryShowcase: CategoryShowcaseBlock,
+  trustBar: TrustBarBlock,
+  promoTiles: PromoTilesBlock,
+  healthHighlights: HealthHighlightsBlock,
 }
 
 export const RenderBlocks: React.FC<{

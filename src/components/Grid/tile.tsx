@@ -44,7 +44,11 @@ export const GridTileImage: React.FC<Props> = ({
           resource={props.media}
           width={80}
         />
-      ) : null}
+      ) : (
+        <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+          <i className="fa-solid fa-capsules text-2xl" />
+        </div>
+      )}
       {label ? <Label amount={label.amount} position={label.position} title={label.title} /> : null}
     </div>
   )

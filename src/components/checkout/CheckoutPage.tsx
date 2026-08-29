@@ -366,12 +366,12 @@ export const CheckoutPage: React.FC = () => {
               if (!quantity) return null
 
               let image = gallery?.[0]?.image || meta?.image
-              let price = product?.priceInUSD
+              let price = product?.priceInINR
 
               const isVariant = Boolean(variant) && typeof variant === 'object'
 
               if (isVariant) {
-                price = variant?.priceInUSD
+                price = variant?.priceInINR
 
                 const imageVariant = product.gallery?.find((item) => {
                   if (!item.variantOption) return false
@@ -395,10 +395,12 @@ export const CheckoutPage: React.FC = () => {
 
               return (
                 <div className="flex items-start gap-4" key={index}>
-                  <div className="flex items-stretch justify-stretch h-20 w-20 p-2 rounded-lg border">
-                    <div className="relative w-full h-full">
-                      {image && typeof image !== 'string' && (
+                  <div className="flex items-stretch justify-stretch h-20 w-20 rounded-lg border bg-muted p-2">
+                    <div className="relative flex w-full h-full items-center justify-center text-muted-foreground">
+                      {image && typeof image !== 'string' ? (
                         <Media className="" fill imgClassName="rounded-lg" resource={image} />
+                      ) : (
+                        <i className="fa-solid fa-capsules text-lg" />
                       )}
                     </div>
                   </div>

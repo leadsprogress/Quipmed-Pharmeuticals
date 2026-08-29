@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
       {
         pathname: '/api/media/file/**',
       },
+      {
+        pathname: '/logo/**',
+      },
     ],
     qualities: [90, 100],
     remotePatterns: [
@@ -30,6 +33,7 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   redirects,
+  devIndicators: false,
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

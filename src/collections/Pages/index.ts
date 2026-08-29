@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 import { Banner } from '@/blocks/Banner/config'
 import { Carousel } from '@/blocks/Carousel/config'
+import { CategoryShowcase } from '@/blocks/CategoryShowcase/config'
+import { TrustBar } from '@/blocks/TrustBar/config'
+import { PromoTiles } from '@/blocks/PromoTiles/config'
+import { HealthHighlights } from '@/blocks/HealthHighlights/config'
 import { ThreeItemGrid } from '@/blocks/ThreeItemGrid/config'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { adminOnly } from '@/access/adminOnly'
@@ -95,6 +99,10 @@ export const Pages: CollectionConfig = {
                 ThreeItemGrid,
                 Banner,
                 FormBlock,
+                CategoryShowcase,
+                TrustBar,
+                PromoTiles,
+                HealthHighlights,
               ],
               required: true,
             },

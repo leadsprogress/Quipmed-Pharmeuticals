@@ -1,5 +1,5 @@
-import { Grid } from '@/components/Grid'
-import { ProductGridItem } from '@/components/ProductGridItem'
+import { ShopGrid } from '@/components/Shop/ShopGrid'
+import { ShopHero } from '@/components/Shop/ShopHero'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -16,7 +16,11 @@ type Props = {
 }
 
 export default async function ShopPage({ searchParams }: Props) {
-  const { q: searchValue, sort, category } = await searchParams
+  const { q: searchValue, sort, category: rawCategory } = await searchParams
+  // Category filtering matches by relationship ID (see Categories.client.tsx) — guard against
+  // any malformed/non-numeric value reaching the DB query, which otherwise throws a hard 500.
+  const category =
+    typeof rawCategory === 'string' && /^\d+$/.test(rawCategory) ? rawCategory : undefined
   const payload = await getPayload({ config: configPromise })
 
   const products = await payload.find({
@@ -28,7 +32,9 @@ export default async function ShopPage({ searchParams }: Props) {
       slug: true,
       gallery: true,
       categories: true,
-      priceInUSD: true,
+      priceInINR: true,
+      composition: true,
+      packing: true,
     },
     ...(sort ? { sort } : { sort: 'title' }),
     ...(searchValue || category
@@ -40,6 +46,8 @@ export default async function ShopPage({ searchParams }: Props) {
                   equals: 'published',
                 },
               },
+              // `description` is a richText (JSON) field — Postgres can't run `like` against
+              // it directly (throws a hard query error), so search plain-text fields only.
               ...(searchValue
                 ? [
                     {
@@ -50,7 +58,7 @@ export default async function ShopPage({ searchParams }: Props) {
                           },
                         },
                         {
-                          description: {
+                          composition: {
                             like: searchValue,
                           },
                         },
@@ -77,6 +85,10 @@ export default async function ShopPage({ searchParams }: Props) {
 
   return (
     <div>
+      <div className="mb-10">
+        <ShopHero count={products.totalDocs} />
+      </div>
+
       {searchValue ? (
         <p className="mb-4">
           {products.docs?.length === 0
@@ -90,13 +102,7 @@ export default async function ShopPage({ searchParams }: Props) {
         <p className="mb-4">No products found. Please try different filters.</p>
       )}
 
-      {products?.docs.length > 0 ? (
-        <Grid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.docs.map((product) => {
-            return <ProductGridItem key={product.id} product={product} />
-          })}
-        </Grid>
-      ) : null}
+      {products?.docs.length > 0 ? <ShopGrid products={products.docs} /> : null}
     </div>
   )
 }

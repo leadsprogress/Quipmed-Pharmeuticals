@@ -9,12 +9,14 @@
  * Rows are classified by shape rather than by hardcoded row numbers, since both sheets in the
  * workbook use different header conventions.
  */
+import { config as loadEnv } from 'dotenv'
 import { writeFileSync } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import XLSX from 'xlsx'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
+loadEnv({ path: path.resolve(dirname, '../../.env') })
 const WORKBOOK_PATH = path.resolve(dirname, '../../../assets/UPDATED PRICE LIST QUIPMED NEW.xlsx')
 const OUTPUT_PATH = path.resolve(dirname, 'parsed-products.json')
 
@@ -66,8 +68,21 @@ function parseSheet(sheetName: string, rows: unknown[][]): ParsedProduct[] {
       continue
     }
 
+    // A section-title row has text in the first cell but no brand name or packing — real
+    // product rows always have both. Don't gate this on the price columns: a stray literal 0
+    // in the MRP/rate cell of an otherwise-empty header row (seen in the source sheet) must
+    // still count as a header, or every product under it silently inherits the previous
+    // category instead of getting its own.
+    // Any row reaching this point already failed isDataRow (real product rows are handled
+    // above), so it's either a category header — sometimes a bare category name, sometimes a
+    // category name alongside the sheet's own column-label row ("DIABETIC RANGE | BRAND NAME |
+    // PACKING | ..."), or a stray 0 in the MRP cell of an otherwise-empty header — or sheet
+    // letterhead/tagline text ("INDIA'S FASTEST GROWING PCD FRANCHISE COMPANY IN INDIA.").
+    // Real category names in this sheet are short and never end in punctuation; letterhead
+    // lines are long prose sentences. That distinction is what separates the two, not whether
+    // other cells in the row happen to hold text.
     const firstCell = String(row[0] ?? '').trim()
-    const looksLikeSectionTitle = firstCell.length > 0 && !row.slice(1, 6).some((c) => cleanNumber(c) !== null)
+    const looksLikeSectionTitle = firstCell.length > 0 && firstCell.length <= 40 && !firstCell.endsWith('.')
     if (looksLikeSectionTitle) {
       currentCategory = firstCell
     }
@@ -76,7 +91,121 @@ function parseSheet(sheetName: string, rows: unknown[][]): ParsedProduct[] {
   return products
 }
 
-function main() {
+// Taxonomy decision (see TASKS.md): the 8 therapeutic ranges map 1:1 to Payload `categories`
+// docs. "NEW LAUNCHED PRODUCTS IN QUIPMED" isn't a therapeutic range — it becomes its own
+// "New Launches" category, Shopify-collection-style, since `Products.categories` is
+// `hasMany: true`. A product only gets one category here because the source sheet doesn't
+// state a launched product's therapeutic range.
+const NEW_LAUNCHES_SOURCE_CATEGORY = 'NEW LAUNCHED PRODUCTS IN QUIPMED'
+const NEW_LAUNCHES_CATEGORY_TITLE = 'New Launches'
+
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+}
+
+function toTitleCase(input: string): string {
+  return input
+    .toLowerCase()
+    .split(' ')
+    .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : word))
+    .join(' ')
+}
+
+async function seedIntoPayload(products: ParsedProduct[]) {
+  const { getPayload } = await import('payload')
+  const configPromise = (await import('@payload-config')).default
+
+  const payload = await getPayload({ config: configPromise })
+
+  const categoryTitles = new Set<string>()
+  for (const p of products) {
+    categoryTitles.add(p.category === NEW_LAUNCHES_SOURCE_CATEGORY ? NEW_LAUNCHES_CATEGORY_TITLE : toTitleCase(p.category))
+  }
+
+  const categoryIdByTitle = new Map<string, number | string>()
+  for (const title of categoryTitles) {
+    const slug = slugify(title)
+    const existing = await payload.find({
+      collection: 'categories',
+      where: { slug: { equals: slug } },
+      limit: 1,
+    })
+    if (existing.docs[0]) {
+      categoryIdByTitle.set(title, existing.docs[0].id)
+      continue
+    }
+    const created = await payload.create({
+      collection: 'categories',
+      data: { title },
+    })
+    categoryIdByTitle.set(title, created.id)
+  }
+  console.log(`\nEnsured ${categoryIdByTitle.size} categories.`)
+
+  let created = 0
+  let skipped = 0
+  for (const p of products) {
+    if (p.mrpPerStrip === null) {
+      skipped += 1
+      continue
+    }
+
+    const title = toTitleCase(p.brandName)
+    const slug = slugify(`${p.brandName}-${p.packing}`)
+    const categoryTitle =
+      p.category === NEW_LAUNCHES_SOURCE_CATEGORY ? NEW_LAUNCHES_CATEGORY_TITLE : toTitleCase(p.category)
+    const categoryId = categoryIdByTitle.get(categoryTitle)
+
+    const existing = await payload.find({
+      collection: 'products',
+      where: { slug: { equals: slug } },
+      limit: 1,
+      depth: 0,
+    })
+    if (existing.docs[0]) {
+      // The QUIPMED and NEW sheets both list some products — a therapeutic-range row and a
+      // "just launched" row for the same drug. Rather than skip the second sighting outright,
+      // add its category to the existing product so it picks up both tags (e.g. "Opthalmic"
+      // and "New Launches"), matching the hasMany, Shopify-collection-style categories field.
+      const existingCategoryIds = (existing.docs[0].categories ?? []).map((c: any) =>
+        typeof c === 'object' ? c.id : c,
+      )
+      if (categoryId && !existingCategoryIds.includes(categoryId)) {
+        await payload.update({
+          collection: 'products',
+          id: existing.docs[0].id,
+          data: { categories: [...existingCategoryIds, categoryId] },
+        })
+      }
+      skipped += 1
+      continue
+    }
+
+    await payload.create({
+      collection: 'products',
+      data: {
+        title,
+        slug,
+        composition: p.composition,
+        packing: p.packing,
+        packType: p.packType || undefined,
+        categories: categoryId ? [categoryId] : [],
+        priceInINREnabled: true,
+        priceInINR: Math.round(p.mrpPerStrip * 100),
+        inventory: 100,
+        _status: 'published',
+      } as any,
+    })
+    created += 1
+  }
+
+  console.log(`Created ${created} products, skipped ${skipped} (already existed or missing price).`)
+}
+
+async function main() {
   const workbook = XLSX.readFile(WORKBOOK_PATH)
   const allProducts: ParsedProduct[] = []
 
@@ -112,10 +241,14 @@ function main() {
     return
   }
 
-  console.log('\nDATABASE_URI is set — seeding into Payload is not yet wired up.')
-  console.log('This is intentional: category taxonomy, variant structure, and product/media')
-  console.log('mapping need to be decided against the real Payload schema before writing rows.')
-  console.log('See PROJECT_AGENTS_GUIDE.md — this is the data-import-agent\'s first real task.')
+  const cleanProducts = allProducts.filter((p) => p.mrpPerStrip !== null)
+  console.log(`\nDATABASE_URI is set — seeding ${cleanProducts.length} products into Payload...`)
+  await seedIntoPayload(cleanProducts)
 }
 
 main()
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error(err)
+    process.exit(1)
+  })

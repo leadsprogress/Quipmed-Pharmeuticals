@@ -1,66 +1,59 @@
 'use client'
-import { CMSLink } from '@/components/Link'
+
 import { Cart } from '@/components/Cart'
 import { OpenCartButton } from '@/components/Cart/OpenCart'
+import { Search } from '@/components/Search'
+import Image from 'next/image'
 import Link from 'next/link'
 import React, { Suspense } from 'react'
 
+import type { Category } from '@/payload-types'
+import { AccountLink } from './AccountLink'
+import { MegaMenu } from './MegaMenu'
 import { MobileMenu } from './MobileMenu'
-import type { Header } from '@/payload-types'
-
-import { LogoIcon } from '@/components/icons/logo'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/utilities/cn'
 
 type Props = {
-  header: Header
+  categories: Category[]
 }
 
-export function HeaderClient({ header }: Props) {
-  const menu = header.navItems || []
-  const pathname = usePathname()
-
+export function HeaderClient({ categories }: Props) {
   return (
-    <div className="relative z-20 border-b">
-      <nav className="flex items-center md:items-end justify-between container pt-2">
+    <div className="relative z-20 border-b border-border bg-background">
+      <div className="container flex items-center gap-4 py-3">
         <div className="block flex-none md:hidden">
           <Suspense fallback={null}>
-            <MobileMenu menu={menu} />
+            <MobileMenu categories={categories} />
           </Suspense>
         </div>
-        <div className="flex w-full items-end justify-between">
-          <div className="flex w-full items-end gap-6 md:w-1/3">
-            <Link className="flex w-full items-center justify-center pt-4 pb-4 md:w-auto" href="/">
-              <LogoIcon className="w-6 h-auto" />
-            </Link>
-            {menu.length ? (
-              <ul className="hidden gap-4 text-sm md:flex md:items-center">
-                {menu.map((item) => (
-                  <li key={item.id}>
-                    <CMSLink
-                      {...item.link}
-                      size={'clear'}
-                      className={cn('relative navLink', {
-                        active:
-                          item.link.url && item.link.url !== '/'
-                            ? pathname.includes(item.link.url)
-                            : false,
-                      })}
-                      appearance="nav"
-                    />
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
 
-          <div className="flex justify-end md:w-1/3 gap-4">
-            <Suspense fallback={<OpenCartButton />}>
-              <Cart />
-            </Suspense>
-          </div>
+        <Link href="/" className="shrink-0">
+          <Image
+            src="/logo/logo-transparent.png"
+            alt="Amulya Medicals"
+            width={180}
+            height={54}
+            className="h-10 w-auto object-contain md:h-12"
+            priority
+          />
+        </Link>
+
+        <div className="hidden flex-1 md:block">
+          <Search className="mx-auto max-w-xl" />
         </div>
-      </nav>
+
+        <div className="ml-auto flex items-center gap-5">
+          <AccountLink />
+          <Suspense fallback={<OpenCartButton />}>
+            <Cart />
+          </Suspense>
+        </div>
+      </div>
+
+      <div className="container pb-3 md:hidden">
+        <Search />
+      </div>
+
+      <MegaMenu categories={categories} />
     </div>
   )
 }

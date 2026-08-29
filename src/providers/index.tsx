@@ -17,6 +17,18 @@ export const Providers: React.FC<{
           <SonnerProvider />
           <EcommerceProvider
             enableVariants={true}
+            currenciesConfig={{
+              defaultCurrency: 'INR',
+              supportedCurrencies: [
+                {
+                  code: 'INR',
+                  decimals: 2,
+                  label: 'Indian Rupee',
+                  symbol: '₹',
+                  symbolDisplay: 'symbol',
+                },
+              ],
+            }}
             api={{
               cartsFetchQuery: {
                 depth: 2,

@@ -11,9 +11,9 @@ type Props = {
 }
 
 export const ProductGridItem: React.FC<Props> = ({ product }) => {
-  const { gallery, priceInUSD, title } = product
+  const { gallery, priceInINR, title, imageUrl } = product
 
-  let price = priceInUSD
+  let price = priceInINR
 
   const variants = product.variants?.docs
 
@@ -22,10 +22,10 @@ export const ProductGridItem: React.FC<Props> = ({ product }) => {
     if (
       variant &&
       typeof variant === 'object' &&
-      variant?.priceInUSD &&
-      typeof variant.priceInUSD === 'number'
+      variant?.priceInINR &&
+      typeof variant.priceInINR === 'number'
     ) {
-      price = variant.priceInUSD
+      price = variant.priceInINR
     }
   }
 
@@ -46,7 +46,18 @@ export const ProductGridItem: React.FC<Props> = ({ product }) => {
           resource={image}
           width={80}
         />
-      ) : null}
+      ) : imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imageUrl}
+          alt={title ?? ''}
+          className="relative aspect-square w-full rounded-2xl border object-cover transition duration-300 ease-in-out group-hover:scale-102"
+        />
+      ) : (
+        <div className="relative flex aspect-square w-full items-center justify-center rounded-2xl border bg-primary-foreground text-muted-foreground">
+          <i className="fa-solid fa-capsules text-3xl" />
+        </div>
+      )}
 
       <div className="font-mono text-primary/50 group-hover:text-primary flex justify-between items-center mt-4">
         <div>{title}</div>

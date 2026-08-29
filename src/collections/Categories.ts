@@ -21,6 +21,14 @@ export const Categories: CollectionConfig = {
       required: true,
     },
     {
+      name: 'icon',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Square icon/photo shown in the "Shop by category" grid on the homepage.',
+      },
+    },
+    {
       name: 'slug',
       type: 'slug',
       useAsSlug: 'title',

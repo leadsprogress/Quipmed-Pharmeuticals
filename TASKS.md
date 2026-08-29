@@ -54,3 +54,25 @@ it for context, but only the lead moves items between sections after `qa-agent` 
 - Pushing to `main` / any shared branch
 - Any schema change or migration against the real (non-local) Supabase database
 - Anything that touches real credentials/secrets
+
+## Current status (2026-08-29)
+
+Direction changed from the original plan above: the client (Amulya Medicals, Bhagyanagar
+Colony, Hyderabad) wants the storefront pages hand-built (Next.js/Tailwind/GSAP), with Payload
+CMS scoped to **Products and Categories only** for this first demo — not full page/blocks
+authoring. `src/app/(app)/page.tsx` is a static component pulling live product/category data from
+Payload; it does not use the `Pages` collection or blocks system. `src/scripts/seed-home-page.ts`
+is therefore unused/deprecated — kept for reference, not maintained.
+
+- [ ] **Compliance review needed before going live**: `src/scripts/seed-product-content.ts`
+      auto-drafted a factual, composition-based description for every product (active ingredient →
+      general therapeutic class/use, no efficacy claims) and a mock hotlinked `imageUrl` per
+      product (cycling a small verified-safe stock-photo pool, not real product photography).
+      Both are placeholders. **A pharmacist/legal review of every product description is required
+      before this site serves real customers** — this is a regulatory concern (Indian pharma
+      advertising rules), not just a content nice-to-have.
+- [ ] Real product photography still needed — `imageUrl` mock images are generic/repeated stock
+      shelf and capsule photos, not the actual products.
+- [ ] Confirmed business details still needed: exact address, phone number, and store hours for
+      Amulya Medicals (Bhagyanagar Colony, Hyderabad) — currently `[placeholder]` text in the
+      homepage "Visit Us" section and site footer.

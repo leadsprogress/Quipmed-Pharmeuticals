@@ -1,15 +1,19 @@
 import type { ReactNode } from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
+import { CursorFollower } from '@/components/CursorFollower'
+import { FloatingContact } from '@/components/FloatingContact'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { ensureStartsWith } from '@/utilities/ensureStartsWith'
 import { Providers } from '@/providers'
+import { SmoothScrollProvider } from '@/providers/SmoothScroll'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import React from 'react'
+import '@fontsource-variable/google-sans-flex'
 import './globals.css'
 
 /* const { SITE_NAME, TWITTER_CREATOR, TWITTER_SITE } = process.env
@@ -50,15 +54,23 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <InitTheme />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+        />
       </head>
       <body>
         <Providers>
-          <AdminBar />
-          <LivePreviewListener />
+          <SmoothScrollProvider>
+            <CursorFollower />
+            <AdminBar />
+            <LivePreviewListener />
 
-          <Header />
-          <main>{children}</main>
-          <Footer />
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <FloatingContact />
+          </SmoothScrollProvider>
         </Providers>
       </body>
     </html>

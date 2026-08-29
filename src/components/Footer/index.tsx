@@ -1,65 +1,92 @@
-import type { Footer } from '@/payload-types'
-
-import { FooterMenu } from '@/components/Footer/menu'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
-import { getCachedGlobal } from '@/utilities/getGlobals'
+import Image from 'next/image'
 import Link from 'next/link'
-import React, { Suspense } from 'react'
-import { LogoIcon } from '@/components/icons/logo'
+import React from 'react'
 
 const { COMPANY_NAME, SITE_NAME } = process.env
 
-export async function Footer() {
-  const footer: Footer = await getCachedGlobal('footer', 1)()
-  const menu = footer.navItems || []
+const QUICK_LINKS = [
+  { label: 'About Us', href: '/about' },
+  { label: 'Contact Us', href: '/contact' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Track Order', href: '/find-order' },
+]
+
+const LEGAL_LINKS = [
+  { label: 'Terms & Conditions', href: '/terms' },
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Return Policy', href: '/returns' },
+]
+
+export function Footer() {
   const currentYear = new Date().getFullYear()
   const copyrightDate = 2023 + (currentYear > 2023 ? `-${currentYear}` : '')
-  const skeleton = 'w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700'
-
   const copyrightName = COMPANY_NAME || SITE_NAME || ''
 
   return (
-    <footer className="text-sm text-neutral-500 dark:text-neutral-400">
-      <div className="container">
-        <div className="flex w-full flex-col gap-6 border-t border-neutral-200 py-12 text-sm md:flex-row md:gap-12 dark:border-neutral-700">
-          <div>
-            <Link className="flex items-center gap-2 text-black md:pt-1 dark:text-white" href="/">
-              <LogoIcon className="w-6" />
-              <span className="sr-only">{SITE_NAME}</span>
-            </Link>
-          </div>
-          <Suspense
-            fallback={
-              <div className="flex h-[188px] w-[200px] flex-col gap-2">
-                <div className={skeleton} />
-                <div className={skeleton} />
-                <div className={skeleton} />
-                <div className={skeleton} />
-                <div className={skeleton} />
-                <div className={skeleton} />
-              </div>
-            }
-          >
-            <FooterMenu menu={menu} />
-          </Suspense>
-          <div className="md:ml-auto flex flex-col gap-4 items-end">
-            <ThemeSelector />
-          </div>
+    <footer className="border-t border-border bg-muted/40 text-sm text-muted-foreground">
+      <div className="container grid grid-cols-2 gap-8 py-12 md:grid-cols-4">
+        <div className="col-span-2 md:col-span-1">
+          <Link href="/">
+            <Image
+              src="/logo/logo-transparent.png"
+              alt="Amulya Medicals"
+              width={180}
+              height={54}
+              className="h-14 w-auto object-contain"
+            />
+          </Link>
+          <p className="mt-3 max-w-xs text-xs">
+            Genuine, authentic healthcare essentials, delivered reliably across Hyderabad.
+          </p>
+        </div>
+
+        <div>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">
+            Quick Links
+          </p>
+          <ul className="space-y-2">
+            {QUICK_LINKS.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="hover:text-primary">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Legal</p>
+          <ul className="space-y-2">
+            {LEGAL_LINKS.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="hover:text-primary">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">
+            Contact
+          </p>
+          <ul className="space-y-2 text-xs">
+            <li>[Phone number — to be provided]</li>
+            <li>[Support email — to be provided]</li>
+            <li>[Business address — to be provided]</li>
+          </ul>
         </div>
       </div>
-      <div className="border-t border-neutral-200 py-6 text-sm dark:border-neutral-700">
-        <div className="container mx-auto flex w-full flex-col items-center gap-1 md:flex-row md:gap-0">
+
+      <div className="border-t border-border py-6">
+        <div className="container flex flex-col items-center gap-1 text-xs md:flex-row md:justify-between">
           <p>
             &copy; {copyrightDate} {copyrightName}
             {copyrightName.length && !copyrightName.endsWith('.') ? '.' : ''} All rights reserved.
           </p>
-          <hr className="mx-4 hidden h-4 w-px border-l border-neutral-400 md:inline-block" />
-          <p>Designed in Michigan</p>
-          <p className="md:ml-auto">
-            <a className="text-black dark:text-white" href="https://payloadcms.com">
-              Crafted by Payload
-            </a>
-          </p>
+          <p>Licensed Pharmacy · [Drug License No. — to be provided]</p>
         </div>
       </div>
     </footer>

@@ -1,31 +1,26 @@
-import { Button } from '@/components/ui/button'
 import clsx from 'clsx'
-import { ShoppingCart } from 'lucide-react'
 import React from 'react'
 
-export function OpenCartButton({
-  className,
-  quantity,
-  ...rest
-}: {
-  className?: string
-  quantity?: number
-}) {
+export const OpenCartButton = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { quantity?: number }
+>(function OpenCartButton({ className, quantity, ...rest }, ref) {
   return (
-    <Button
-      variant="nav"
-      size="clear"
-      className="navLink relative items-end hover:cursor-pointer"
+    <button
+      ref={ref}
+      data-cursor-hover
+      className={clsx(
+        'relative flex items-center text-foreground transition-colors hover:text-primary',
+        className,
+      )}
       {...rest}
     >
-      <span>Cart</span>
-
+      <i className="fa-solid fa-bag-shopping text-lg" />
       {quantity ? (
-        <>
-          <span>•</span>
-          <span>{quantity}</span>
-        </>
+        <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-secondary text-[10px] font-semibold text-secondary-foreground">
+          {quantity}
+        </span>
       ) : null}
-    </Button>
+    </button>
   )
-}
+})

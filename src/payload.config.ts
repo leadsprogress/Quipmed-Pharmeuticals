@@ -1,5 +1,13 @@
+import dns from 'node:dns'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { s3Storage } from '@payloadcms/storage-s3'
+
+// Supabase's direct Postgres host resolves to an IPv6-only address in many regions, but Vercel's
+// build/serverless sandboxes have no IPv6 route out — every DB connection attempt fails with
+// ENETUNREACH before ever reaching Supabase. Node still resolves an IPv4 address for the same
+// host; it just tries IPv6 first by default. Preferring IPv4 here, before anything opens a
+// connection, sidesteps the failure without touching the connection string itself.
+dns.setDefaultResultOrder('ipv4first')
 
 import {
   BoldFeature,

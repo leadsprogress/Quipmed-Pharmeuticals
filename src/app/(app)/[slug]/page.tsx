@@ -11,27 +11,33 @@ import React from 'react'
 import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const pages = await payload.find({
-    collection: 'pages',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  const params = pages.docs
-    ?.filter((doc) => {
-      return doc.slug !== 'home'
-    })
-    .map(({ slug }) => {
-      return { slug }
+  // This collection is currently unused (the site's real pages are all hardcoded App Router
+  // routes, not CMS-authored `Pages` docs) — never let a database hiccup at build time fail the
+  // whole deploy over a route that has nothing to pre-render anyway.
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const pages = await payload.find({
+      collection: 'pages',
+      draft: false,
+      limit: 1000,
+      overrideAccess: false,
+      pagination: false,
+      select: {
+        slug: true,
+      },
     })
 
-  return params
+    return pages.docs
+      ?.filter((doc) => {
+        return doc.slug !== 'home'
+      })
+      .map(({ slug }) => {
+        return { slug }
+      })
+  } catch (error) {
+    console.error('Skipping [slug] static params — could not reach the database:', error)
+    return []
+  }
 }
 
 type Args = {

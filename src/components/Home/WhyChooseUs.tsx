@@ -4,11 +4,13 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
 import React, { useLayoutEffect, useRef } from 'react'
 
+import { Media } from '@/components/Media'
+import type { Media as MediaType } from '@/payload-types'
 import { SectionBackdrop } from './SectionBackdrop'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const ROWS = [
+const DEFAULT_ROWS = [
   {
     title: 'Sourced Directly, Never Grey-Market',
     body: 'Every product on our shelves comes straight from authorized distributors — no exceptions.',
@@ -29,7 +31,26 @@ const ROWS = [
   },
 ]
 
-export const WhyChooseUs: React.FC = () => {
+type Row = {
+  title: string
+  body: string
+  image?: MediaType | number | string | null
+  icon?: string | null
+}
+
+type Props = {
+  heading?: string | null
+  rows?: Row[] | null
+}
+
+export const WhyChooseUs: React.FC<Props> = ({ heading, rows }) => {
+  // Fall back per-row (not just when the whole array is empty) since the CMS `image` field is a
+  // real upload — until an editor uploads a photo for a row, keep showing a placeholder image
+  // rather than a broken <img>.
+  const ROWS = (rows && rows.length > 0 ? rows : DEFAULT_ROWS).map((row, i) => ({
+    ...row,
+    image: row.image ?? DEFAULT_ROWS[i % DEFAULT_ROWS.length].image,
+  }))
   const sectionRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
@@ -66,7 +87,7 @@ export const WhyChooseUs: React.FC = () => {
   return (
     <div className="container py-16" ref={sectionRef}>
       <h2 className="mb-12 font-display text-2xl font-semibold tracking-tight md:text-3xl">
-        Why Choose Amulya Medicals
+        {heading || 'Why Choose Amulya Medicals'}
       </h2>
       <div className="space-y-20">
         {ROWS.map((row, i) => (
@@ -75,16 +96,25 @@ export const WhyChooseUs: React.FC = () => {
             key={row.title}
             className={`relative grid items-center gap-8 overflow-hidden md:grid-cols-2 ${i % 2 === 1 ? 'md:[direction:rtl]' : ''}`}
           >
-            <SectionBackdrop icon={row.icon} side={i % 2 === 1 ? 'left' : 'right'} />
+            <SectionBackdrop icon={row.icon || 'fa-capsules'} side={i % 2 === 1 ? 'left' : 'right'} />
             <div data-why-image className="relative overflow-hidden rounded-3xl [direction:ltr]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={row.image}
-                alt={row.title}
-                width={800}
-                height={600}
-                className="h-80 w-full scale-110 object-cover"
-              />
+              {row.image && typeof row.image === 'object' ? (
+                <Media
+                  resource={row.image}
+                  imgClassName="h-80 w-full scale-110 object-cover"
+                  width={800}
+                  height={600}
+                />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={typeof row.image === 'string' ? row.image : undefined}
+                  alt={row.title}
+                  width={800}
+                  height={600}
+                  className="h-80 w-full scale-110 object-cover"
+                />
+              )}
             </div>
             <div data-why-copy className="relative [direction:ltr]">
               <h3 className="font-display text-xl font-semibold md:text-2xl">{row.title}</h3>

@@ -10,6 +10,8 @@ import { stripeAdapter } from '@payloadcms/plugin-ecommerce/payments/stripe'
 import { Page, Product } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { ProductsCollection } from '@/collections/Products'
+import { fulfillmentFields } from '@/collections/Orders/fields/fulfillment'
+import { syncFulfillmentStatus } from '@/collections/Orders/hooks/syncFulfillmentStatus'
 import { adminOrPublishedStatus } from '@/access/adminOrPublishedStatus'
 import { adminOnlyFieldAccess } from '@/access/adminOnlyFieldAccess'
 import { customerOnlyFieldAccess } from '@/access/customerOnlyFieldAccess'
@@ -124,7 +126,12 @@ export const plugins: Plugin[] = [
               ],
             },
           },
+          ...fulfillmentFields,
         ],
+        hooks: {
+          ...defaultCollection.hooks,
+          beforeChange: [...(defaultCollection.hooks?.beforeChange || []), syncFulfillmentStatus],
+        },
       }),
     },
     payments: {

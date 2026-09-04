@@ -14,6 +14,18 @@ import { CallToAction } from '@/blocks/CallToAction/config'
 import { Content } from '@/blocks/Content/config'
 import { FormBlock } from '@/blocks/Form/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { FAQBlock } from '@/blocks/FAQBlock/config'
+import { StatsBlock } from '@/blocks/StatsBlock/config'
+import { ValueCardsBlock } from '@/blocks/ValueCardsBlock/config'
+import { TimelineBlock } from '@/blocks/TimelineBlock/config'
+import { ContactBlock } from '@/blocks/ContactBlock/config'
+import { HeroBlock } from '@/blocks/HeroBlock/config'
+import { WhyChooseUsBlock } from '@/blocks/WhyChooseUsBlock/config'
+import { PromoBannerBlock } from '@/blocks/PromoBannerBlock/config'
+import { HealthAndVisitBlock } from '@/blocks/HealthAndVisitBlock/config'
+import { FeaturedRailBlock } from '@/blocks/FeaturedRailBlock/config'
+import { PopularRangesBlock } from '@/blocks/PopularRangesBlock/config'
+import { CallToOrderBlock } from '@/blocks/CallToOrderBlock/config'
 import { hero } from '@/fields/hero'
 import { adminOrPublishedStatus } from '@/access/adminOrPublishedStatus'
 import {
@@ -103,6 +115,18 @@ export const Pages: CollectionConfig = {
                 TrustBar,
                 PromoTiles,
                 HealthHighlights,
+                FAQBlock,
+                StatsBlock,
+                ValueCardsBlock,
+                TimelineBlock,
+                ContactBlock,
+                HeroBlock,
+                WhyChooseUsBlock,
+                PromoBannerBlock,
+                HealthAndVisitBlock,
+                FeaturedRailBlock,
+                PopularRangesBlock,
+                CallToOrderBlock,
               ],
               required: true,
             },

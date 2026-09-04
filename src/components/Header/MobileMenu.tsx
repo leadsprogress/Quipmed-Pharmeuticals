@@ -1,6 +1,6 @@
 'use client'
 
-import type { Category } from '@/payload-types'
+import type { Category, Header } from '@/payload-types'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -17,17 +17,16 @@ import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-import { MEGA_MENU_GROUPS } from './megaMenuGroups'
+import { buildNavGroups } from './megaMenuGroups'
+import { ThemeToggle } from './ThemeToggle'
 
 interface Props {
   categories: Category[]
+  navGroups?: Header['navGroups']
 }
 
-export function MobileMenu({ categories }: Props) {
-  const groups = MEGA_MENU_GROUPS.map((g) => ({
-    label: g.label,
-    categories: categories.filter((c) => g.categoryTitles.includes(c.title)),
-  })).filter((g) => g.categories.length > 0)
+export function MobileMenu({ categories, navGroups }: Props) {
+  const groups = buildNavGroups(categories, navGroups)
 
   const { user } = useAuth()
 
@@ -53,15 +52,17 @@ export function MobileMenu({ categories }: Props) {
 
   return (
     <Sheet onOpenChange={setIsOpen} open={isOpen}>
-      <SheetTrigger className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:bg-black dark:text-white">
+      <SheetTrigger className="relative flex h-11 w-11 items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors">
         <MenuIcon className="h-4" />
       </SheetTrigger>
 
       <SheetContent side="left" className="px-4">
-        <SheetHeader className="px-0 pt-4 pb-0">
-          <SheetTitle>My Store</SheetTitle>
-
-          <SheetDescription />
+        <SheetHeader className="flex-row items-center justify-between px-0 pt-4 pb-0">
+          <div>
+            <SheetTitle>My Store</SheetTitle>
+            <SheetDescription />
+          </div>
+          <ThemeToggle />
         </SheetHeader>
 
         <div className="flex flex-col gap-5 py-4">

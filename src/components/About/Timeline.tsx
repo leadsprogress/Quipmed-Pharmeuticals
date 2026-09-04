@@ -6,7 +6,7 @@ import React, { useLayoutEffect, useRef } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const MILESTONES = [
+const DEFAULT_MILESTONES = [
   {
     title: 'Our Story',
     body: '[Placeholder: replace with the real founding story — when Amulya Medicals opened its doors in Bhagyanagar Colony, Hyderabad.]',
@@ -21,7 +21,12 @@ const MILESTONES = [
   },
 ]
 
-export const Timeline: React.FC = () => {
+type Props = {
+  items?: { title: string; body: string }[]
+}
+
+export const Timeline: React.FC<Props> = ({ items }) => {
+  const MILESTONES = items && items.length > 0 ? items : DEFAULT_MILESTONES
   const ref = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {

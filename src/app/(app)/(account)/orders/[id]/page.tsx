@@ -13,6 +13,7 @@ import { headers as getHeaders } from 'next/headers.js'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { OrderStatus } from '@/components/OrderStatus'
+import { FulfillmentTimeline } from '@/components/OrderStatus/FulfillmentTimeline'
 import { AddressItem } from '@/components/addresses/AddressItem'
 
 export const dynamic = 'force-dynamic'
@@ -80,6 +81,8 @@ export default async function Order({ params, searchParams }: PageProps) {
         customerEmail: true,
         customer: true,
         status: true,
+        currentFulfillmentStatus: true,
+        fulfillmentEvents: true,
         createdAt: true,
         updatedAt: true,
         shippingAddress: true,
@@ -156,6 +159,13 @@ export default async function Order({ params, searchParams }: PageProps) {
             </div>
           )}
         </div>
+
+        {order.fulfillmentEvents && order.fulfillmentEvents.length > 0 && (
+          <div>
+            <h2 className="font-mono text-primary/50 mb-4 uppercase text-sm">Order Status</h2>
+            <FulfillmentTimeline events={order.fulfillmentEvents} />
+          </div>
+        )}
 
         {order.items && (
           <div>

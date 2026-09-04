@@ -6,14 +6,19 @@ import React, { useLayoutEffect, useRef } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const STATS = [
+const DEFAULT_STATS = [
   { icon: 'fa-capsules', value: 290, suffix: '+', label: 'Products in catalog' },
   { icon: 'fa-layer-group', value: 15, suffix: '', label: 'Therapeutic ranges' },
   { icon: 'fa-truck-fast', value: 24, suffix: '-48 hrs', label: 'Delivery window' },
   { icon: 'fa-shield-heart', value: 100, suffix: '%', label: 'Genuine, sourced directly' },
 ]
 
-export const StatsBar: React.FC = () => {
+type Props = {
+  items?: { icon?: string | null; value: number; suffix?: string | null; label: string }[]
+}
+
+export const StatsBar: React.FC<Props> = ({ items }) => {
+  const STATS = items && items.length > 0 ? items : DEFAULT_STATS
   const ref = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {

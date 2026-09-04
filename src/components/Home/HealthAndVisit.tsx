@@ -7,7 +7,7 @@ import React, { useLayoutEffect, useRef } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const GUIDES = [
+const DEFAULT_GUIDES = [
   {
     icon: 'fa-droplet',
     title: 'Managing Diabetes Day to Day',
@@ -34,7 +34,20 @@ const GUIDES = [
   },
 ]
 
-export const HealthAndVisit: React.FC = () => {
+type Props = {
+  guidesHeading?: string | null
+  guides?: { icon?: string | null; title: string; excerpt: string; tag?: string | null }[] | null
+  visitHeading?: string | null
+  visitAddress?: string | null
+}
+
+export const HealthAndVisit: React.FC<Props> = ({
+  guidesHeading,
+  guides,
+  visitHeading,
+  visitAddress,
+}) => {
+  const GUIDES = guides && guides.length > 0 ? guides : DEFAULT_GUIDES
   const ref = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
@@ -66,7 +79,7 @@ export const HealthAndVisit: React.FC = () => {
     <div ref={ref}>
       <div className="container py-16">
         <h2 className="mb-8 font-display text-2xl font-semibold tracking-tight md:text-3xl">
-          Health & Wellness Guides
+          {guidesHeading || 'Health & Wellness Guides'}
         </h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {GUIDES.map((card, i) => (
@@ -85,7 +98,7 @@ export const HealthAndVisit: React.FC = () => {
                   {card.tag}
                 </span>
                 <i
-                  className={`fa-solid ${card.icon} text-lg text-muted-foreground transition-transform duration-500 group-hover:rotate-12`}
+                  className={`fa-solid ${card.icon || 'fa-notes-medical'} text-lg text-muted-foreground transition-transform duration-500 group-hover:rotate-12`}
                 />
               </div>
               <h3 className="mt-4 text-lg font-semibold leading-snug">{card.title}</h3>
@@ -102,11 +115,11 @@ export const HealthAndVisit: React.FC = () => {
         >
           <div>
             <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
-              Visit Us
+              {visitHeading || 'Visit Us'}
             </h2>
             <p className="mt-3 max-w-md text-muted-foreground">
-              Amulya Medicals, Bhagyanagar Colony, Hyderabad. [Exact address, phone number and
-              store hours to be confirmed.]
+              {visitAddress ||
+                'Amulya Medicals, Bhagyanagar Colony, Hyderabad. [Exact address, phone number and store hours to be confirmed.]'}
             </p>
             <Link
               href="/contact"

@@ -28,6 +28,7 @@ import { Categories } from '@/collections/Categories'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
 import { Users } from '@/collections/Users'
+import { customerSearchEndpoints } from '@/endpoints/customerSearch'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
 import { plugins } from './plugins'
@@ -44,6 +45,13 @@ export default buildConfig({
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
       beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard'],
+      beforeNavLinks: ['@/components/admin/CustomersNavLink#CustomersNavLink'],
+      views: {
+        customers: {
+          Component: '@/components/admin/CustomersView#CustomersView',
+          path: '/customers',
+        },
+      },
     },
     user: Users.slug,
   },
@@ -53,6 +61,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || '',
     },
   }),
+  endpoints: customerSearchEndpoints,
   editor: lexicalEditor({
     features: () => {
       return [
@@ -89,7 +98,6 @@ export default buildConfig({
     },
   }),
   //email: nodemailerAdapter(),
-  endpoints: [],
   globals: [Header, Footer],
   plugins,
   secret: process.env.PAYLOAD_SECRET || '',

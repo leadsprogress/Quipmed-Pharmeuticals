@@ -20,7 +20,7 @@ export const Users: CollectionConfig = {
   },
   admin: {
     group: 'Users',
-    defaultColumns: ['name', 'email', 'roles'],
+    defaultColumns: ['name', 'email', 'phone', 'roles'],
     useAsTitle: 'name',
   },
   auth: {
@@ -30,6 +30,14 @@ export const Users: CollectionConfig = {
     {
       name: 'name',
       type: 'text',
+    },
+    {
+      name: 'phone',
+      type: 'text',
+      index: true,
+      admin: {
+        description: 'Used for order lookups and CMS customer search.',
+      },
     },
     {
       name: 'roles',

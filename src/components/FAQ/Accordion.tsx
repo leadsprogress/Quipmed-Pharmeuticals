@@ -3,7 +3,7 @@
 import { gsap } from 'gsap'
 import React, { useRef, useState } from 'react'
 
-const FAQS = [
+const DEFAULT_FAQS = [
   {
     q: 'How long does delivery take?',
     a: 'Orders placed before 6pm are typically delivered within 24-48 hours across Hyderabad.',
@@ -64,10 +64,17 @@ function AccordionItem({ q, a, index }: { q: string; a: string; index: number })
   )
 }
 
-export const Accordion: React.FC = () => {
+type Props = {
+  items?: { question: string; answer: string }[]
+}
+
+export const Accordion: React.FC<Props> = ({ items }) => {
+  const faqs =
+    items && items.length > 0 ? items.map((i) => ({ q: i.question, a: i.answer })) : DEFAULT_FAQS
+
   return (
     <div>
-      {FAQS.map((faq, i) => (
+      {faqs.map((faq, i) => (
         <AccordionItem key={faq.q} q={faq.q} a={faq.a} index={i} />
       ))}
     </div>

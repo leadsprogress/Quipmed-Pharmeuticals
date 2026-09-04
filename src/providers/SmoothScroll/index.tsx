@@ -36,10 +36,8 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
     gsap.ticker.lagSmoothing(0)
 
     // Extra safety net: if the page's rendered height ever changes after mount (a late-loading
-    // image, a font swap), re-measure every ScrollTrigger so pinned/scrubbed sections don't drift
-    // out of sync with the document. The pin-ordering fix itself lives on each pinned trigger's
-    // `refreshPriority` (see FeaturedRail/PromoBanner) — without it, an earlier pin's reserved
-    // spacer isn't accounted for when later, unpinned scrub triggers compute their positions.
+    // image, a font swap), re-measure every ScrollTrigger so scrubbed sections don't drift out of
+    // sync with the document.
     const refresh = () => ScrollTrigger.refresh()
     window.addEventListener('load', refresh)
 

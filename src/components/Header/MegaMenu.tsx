@@ -2,24 +2,30 @@
 
 import { gsap } from 'gsap'
 import Link from 'next/link'
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
-import type { Category } from '@/payload-types'
-import { MEGA_MENU_GROUPS } from './megaMenuGroups'
+import type { Category, Header } from '@/payload-types'
+import { buildNavGroups } from './megaMenuGroups'
 
-type Group = {
-  label: string
+type Props = {
   categories: Category[]
+  navGroups?: Header['navGroups']
 }
 
-export const MegaMenu: React.FC<{ categories: Category[] }> = ({ categories }) => {
-  const groups: Group[] = MEGA_MENU_GROUPS.map((g) => ({
-    label: g.label,
-    categories: categories.filter((c) => g.categoryTitles.includes(c.title)),
-  })).filter((g) => g.categories.length > 0)
+export const MegaMenu: React.FC<Props> = ({ categories, navGroups }) => {
+  const groups = useMemo(() => buildNavGroups(categories, navGroups), [categories, navGroups])
 
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const pathname = usePathname()
+
+  // The header persists across client-side navigations (it lives in the shared layout), so a
+  // menu left open when the user clicks through to a new page would otherwise stay open,
+  // rendered on top of that page's content, until they hover the nav again.
+  useEffect(() => {
+    setOpenIndex(null)
+  }, [pathname])
 
   useLayoutEffect(() => {
     panelRefs.current.forEach((panel, i) => {
@@ -75,6 +81,7 @@ export const MegaMenu: React.FC<{ categories: Category[] }> = ({ categories }) =
                     key={category.id}
                     href={`/shop?category=${category.id}`}
                     data-cursor-hover
+                    onClick={() => setOpenIndex(null)}
                     className="block rounded-xl px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted hover:text-primary"
                   >
                     {category.title}
@@ -84,6 +91,7 @@ export const MegaMenu: React.FC<{ categories: Category[] }> = ({ categories }) =
               <Link
                 href="/shop"
                 data-cursor-hover
+                onClick={() => setOpenIndex(null)}
                 className="group relative hidden w-28 shrink-0 sm:block"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}

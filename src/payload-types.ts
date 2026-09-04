@@ -257,6 +257,10 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   name?: string | null;
+  /**
+   * Used for order lookups and CMS customer search.
+   */
+  phone?: string | null;
   roles?: ('admin' | 'customer')[] | null;
   orders?: {
     docs?: (number | Order)[];
@@ -326,6 +330,30 @@ export interface Order {
   amount?: number | null;
   currency?: 'INR' | null;
   accessToken?: string | null;
+  /**
+   * Automatically set from the latest entry in the fulfillment timeline below.
+   */
+  currentFulfillmentStatus?:
+    | ('placed' | 'packed' | 'shipped' | 'out_for_delivery' | 'delivered' | 'collected' | 'cancelled' | 'refunded')
+    | null;
+  /**
+   * Add a row each time this order moves to a new stage (packed, shipped, delivered, etc). The most recent row becomes the current status shown to the customer.
+   */
+  fulfillmentEvents?:
+    | {
+        status:
+          'placed' | 'packed' | 'shipped' | 'out_for_delivery' | 'delivered' | 'collected' | 'cancelled' | 'refunded';
+        /**
+         * Defaults to now if left empty.
+         */
+        timestamp?: string | null;
+        /**
+         * Optional, e.g. courier name or tracking number.
+         */
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -515,6 +543,18 @@ export interface Page {
     | TrustBarBlock
     | PromoTilesBlock
     | HealthHighlightsBlock
+    | FAQBlock
+    | StatsBlock
+    | ValueCardsBlock
+    | TimelineBlock
+    | ContactBlockType
+    | HomeHeroBlock
+    | WhyChooseUsBlock
+    | PromoBannerBlock
+    | HealthAndVisitBlock
+    | FeaturedRailBlock
+    | PopularRangesBlock
+    | CallToOrderBlock
   )[];
   meta?: {
     title?: string | null;
@@ -893,6 +933,231 @@ export interface HealthHighlightsBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQBlock".
+ */
+export interface FAQBlock {
+  items?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsBlock".
+ */
+export interface StatsBlock {
+  items?:
+    | {
+        /**
+         * Font Awesome icon class, e.g. "fa-capsules"
+         */
+        icon?: string | null;
+        value: number;
+        /**
+         * e.g. "+", "%", "-48 hrs"
+         */
+        suffix?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'stats';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ValueCardsBlock".
+ */
+export interface ValueCardsBlock {
+  items?:
+    | {
+        /**
+         * Font Awesome icon class, e.g. "fa-shield-heart"
+         */
+        icon?: string | null;
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'valueCards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock".
+ */
+export interface TimelineBlock {
+  items?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'timeline';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactBlockType".
+ */
+export interface ContactBlockType {
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactInfo';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HomeHeroBlock".
+ */
+export interface HomeHeroBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  subtext?: string | null;
+  primaryCtaLabel?: string | null;
+  primaryCtaUrl?: string | null;
+  secondaryCtaLabel?: string | null;
+  secondaryCtaUrl?: string | null;
+  image?: (number | null) | Media;
+  statValue?: number | null;
+  statSuffix?: string | null;
+  statLabel?: string | null;
+  trustItems?:
+    | {
+        /**
+         * Font Awesome icon class
+         */
+        icon?: string | null;
+        title: string;
+        subtitle?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'homeHero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WhyChooseUsBlock".
+ */
+export interface WhyChooseUsBlock {
+  heading?: string | null;
+  rows?:
+    | {
+        title: string;
+        body: string;
+        image?: (number | null) | Media;
+        /**
+         * Font Awesome icon class
+         */
+        icon?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'whyChooseUs';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PromoBannerBlock".
+ */
+export interface PromoBannerBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  body?: string | null;
+  buttonLabel?: string | null;
+  buttonUrl?: string | null;
+  image?: (number | null) | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'promoBanner';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HealthAndVisitBlock".
+ */
+export interface HealthAndVisitBlock {
+  guidesHeading?: string | null;
+  guides?:
+    | {
+        /**
+         * Font Awesome icon class
+         */
+        icon?: string | null;
+        tag?: string | null;
+        title: string;
+        excerpt: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The address shown below is pulled automatically from Admin → Footer → Contact.
+   */
+  visitHeading?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'healthAndVisit';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedRailBlock".
+ */
+export interface FeaturedRailBlock {
+  heading: string;
+  /**
+   * Products from this category are shown in the rail.
+   */
+  category?: (number | null) | Category;
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featuredRail';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopularRangesBlock".
+ */
+export interface PopularRangesBlock {
+  heading?: string | null;
+  subheading?: string | null;
+  ranges?:
+    | {
+        label: string;
+        category: number | Category;
+        limit?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'popularRanges';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CallToOrderBlock".
+ */
+export interface CallToOrderBlock {
+  label?: string | null;
+  heading?: string | null;
+  phoneLabel?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'callToOrder';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "variants".
  */
 export interface Variant {
@@ -1182,6 +1447,7 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  phone?: T;
   roles?: T;
   orders?: T;
   cart?: T;
@@ -1247,6 +1513,18 @@ export interface PagesSelect<T extends boolean = true> {
         trustBar?: T | TrustBarBlockSelect<T>;
         promoTiles?: T | PromoTilesBlockSelect<T>;
         healthHighlights?: T | HealthHighlightsBlockSelect<T>;
+        faq?: T | FAQBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        valueCards?: T | ValueCardsBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        contactInfo?: T | ContactBlockTypeSelect<T>;
+        homeHero?: T | HomeHeroBlockSelect<T>;
+        whyChooseUs?: T | WhyChooseUsBlockSelect<T>;
+        promoBanner?: T | PromoBannerBlockSelect<T>;
+        healthAndVisit?: T | HealthAndVisitBlockSelect<T>;
+        featuredRail?: T | FeaturedRailBlockSelect<T>;
+        popularRanges?: T | PopularRangesBlockSelect<T>;
+        callToOrder?: T | CallToOrderBlockSelect<T>;
       };
   meta?:
     | T
@@ -1436,6 +1714,195 @@ export interface HealthHighlightsBlockSelect<T extends boolean = true> {
         tag?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQBlock_select".
+ */
+export interface FAQBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsBlock_select".
+ */
+export interface StatsBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        icon?: T;
+        value?: T;
+        suffix?: T;
+        label?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ValueCardsBlock_select".
+ */
+export interface ValueCardsBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock_select".
+ */
+export interface TimelineBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactBlockType_select".
+ */
+export interface ContactBlockTypeSelect<T extends boolean = true> {
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HomeHeroBlock_select".
+ */
+export interface HomeHeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  subtext?: T;
+  primaryCtaLabel?: T;
+  primaryCtaUrl?: T;
+  secondaryCtaLabel?: T;
+  secondaryCtaUrl?: T;
+  image?: T;
+  statValue?: T;
+  statSuffix?: T;
+  statLabel?: T;
+  trustItems?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        subtitle?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WhyChooseUsBlock_select".
+ */
+export interface WhyChooseUsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  rows?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        image?: T;
+        icon?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PromoBannerBlock_select".
+ */
+export interface PromoBannerBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  buttonLabel?: T;
+  buttonUrl?: T;
+  image?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HealthAndVisitBlock_select".
+ */
+export interface HealthAndVisitBlockSelect<T extends boolean = true> {
+  guidesHeading?: T;
+  guides?:
+    | T
+    | {
+        icon?: T;
+        tag?: T;
+        title?: T;
+        excerpt?: T;
+        id?: T;
+      };
+  visitHeading?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedRailBlock_select".
+ */
+export interface FeaturedRailBlockSelect<T extends boolean = true> {
+  heading?: T;
+  category?: T;
+  limit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopularRangesBlock_select".
+ */
+export interface PopularRangesBlockSelect<T extends boolean = true> {
+  heading?: T;
+  subheading?: T;
+  ranges?:
+    | T
+    | {
+        label?: T;
+        category?: T;
+        limit?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CallToOrderBlock_select".
+ */
+export interface CallToOrderBlockSelect<T extends boolean = true> {
+  label?: T;
+  heading?: T;
+  phoneLabel?: T;
   id?: T;
   blockName?: T;
 }
@@ -1782,6 +2249,15 @@ export interface OrdersSelect<T extends boolean = true> {
   amount?: T;
   currency?: T;
   accessToken?: T;
+  currentFulfillmentStatus?: T;
+  fulfillmentEvents?:
+    | T
+    | {
+        status?: T;
+        timestamp?: T;
+        note?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1876,21 +2352,27 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
-  navItems?:
+  /**
+   * Shown in the site header. Falls back to the default Amulya Medicals logo if left empty.
+   */
+  logo?: (number | null) | Media;
+  searchPlaceholder?: string | null;
+  /**
+   * Dropdown groups shown in the header navigation bar, e.g. "Chronic Care" containing the Cardiac and Diabetic categories.
+   */
+  navGroups?:
     | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?: {
-            relationTo: 'pages';
-            value: number | Page;
-          } | null;
-          url?: string | null;
-          label: string;
-        };
+        label: string;
+        categories: (number | Category)[];
         id?: string | null;
       }[]
     | null;
+  announcementBar?: {
+    enabled?: boolean | null;
+    text?: string | null;
+    linkLabel?: string | null;
+    linkUrl?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1900,21 +2382,48 @@ export interface Header {
  */
 export interface Footer {
   id: number;
-  navItems?:
+  /**
+   * Shown in the site footer. Falls back to the default Amulya Medicals logo if left empty.
+   */
+  logo?: (number | null) | Media;
+  tagline?: string | null;
+  quickLinks?:
     | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?: {
-            relationTo: 'pages';
-            value: number | Page;
-          } | null;
-          url?: string | null;
-          label: string;
-        };
+        label: string;
+        url: string;
         id?: string | null;
       }[]
     | null;
+  legalLinks?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  contact?: {
+    phone?: string | null;
+    email?: string | null;
+    /**
+     * e.g. "Bhagyanagar Colony, Hyderabad"
+     */
+    address?: string | null;
+  };
+  /**
+   * Shown in the footer as "Licensed Pharmacy · Drug License No. ...".
+   */
+  drugLicenseNumber?: string | null;
+  socialLinks?:
+    | {
+        platform: 'facebook' | 'instagram' | 'whatsapp' | 'twitter' | 'youtube' | 'linkedin';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Defaults to the site/company name env var if left empty.
+   */
+  copyrightName?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1923,19 +2432,22 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
-  navItems?:
+  logo?: T;
+  searchPlaceholder?: T;
+  navGroups?:
     | T
     | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
+        label?: T;
+        categories?: T;
         id?: T;
+      };
+  announcementBar?:
+    | T
+    | {
+        enabled?: T;
+        text?: T;
+        linkLabel?: T;
+        linkUrl?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1946,20 +2458,38 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
+  logo?: T;
+  tagline?: T;
+  quickLinks?:
     | T
     | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
+        label?: T;
+        url?: T;
         id?: T;
       };
+  legalLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  contact?:
+    | T
+    | {
+        phone?: T;
+        email?: T;
+        address?: T;
+      };
+  drugLicenseNumber?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  copyrightName?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

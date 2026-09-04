@@ -6,7 +6,7 @@ import React, { useLayoutEffect, useRef } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const VALUES = [
+const DEFAULT_VALUES = [
   {
     icon: 'fa-shield-heart',
     title: 'Genuine, Always',
@@ -24,7 +24,12 @@ const VALUES = [
   },
 ]
 
-export const ValueCards: React.FC = () => {
+type Props = {
+  items?: { icon?: string | null; title: string; body: string }[]
+}
+
+export const ValueCards: React.FC<Props> = ({ items }) => {
+  const VALUES = items && items.length > 0 ? items : DEFAULT_VALUES
   const ref = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {

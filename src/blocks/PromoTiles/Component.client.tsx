@@ -71,7 +71,7 @@ export const PromoTilesClient: React.FC<{ tiles: Tile[] }> = ({ tiles }) => {
               {tile.linkLabel && tile.linkUrl && (
                 <Link
                   href={tile.linkUrl}
-                  className="mt-5 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-foreground transition-transform hover:scale-105"
+                  className="mt-5 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-neutral-900 transition-transform hover:scale-105"
                 >
                   {tile.linkLabel}
                 </Link>

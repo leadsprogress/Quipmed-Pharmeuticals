@@ -1,4 +1,5 @@
 import { OrderStatus } from '@/components/OrderStatus'
+import { FulfillmentBadge } from '@/components/OrderStatus/FulfillmentTimeline'
 import { Price } from '@/components/Price'
 import { Button } from '@/components/ui/button'
 import { Order } from '@/payload-types'
@@ -25,6 +26,9 @@ export const OrderItem: React.FC<Props> = ({ order }) => {
           </p>
 
           {order.status && <OrderStatus status={order.status} />}
+          {order.currentFulfillmentStatus && (
+            <FulfillmentBadge status={order.currentFulfillmentStatus} />
+          )}
         </div>
 
         <p className="flex gap-2 text-xs text-primary/80">

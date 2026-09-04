@@ -49,7 +49,10 @@ export const Image: React.FC<MediaProps> = (props) => {
 
     const filename = fullFilename
 
-    src = `${process.env.NEXT_PUBLIC_SERVER_URL}${url}`
+    // Keep this relative (not prefixed with NEXT_PUBLIC_SERVER_URL) — Next's image optimizer
+    // rejects a same-origin absolute URL passed through `remotePatterns` (anti-SSRF-loop check),
+    // so a relative path is required to match the `localPatterns` entry for `/api/media/file/**`.
+    src = url || ''
   }
 
   // NOTE: this is used by the browser to determine which image to download at different screen sizes

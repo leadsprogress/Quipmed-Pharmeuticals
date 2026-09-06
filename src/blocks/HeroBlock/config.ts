@@ -14,13 +14,6 @@ export const HeroBlock: Block = {
         { name: 'primaryCtaUrl', type: 'text', admin: { width: '50%' } },
       ],
     },
-    {
-      type: 'row',
-      fields: [
-        { name: 'secondaryCtaLabel', type: 'text', admin: { width: '50%' } },
-        { name: 'secondaryCtaUrl', type: 'text', admin: { width: '50%' } },
-      ],
-    },
     { name: 'image', type: 'upload', relationTo: 'media' },
     {
       type: 'row',

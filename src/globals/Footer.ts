@@ -57,6 +57,22 @@ export const Footer: GlobalConfig = {
             description: 'e.g. "Bhagyanagar Colony, Hyderabad"',
           },
         },
+        {
+          name: 'whatsappNumber',
+          type: 'text',
+          admin: {
+            description:
+              'WhatsApp business number with country code, digits only, no + or spaces (e.g. 917997438888). Used by the floating WhatsApp button and every "chat on WhatsApp" link site-wide.',
+          },
+        },
+        {
+          name: 'mapEmbedUrl',
+          type: 'text',
+          admin: {
+            description:
+              'Google Maps embed URL for the store location, shown in the homepage "Visit Us" section (fully interactive — draggable, zoomable). In Google Maps, find the location, share it, then paste that link here, or build one as https://maps.google.com/maps?q=LAT,LNG&z=17&output=embed.',
+          },
+        },
       ],
     },
     {

@@ -24,8 +24,6 @@ type Props = {
   subtext?: string | null
   primaryCtaLabel?: string | null
   primaryCtaUrl?: string | null
-  secondaryCtaLabel?: string | null
-  secondaryCtaUrl?: string | null
   image?: MediaType | number | string | null
   statValue?: number | null
   statSuffix?: string | null
@@ -39,8 +37,6 @@ export const Hero: React.FC<Props> = ({
   subtext,
   primaryCtaLabel,
   primaryCtaUrl,
-  secondaryCtaLabel,
-  secondaryCtaUrl,
   image,
   statValue,
   statSuffix,
@@ -98,7 +94,7 @@ export const Hero: React.FC<Props> = ({
   }, [])
 
   return (
-    <div className="relative overflow-hidden pt-4" ref={rootRef}>
+    <div className="relative overflow-hidden pt-4 md:flex md:h-[650px] md:flex-col md:justify-center md:pt-0" ref={rootRef}>
       <div
         data-hero-blob
         aria-hidden
@@ -111,7 +107,7 @@ export const Hero: React.FC<Props> = ({
       />
       <SectionBackdrop icon="fa-mortar-pestle" side="right" />
 
-      <div className="relative mx-auto grid w-full max-w-[1700px] gap-10 px-4 pb-8 pt-16 md:h-[650px] md:grid-cols-2 md:items-center md:overflow-hidden md:px-8 md:pb-0 md:pt-0">
+      <div className="relative mx-auto grid w-full max-w-[1700px] flex-1 gap-10 px-4 pb-8 pt-16 md:grid-cols-2 md:items-center md:overflow-hidden md:px-8 md:pb-0 md:pt-0">
         <div data-hero-copy>
           <span className="inline-block rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">
             {eyebrow || 'Your neighbourhood pharmacy, online'}
@@ -131,17 +127,10 @@ export const Hero: React.FC<Props> = ({
             >
               {primaryCtaLabel || 'Shop Now'}
             </Link>
-            <Link
-              href={secondaryCtaUrl || '/contact'}
-              data-cursor-hover
-              className="rounded-full border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-            >
-              {secondaryCtaLabel || 'Upload Prescription'}
-            </Link>
           </div>
         </div>
 
-        <div data-hero-copy className="relative md:h-[500px] md:min-h-0 md:overflow-hidden">
+        <div data-hero-copy className="relative md:h-[420px] md:min-h-0 md:overflow-hidden">
           <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-xl md:aspect-auto md:h-full">
             {image && typeof image === 'object' ? (
               <Media
@@ -172,11 +161,11 @@ export const Hero: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="container grid grid-cols-2 gap-6 py-10 md:grid-cols-4">
+      <div className="container grid grid-cols-2 gap-4 py-4 md:grid-cols-4">
         {TRUST_ITEMS.map((item, i) => (
           <div data-trust-item key={item.title} className="flex items-center gap-3 text-left">
             <span
-              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm ${
                 i % 2 === 0 ? 'bg-primary/10 text-primary' : 'bg-secondary/15 text-secondary'
               }`}
             >

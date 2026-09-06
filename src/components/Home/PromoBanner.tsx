@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import React from 'react'
 
 import type { Media as MediaType } from '@/payload-types'
@@ -7,19 +6,10 @@ type Props = {
   eyebrow?: string | null
   heading?: string | null
   body?: string | null
-  buttonLabel?: string | null
-  buttonUrl?: string | null
   image?: MediaType | number | string | null
 }
 
-export const PromoBanner: React.FC<Props> = ({
-  eyebrow,
-  heading,
-  body,
-  buttonLabel,
-  buttonUrl,
-  image,
-}) => {
+export const PromoBanner: React.FC<Props> = ({ eyebrow, heading, body, image }) => {
   const imageSrc =
     image && typeof image === 'object' && image.url
       ? `${process.env.NEXT_PUBLIC_SERVER_URL || ''}${image.url}`
@@ -45,15 +35,8 @@ export const PromoBanner: React.FC<Props> = ({
         </h2>
         <p className="mt-4 text-background/80">
           {body ||
-            'Upload your prescription once — our pharmacists keep it on file, so every refill after that is just a tap, no re-explaining required.'}
+            'Keep an eye on your regular medicines — our pharmacists are on hand whenever you need a refill, no re-explaining required.'}
         </p>
-        <Link
-          href={buttonUrl || '/contact'}
-          data-cursor-hover
-          className="mt-7 inline-block rounded-full bg-background px-6 py-3 text-sm font-semibold text-foreground transition-transform hover:scale-105"
-        >
-          {buttonLabel || 'Upload Prescription'}
-        </Link>
       </div>
     </div>
   )

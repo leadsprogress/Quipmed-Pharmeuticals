@@ -5,6 +5,8 @@ import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
 import Link from 'next/link'
 import React, { useLayoutEffect, useRef } from 'react'
 
+import { getWhatsAppUrl } from '@/utilities/getWhatsAppUrl'
+
 gsap.registerPlugin(ScrollTrigger)
 
 const DEFAULT_GUIDES = [
@@ -39,6 +41,8 @@ type Props = {
   guides?: { icon?: string | null; title: string; excerpt: string; tag?: string | null }[] | null
   visitHeading?: string | null
   visitAddress?: string | null
+  mapEmbedUrl?: string | null
+  whatsappNumber?: string | null
 }
 
 export const HealthAndVisit: React.FC<Props> = ({
@@ -46,6 +50,8 @@ export const HealthAndVisit: React.FC<Props> = ({
   guides,
   visitHeading,
   visitAddress,
+  mapEmbedUrl,
+  whatsappNumber,
 }) => {
   const GUIDES = guides && guides.length > 0 ? guides : DEFAULT_GUIDES
   const ref = useRef<HTMLDivElement>(null)
@@ -122,20 +128,34 @@ export const HealthAndVisit: React.FC<Props> = ({
                 'Amulya Medicals, Bhagyanagar Colony, Hyderabad. [Exact address, phone number and store hours to be confirmed.]'}
             </p>
             <Link
-              href="/contact"
+              href={getWhatsAppUrl(whatsappNumber)}
+              target={whatsappNumber ? '_blank' : undefined}
+              rel={whatsappNumber ? 'noopener noreferrer' : undefined}
               data-cursor-hover
               className="mt-6 inline-block rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-transform hover:scale-105"
             >
               Get in Touch
             </Link>
           </div>
-          <div className="flex items-center justify-center rounded-2xl bg-card/60 p-8 text-center">
-            <div>
-              <i className="fa-solid fa-location-dot text-4xl text-primary" />
-              <p className="mt-3 text-sm text-muted-foreground">
-                Map placeholder — pending confirmed address
-              </p>
-            </div>
+          <div className="overflow-hidden rounded-2xl bg-card/60">
+            {mapEmbedUrl ? (
+              <iframe
+                src={mapEmbedUrl}
+                title="Amulya Medicals location"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="h-64 w-full border-0 md:h-full md:min-h-[280px]"
+              />
+            ) : (
+              <div className="flex h-64 items-center justify-center p-8 text-center md:h-full">
+                <div>
+                  <i className="fa-solid fa-location-dot text-4xl text-primary" />
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    Map — pending confirmed address in Admin → Footer → Contact
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

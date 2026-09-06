@@ -1,14 +1,18 @@
-'use client'
-
 import Link from 'next/link'
 import React from 'react'
 
-// No confirmed WhatsApp business number yet — links to Contact for now. Once a real number is
-// provided, swap the href for `https://wa.me/91XXXXXXXXXX`.
-export const FloatingContact: React.FC = () => {
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import { getWhatsAppUrl } from '@/utilities/getWhatsAppUrl'
+
+export const FloatingContact: React.FC = async () => {
+  const footer = await getCachedGlobal('footer', 0)()
+  const href = getWhatsAppUrl(footer?.contact?.whatsappNumber)
+
   return (
     <Link
-      href="/contact"
+      href={href}
+      target={href.startsWith('http') ? '_blank' : undefined}
+      rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
       aria-label="Chat with us on WhatsApp"
       data-cursor-hover
       className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform duration-300 hover:scale-110"

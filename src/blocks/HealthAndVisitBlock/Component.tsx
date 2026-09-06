@@ -22,6 +22,8 @@ export const HealthAndVisitBlockComponent: React.FC<
       guides={guides}
       visitHeading={visitHeading}
       visitAddress={visitAddress}
+      mapEmbedUrl={footer?.contact?.mapEmbedUrl}
+      whatsappNumber={footer?.contact?.whatsappNumber}
     />
   )
 }

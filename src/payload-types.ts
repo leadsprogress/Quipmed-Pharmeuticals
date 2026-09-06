@@ -1032,8 +1032,6 @@ export interface HomeHeroBlock {
   subtext?: string | null;
   primaryCtaLabel?: string | null;
   primaryCtaUrl?: string | null;
-  secondaryCtaLabel?: string | null;
-  secondaryCtaUrl?: string | null;
   image?: (number | null) | Media;
   statValue?: number | null;
   statSuffix?: string | null;
@@ -1083,8 +1081,6 @@ export interface PromoBannerBlock {
   eyebrow?: string | null;
   heading?: string | null;
   body?: string | null;
-  buttonLabel?: string | null;
-  buttonUrl?: string | null;
   image?: (number | null) | Media;
   id?: string | null;
   blockName?: string | null;
@@ -1882,8 +1878,6 @@ export interface HomeHeroBlockSelect<T extends boolean = true> {
   subtext?: T;
   primaryCtaLabel?: T;
   primaryCtaUrl?: T;
-  secondaryCtaLabel?: T;
-  secondaryCtaUrl?: T;
   image?: T;
   statValue?: T;
   statSuffix?: T;
@@ -1925,8 +1919,6 @@ export interface PromoBannerBlockSelect<T extends boolean = true> {
   eyebrow?: T;
   heading?: T;
   body?: T;
-  buttonLabel?: T;
-  buttonUrl?: T;
   image?: T;
   id?: T;
   blockName?: T;
@@ -2546,6 +2538,14 @@ export interface Footer {
      * e.g. "Bhagyanagar Colony, Hyderabad"
      */
     address?: string | null;
+    /**
+     * WhatsApp business number with country code, digits only, no + or spaces (e.g. 917997438888). Used by the floating WhatsApp button and every "chat on WhatsApp" link site-wide.
+     */
+    whatsappNumber?: string | null;
+    /**
+     * Google Maps embed URL for the store location, shown in the homepage "Visit Us" section (fully interactive — draggable, zoomable). In Google Maps, find the location, share it, then paste that link here, or build one as https://maps.google.com/maps?q=LAT,LNG&z=17&output=embed.
+     */
+    mapEmbedUrl?: string | null;
   };
   /**
    * Shown in the footer as "Licensed Pharmacy · Drug License No. ...".
@@ -2618,6 +2618,8 @@ export interface FooterSelect<T extends boolean = true> {
         phone?: T;
         email?: T;
         address?: T;
+        whatsappNumber?: T;
+        mapEmbedUrl?: T;
       };
   drugLicenseNumber?: T;
   socialLinks?:

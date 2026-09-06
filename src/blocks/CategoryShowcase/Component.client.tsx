@@ -59,15 +59,14 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
     if (!section) return
 
     const ctx = gsap.context(() => {
+      // No ScrollTrigger — this section sits right below the hero, so it's usually already
+      // visible on load (same convention as Hero's [data-hero-copy]); a scroll-gated reveal
+      // here left the heading invisible until the user scrolled.
       gsap.from('[data-category-heading]', {
         opacity: 0,
         y: 24,
         duration: 0.6,
         ease: 'power3.out',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 80%',
-        },
       })
 
       // Plain fade, no vertical offset — a y-offset entrance here previously risked tiles
@@ -111,7 +110,7 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
               data-cursor-hover
               key={category.id}
               href={`/shop?category=${category.id}`}
-              className="group flex basis-[calc((100%-1rem)/2)] flex-col items-center gap-3 rounded-2xl p-3 text-center transition-transform duration-300 hover:-translate-y-1 sm:basis-[calc((100%-2rem)/3)] md:basis-[calc((100%-3rem)/4)] lg:basis-[calc((100%-7rem)/8)]"
+              className="group flex basis-[calc((100%-2rem)/3)] flex-col items-center gap-3 rounded-2xl p-3 text-center transition-transform duration-300 hover:-translate-y-1 md:basis-[calc((100%-3rem)/4)] lg:basis-[calc((100%-7rem)/8)]"
             >
               <div
                 className={`relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-full shadow-sm transition-shadow duration-300 group-hover:shadow-lg ${bg}`}
@@ -143,10 +142,10 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
                 />
 
                 <i
-                  className={`fa-solid ${iconForCategory(category.title)} relative z-10 text-2xl text-white transition-all duration-300 group-hover:scale-110 ${iconHoverColor}`}
+                  className={`fa-solid ${iconForCategory(category.title)} relative z-10 text-lg text-white transition-all duration-300 group-hover:scale-110 sm:text-2xl ${iconHoverColor}`}
                 />
               </div>
-              <span className="flex min-h-[2.5rem] items-start text-sm font-medium leading-tight">
+              <span className="flex min-h-[2.5rem] items-start text-xs font-medium leading-tight sm:text-sm">
                 {category.title}
               </span>
             </Link>

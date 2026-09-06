@@ -27,8 +27,10 @@ import { fileURLToPath } from 'url'
 import { Categories } from '@/collections/Categories'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
+import { ProductImageImports } from '@/collections/ProductImageImports'
 import { Users } from '@/collections/Users'
 import { customerSearchEndpoints } from '@/endpoints/customerSearch'
+import { productImageImporterEndpoints } from '@/endpoints/productImageImporter'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
 import { plugins } from './plugins'
@@ -45,23 +47,30 @@ export default buildConfig({
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
       beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard'],
-      beforeNavLinks: ['@/components/admin/CustomersNavLink#CustomersNavLink'],
+      beforeNavLinks: [
+        '@/components/admin/CustomersNavLink#CustomersNavLink',
+        '@/components/admin/ProductImageImporterNavLink#ProductImageImporterNavLink',
+      ],
       views: {
         customers: {
           Component: '@/components/admin/CustomersView#CustomersView',
           path: '/customers',
         },
+        productImageImporter: {
+          Component: '@/components/admin/ProductImageImporter/View#ProductImageImporterView',
+          path: '/product-image-importer',
+        },
       },
     },
     user: Users.slug,
   },
-  collections: [Users, Pages, Categories, Media],
+  collections: [Users, Pages, Categories, Media, ProductImageImports],
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
   }),
-  endpoints: customerSearchEndpoints,
+  endpoints: [...customerSearchEndpoints, ...productImageImporterEndpoints],
   editor: lexicalEditor({
     features: () => {
       return [

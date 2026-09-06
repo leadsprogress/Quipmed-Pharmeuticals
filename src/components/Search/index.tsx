@@ -3,13 +3,19 @@
 import { cn } from '@/utilities/cn'
 import { createUrl } from '@/utilities/createUrl'
 import { gsap } from 'gsap'
-import { Loader2Icon, SearchIcon } from 'lucide-react'
+import { HistoryIcon, Loader2Icon, SearchIcon, XIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { Media } from '@/components/Media'
 import type { Product } from '@/payload-types'
+import {
+  addRecentSearch,
+  clearRecentSearches,
+  getRecentSearches,
+  removeRecentSearch,
+} from './recentSearches'
 
 type Props = {
   className?: string
@@ -36,11 +42,16 @@ export const Search: React.FC<Props> = ({ className, placeholder = 'Search for p
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
+  const [recentSearches, setRecentSearches] = useState<string[]>([])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const scrollTargetRef = useRef(0)
   const requestIdRef = useRef(0)
+
+  useEffect(() => {
+    setRecentSearches(getRecentSearches())
+  }, [])
 
   const onDropdownWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     // The site's global Lenis smooth-scroll takes over the page's own wheel handling, which also
@@ -68,7 +79,7 @@ export const Search: React.FC<Props> = ({ className, placeholder = 'Search for p
     scrollTargetRef.current = 0
     if (scrollRef.current) scrollRef.current.scrollTop = 0
 
-    if (query.length < 2) {
+    if (query.length < 1) {
       setResults([])
       setIsLoading(false)
       return
@@ -115,11 +126,32 @@ export const Search: React.FC<Props> = ({ className, placeholder = 'Search for p
     const newParams = new URLSearchParams(searchParams?.toString())
     if (query) {
       newParams.set('q', query)
+      setRecentSearches(addRecentSearch(query))
     } else {
       newParams.delete('q')
     }
     router.push(createUrl('/shop', newParams))
     setIsOpen(false)
+  }
+
+  const onSelectProduct = (query: string) => {
+    if (query) setRecentSearches(addRecentSearch(query))
+    setIsOpen(false)
+  }
+
+  const onSelectRecent = (term: string) => {
+    setValue(term)
+    setIsOpen(true)
+  }
+
+  const onRemoveRecent = (e: React.MouseEvent, term: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setRecentSearches(removeRecentSearch(term))
+  }
+
+  const onClearRecent = () => {
+    setRecentSearches(clearRecentSearches())
   }
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -142,13 +174,15 @@ export const Search: React.FC<Props> = ({ className, placeholder = 'Search for p
       e.preventDefault()
       const product = results[activeIndex]
       if (product?.slug) {
-        setIsOpen(false)
+        onSelectProduct(value.trim())
         router.push(`/products/${product.slug}`)
       }
     }
   }
 
-  const showDropdown = isOpen && value.trim().length >= 2
+  const trimmedValue = value.trim()
+  const showDropdown =
+    isOpen && (trimmedValue.length >= 1 || (trimmedValue.length === 0 && recentSearches.length > 0))
 
   return (
     <div className={cn('relative w-full', className)} ref={containerRef}>
@@ -182,9 +216,47 @@ export const Search: React.FC<Props> = ({ className, placeholder = 'Search for p
           onWheel={onDropdownWheel}
           className="absolute left-1/2 top-full z-40 mt-2 max-h-[70vh] w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 overflow-y-auto overscroll-contain rounded-2xl border border-border bg-card shadow-xl sm:w-[36rem] sm:max-w-[36rem] md:w-[44rem] md:max-w-[44rem]"
         >
-          {results.length === 0 && !isLoading ? (
+          {trimmedValue.length === 0 ? (
+            <>
+              <div className="flex items-center justify-between px-4 pt-3">
+                <span className="text-xs font-medium text-muted-foreground">Recent searches</span>
+                <button
+                  type="button"
+                  className="text-xs font-medium text-muted-foreground hover:text-foreground"
+                  onClick={onClearRecent}
+                >
+                  Clear all
+                </button>
+              </div>
+              <ul className="p-2">
+                {recentSearches.map((term) => (
+                  <li
+                    key={term}
+                    className="group flex items-center gap-2 rounded-xl px-1 transition-colors hover:bg-muted"
+                  >
+                    <button
+                      type="button"
+                      className="flex min-w-0 flex-1 items-center gap-2 px-2 py-2 text-left text-sm"
+                      onClick={() => onSelectRecent(term)}
+                    >
+                      <HistoryIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      <span className="min-w-0 flex-1 truncate text-foreground">{term}</span>
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={`Remove "${term}" from recent searches`}
+                      className="shrink-0 rounded-full p-1 text-muted-foreground hover:bg-border hover:text-foreground"
+                      onClick={(e) => onRemoveRecent(e, term)}
+                    >
+                      <XIcon className="h-3.5 w-3.5" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : results.length === 0 && !isLoading ? (
             <p className="p-4 text-sm text-muted-foreground">
-              No products found for &quot;{value.trim()}&quot;.
+              No products found for &quot;{trimmedValue}&quot;.
             </p>
           ) : (
             <>
@@ -204,7 +276,7 @@ export const Search: React.FC<Props> = ({ className, placeholder = 'Search for p
                           'flex h-full items-center gap-3 rounded-xl border border-transparent p-2 text-sm transition-colors hover:border-border hover:bg-muted',
                           activeIndex === i && 'border-border bg-muted',
                         )}
-                        onClick={() => setIsOpen(false)}
+                        onClick={() => onSelectProduct(trimmedValue)}
                         onMouseEnter={() => setActiveIndex(i)}
                       >
                         <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-primary-foreground text-muted-foreground">
@@ -247,9 +319,9 @@ export const Search: React.FC<Props> = ({ className, placeholder = 'Search for p
               <button
                 type="button"
                 className="block w-full border-t border-border px-4 py-3 text-center text-sm font-medium text-primary hover:bg-muted"
-                onClick={() => goToShop(value.trim())}
+                onClick={() => goToShop(trimmedValue)}
               >
-                View all results for &quot;{value.trim()}&quot;
+                View all results for &quot;{trimmedValue}&quot;
               </button>
             </>
           )}

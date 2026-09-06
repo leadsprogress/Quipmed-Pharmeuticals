@@ -35,6 +35,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   redirects,
   devIndicators: false,
+  // Native-binding packages used server-side by the Product Image Importer — bundling their
+  // .node binaries (instead of letting Node's own require resolve them at runtime) fails under
+  // Turbopack with "Cannot find module './skia.win32-x64-msvc.node'" even though the file exists.
+  serverExternalPackages: ['@napi-rs/canvas', 'pdfjs-dist'],
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

@@ -11,7 +11,7 @@ const RESULT_LIMIT = 8
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get('q')?.trim() || ''
 
-  if (q.length < 2) {
+  if (q.length < 1) {
     return NextResponse.json({ products: [], query: q })
   }
 

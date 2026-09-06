@@ -24,7 +24,9 @@ import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f
 import { BeforeDashboard as BeforeDashboard_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
 import { BeforeLogin as BeforeLogin_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
 import { CustomersNavLink as CustomersNavLink_5f7002d62d13bfd5fc43bf61cb1bd75d } from '@/components/admin/CustomersNavLink'
+import { ProductImageImporterNavLink as ProductImageImporterNavLink_c2b0b41bdff2b4b593f7c1a1332fc48a } from '@/components/admin/ProductImageImporterNavLink'
 import { CustomersView as CustomersView_1c7ccf791182717f67a93518baff0c66 } from '@/components/admin/CustomersView'
+import { ProductImageImporterView as ProductImageImporterView_ec6144d8ac1eab8f923c2fd0dce6ac5d } from '@/components/admin/ProductImageImporter/View'
 import { CollectionCards as CollectionCards_ab83ff7e88da8d3530831f296ec4756a } from '@payloadcms/ui/rsc'
 import { CollectionQueryWidget as CollectionQueryWidget_ab83ff7e88da8d3530831f296ec4756a } from '@payloadcms/ui/rsc'
 import { QueryPresetsWhereField as QueryPresetsWhereField_3817bf644402e67bfe6577f60ef982de } from '@payloadcms/ui'
@@ -60,7 +62,9 @@ export const importMap = {
   "@/components/BeforeDashboard#BeforeDashboard": BeforeDashboard_1a7510af427896d367a49dbf838d2de6,
   "@/components/BeforeLogin#BeforeLogin": BeforeLogin_8a7ab0eb7ab5c511aba12e68480bfe5e,
   "@/components/admin/CustomersNavLink#CustomersNavLink": CustomersNavLink_5f7002d62d13bfd5fc43bf61cb1bd75d,
+  "@/components/admin/ProductImageImporterNavLink#ProductImageImporterNavLink": ProductImageImporterNavLink_c2b0b41bdff2b4b593f7c1a1332fc48a,
   "@/components/admin/CustomersView#CustomersView": CustomersView_1c7ccf791182717f67a93518baff0c66,
+  "@/components/admin/ProductImageImporter/View#ProductImageImporterView": ProductImageImporterView_ec6144d8ac1eab8f923c2fd0dce6ac5d,
   "@payloadcms/ui/rsc#CollectionCards": CollectionCards_ab83ff7e88da8d3530831f296ec4756a,
   "@payloadcms/ui/rsc#CollectionQueryWidget": CollectionQueryWidget_ab83ff7e88da8d3530831f296ec4756a,
   "@payloadcms/ui#QueryPresetsWhereField": QueryPresetsWhereField_3817bf644402e67bfe6577f60ef982de,

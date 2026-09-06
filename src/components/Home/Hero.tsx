@@ -49,11 +49,9 @@ export const Hero: React.FC<Props> = ({
 }) => {
   const TRUST_ITEMS = trustItems && trustItems.length > 0 ? trustItems : DEFAULT_TRUST_ITEMS
   const rootRef = useRef<HTMLDivElement>(null)
-  const imageWrapRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
     const root = rootRef.current
-    const imageWrap = imageWrapRef.current
     if (!root) return
 
     const ctx = gsap.context(() => {
@@ -79,19 +77,6 @@ export const Hero: React.FC<Props> = ({
         repeat: -1,
         yoyo: true,
       })
-
-      if (imageWrap) {
-        gsap.to(imageWrap, {
-          yPercent: 15,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: root,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true,
-          },
-        })
-      }
 
       gsap.utils.toArray<HTMLElement>('[data-count-to]').forEach((el) => {
         const target = Number(el.dataset.countTo)
@@ -126,7 +111,7 @@ export const Hero: React.FC<Props> = ({
       />
       <SectionBackdrop icon="fa-mortar-pestle" side="right" />
 
-      <div className="container relative grid gap-10 pb-8 pt-16 md:grid-cols-2 md:items-center md:pt-24">
+      <div className="relative mx-auto grid w-full max-w-[1700px] gap-10 px-4 pb-8 pt-16 md:h-[650px] md:grid-cols-2 md:items-center md:overflow-hidden md:px-8 md:pb-0 md:pt-0">
         <div data-hero-copy>
           <span className="inline-block rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">
             {eyebrow || 'Your neighbourhood pharmacy, online'}
@@ -156,27 +141,27 @@ export const Hero: React.FC<Props> = ({
           </div>
         </div>
 
-        <div data-hero-copy className="relative hidden md:block">
-          <div ref={imageWrapRef} className="overflow-hidden rounded-3xl shadow-xl">
+        <div data-hero-copy className="relative md:h-[500px] md:min-h-0 md:overflow-hidden">
+          <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-xl md:aspect-auto md:h-full">
             {image && typeof image === 'object' ? (
               <Media
                 resource={image}
-                imgClassName="h-[420px] w-full object-cover"
-                width={900}
-                height={700}
+                imgClassName="h-full w-full object-cover"
+                width={1080}
+                height={1350}
               />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src="https://loremflickr.com/900/700/pharmacy,shop,shelf/all?lock=55"
+                src="https://loremflickr.com/1080/1350/pharmacy,shop,shelf/all?lock=55"
                 alt="Pharmacy counter"
-                width={900}
-                height={700}
-                className="h-[420px] w-full object-cover"
+                width={1080}
+                height={1350}
+                className="h-full w-full object-cover"
               />
             )}
           </div>
-          <div className="absolute -bottom-6 -left-6 rounded-2xl bg-card p-4 shadow-lg">
+          <div className="absolute bottom-4 left-4 rounded-2xl bg-card p-4 shadow-lg">
             <p className="text-2xl font-bold text-primary">
               <span data-count-to={statValue ?? 290} data-count-suffix={statSuffix ?? '+'}>
                 0

@@ -1,0 +1,200 @@
+@layer payload-default {
+  .product-image-importer-view__intro {
+    color: var(--theme-elevation-500, var(--color-text));
+    margin-bottom: var(--spacer-3, 20px);
+  }
+
+  .product-image-importer-view__forbidden {
+    color: var(--theme-error-500, #d0021b);
+  }
+
+  .pii {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-3, 20px);
+    max-width: 72rem;
+  }
+
+  .pii__upload input[type='file'] {
+    padding: 10px;
+    border: var(--stroke-width-small, 1px) dashed var(--color-border, #ccc);
+    border-radius: var(--radius-medium, 4px);
+    width: 100%;
+  }
+
+  .pii__summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .pii__toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .pii__status {
+    font-size: 13px;
+    color: var(--theme-elevation-500, #666);
+  }
+
+  .pii__error {
+    color: var(--theme-error-500, #d0021b);
+    font-size: 13px;
+  }
+
+  .pii__button {
+    align-self: flex-start;
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: var(--radius-medium, 4px);
+    border: var(--stroke-width-small, 1px) solid var(--color-border, #ccc);
+    background: var(--color-bg-secondary, #f7f7f7);
+    cursor: pointer;
+  }
+
+  .pii__button:hover {
+    background: var(--color-bg-secondary-hover, #ececec);
+  }
+
+  .pii__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .pii__button--primary {
+    background: var(--theme-success-500, #2b8a3e);
+    color: #fff;
+    border-color: transparent;
+  }
+
+  .pii__progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pii__progress-bar {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--color-bg-tertiary, #eee);
+    overflow: hidden;
+  }
+
+  .pii__progress-fill {
+    height: 100%;
+    background: var(--theme-success-500, #2b8a3e);
+    transition: width 0.2s ease;
+  }
+
+  .pii__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .pii__table th {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: var(--stroke-width-small, 1px) solid var(--color-border, #ccc);
+    color: var(--theme-elevation-500, #666);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .pii__row {
+    cursor: pointer;
+  }
+
+  .pii__row:hover {
+    background: var(--color-bg-secondary-hover, #ececec);
+  }
+
+  .pii__row td {
+    padding: 8px 10px;
+    border-bottom: var(--stroke-width-small, 1px) solid var(--color-border, #eee);
+  }
+
+  .pii__detail-row td {
+    padding: 16px;
+    background: var(--color-bg-secondary, #f7f7f7);
+    border-bottom: var(--stroke-width-small, 1px) solid var(--color-border, #ccc);
+  }
+
+  .pii__detail {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pii__detail-images {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .pii__detail-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--theme-elevation-500, #666);
+    margin: 0 0 6px;
+  }
+
+  .pii__detail-img {
+    max-width: 260px;
+    max-height: 260px;
+    object-fit: contain;
+    border: var(--stroke-width-small, 1px) solid var(--color-border, #ccc);
+    border-radius: var(--radius-medium, 4px);
+    background: #fff;
+  }
+
+  .pii__detail-fields {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4px 12px;
+    margin: 0;
+  }
+
+  .pii__detail-fields dt {
+    font-weight: 600;
+    color: var(--theme-elevation-500, #666);
+  }
+
+  .pii__detail-fields dd {
+    margin: 0;
+  }
+
+  .pii__manual-match {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 24rem;
+  }
+
+  .pii__manual-match input {
+    padding: 8px 10px;
+    border-radius: var(--radius-medium, 4px);
+    border: var(--stroke-width-small, 1px) solid var(--color-border, #ccc);
+  }
+
+  .pii__suggestion {
+    text-align: left;
+    padding: 6px 10px;
+    border-radius: var(--radius-medium, 4px);
+    border: var(--stroke-width-small, 1px) solid var(--color-border, #ccc);
+    background: var(--color-bg, #fff);
+    cursor: pointer;
+  }
+
+  .pii__suggestion:hover {
+    background: var(--color-bg-secondary-hover, #ececec);
+  }
+}

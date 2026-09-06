@@ -16,11 +16,9 @@ export const CallToOrder: React.FC<Props> = ({ label, heading, phoneLabel, phone
 
   return (
     <div className="container pb-2 pt-2">
-      <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-secondary/40 bg-card px-6 py-6 sm:flex-row sm:items-center sm:px-10">
-        <p className="text-2xl font-semibold leading-tight text-foreground sm:text-3xl">
-          {label || 'Place'}
-          <br />
-          {heading || 'Your Order Via'}
+      <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-secondary/40 bg-card px-6 py-4 sm:flex-row sm:items-center sm:px-10">
+        <p className="text-xl font-semibold leading-tight text-foreground sm:whitespace-nowrap sm:text-2xl">
+          {label || 'Place'} {heading || 'Your Order Via'}
         </p>
 
         <a

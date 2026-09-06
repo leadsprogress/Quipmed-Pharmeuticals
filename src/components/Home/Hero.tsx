@@ -161,7 +161,7 @@ export const Hero: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="container mt-4 grid grid-cols-2 gap-4 md:mt-6 md:grid-cols-4">
+      <div className="container mb-4 mt-4 grid grid-cols-2 gap-4 md:mb-6 md:mt-6 md:grid-cols-4">
         {TRUST_ITEMS.map((item, i) => (
           <div data-trust-item key={item.title} className="flex items-center gap-3 text-left">
             <span

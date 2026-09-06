@@ -94,7 +94,7 @@ export const Hero: React.FC<Props> = ({
   }, [])
 
   return (
-    <div className="relative overflow-hidden" ref={rootRef}>
+    <div className="relative overflow-hidden pb-[4px] pt-[4px]" ref={rootRef}>
       <div
         data-hero-blob
         aria-hidden
@@ -107,7 +107,7 @@ export const Hero: React.FC<Props> = ({
       />
       <SectionBackdrop icon="fa-mortar-pestle" side="right" />
 
-      <div className="relative mx-auto grid w-full max-w-[1700px] gap-6 px-4 md:grid-cols-2 md:items-center md:gap-10 md:overflow-hidden md:px-8">
+      <div className="container relative grid gap-6 md:grid-cols-[3fr_2fr] md:items-center md:gap-10 md:overflow-hidden">
         <div data-hero-copy>
           <span className="inline-block rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">
             {eyebrow || 'Your neighbourhood pharmacy, online'}

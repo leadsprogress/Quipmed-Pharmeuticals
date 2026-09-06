@@ -92,7 +92,7 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
   if (!categories?.length) return null
 
   return (
-    <section className="container py-16" ref={sectionRef}>
+    <section className="container pb-16 pt-4" ref={sectionRef}>
       <div data-category-heading className="mb-10 text-center">
         {heading && <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">{heading}</h2>}
         {subheading && <p className="mt-3 text-muted-foreground">{subheading}</p>}

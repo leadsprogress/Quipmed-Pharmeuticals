@@ -144,4 +144,20 @@
     font-size: 13px;
     color: var(--theme-elevation-500, #666);
   }
+
+  .customer-search__mark-paid {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--theme-success-500, #1a7f37);
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .customer-search__mark-paid:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }

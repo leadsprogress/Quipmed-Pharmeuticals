@@ -7,6 +7,28 @@ const forbidden = () => Response.json({ error: 'Forbidden' }, { status: 403 })
 
 const RESULT_LIMIT = 8
 
+// An order's `transactions` are populated objects only once `depth` is high enough — this is
+// only ever called on data fetched with depth >= 1, but stays defensive against a bare ID
+// slipping through so a payment badge never crashes the page, it just renders as "Unknown".
+function summarizePayment(order: { transactions?: unknown }): {
+  paymentMethod: string | null
+  paymentStatus: string | null
+} {
+  const transactions = Array.isArray(order.transactions) ? order.transactions : []
+  const transaction = transactions.find(
+    (t): t is Record<string, unknown> => typeof t === 'object' && t !== null,
+  )
+
+  return {
+    paymentMethod: (transaction?.paymentMethod as string | undefined) ?? null,
+    paymentStatus: (transaction?.status as string | undefined) ?? null,
+  }
+}
+
+function withPaymentSummary<T extends { transactions?: unknown }>(order: T) {
+  return { ...order, ...summarizePayment(order) }
+}
+
 // Searches customers (Users with the "customer" role) and orders together so a single search
 // box can resolve name / phone / email / order-number queries the way a support agent expects.
 export const customerSearchListEndpoint: Endpoint = {
@@ -52,7 +74,7 @@ export const customerSearchListEndpoint: Endpoint = {
       }),
       req.payload.find({
         collection: 'orders',
-        depth: 0,
+        depth: 1,
         limit: RESULT_LIMIT,
         overrideAccess: true,
         sort: '-createdAt',
@@ -62,7 +84,7 @@ export const customerSearchListEndpoint: Endpoint = {
 
     return Response.json({
       customers: customers.docs,
-      orders: orders.docs,
+      orders: orders.docs.map((order) => withPaymentSummary(order)),
       query: q,
     })
   },
@@ -131,9 +153,9 @@ export const customerDetailEndpoint: Endpoint = {
     for (const order of [...linkedOrders.docs, ...(guestOrders?.docs || [])]) {
       ordersById.set(order.id, order)
     }
-    const orders = Array.from(ordersById.values()).sort((a: any, b: any) => {
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    })
+    const orders = Array.from(ordersById.values())
+      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .map((order: any) => withPaymentSummary(order))
 
     return Response.json({
       customer: {
@@ -149,7 +171,60 @@ export const customerDetailEndpoint: Endpoint = {
   },
 }
 
+// Cash-on-delivery orders start "unpaid" (the underlying transaction stays `pending` — see
+// src/payments/codAdapter.ts) until staff have the cash in hand. This is the one-click way to
+// flip that from the lookup tool, instead of making them go find the transaction record
+// themselves and edit its status field directly (still possible, just not the happy path).
+export const markOrderPaidEndpoint: Endpoint = {
+  path: '/customer-search/orders/:orderId/mark-paid',
+  method: 'patch',
+  handler: async (req) => {
+    if (!checkRole(['admin'], req.user as User | undefined)) {
+      return forbidden()
+    }
+
+    const orderId = req.routeParams?.orderId as string | undefined
+    if (!orderId) {
+      return Response.json({ error: 'Missing order id' }, { status: 400 })
+    }
+
+    let order
+    try {
+      order = await req.payload.findByID({
+        collection: 'orders',
+        id: orderId,
+        depth: 1,
+        overrideAccess: true,
+      })
+    } catch {
+      return Response.json({ error: 'Order not found' }, { status: 404 })
+    }
+
+    const transactions = Array.isArray(order.transactions) ? order.transactions : []
+    const pendingTransaction = transactions.find(
+      (t) => typeof t === 'object' && t !== null && t.status === 'pending',
+    )
+
+    if (!pendingTransaction || typeof pendingTransaction !== 'object') {
+      return Response.json(
+        { error: 'No pending transaction found on this order — it may already be paid.' },
+        { status: 400 },
+      )
+    }
+
+    await req.payload.update({
+      collection: 'transactions',
+      id: pendingTransaction.id,
+      data: { status: 'succeeded' },
+      overrideAccess: true,
+    })
+
+    return Response.json({ ok: true })
+  },
+}
+
 export const customerSearchEndpoints: Endpoint[] = [
   customerSearchListEndpoint,
   customerDetailEndpoint,
+  markOrderPaidEndpoint,
 ]

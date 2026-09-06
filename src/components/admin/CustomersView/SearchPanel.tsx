@@ -22,6 +22,8 @@ type OrderSuggestion = {
   customerEmail?: string | null
   status?: string | null
   currentFulfillmentStatus?: string | null
+  paymentMethod?: string | null
+  paymentStatus?: string | null
   amount?: number | null
   currency?: string | null
   createdAt?: string
@@ -55,6 +57,26 @@ const FULFILLMENT_LABELS: Record<string, string> = {
 
 const fulfillmentLabel = (status?: string | null) =>
   (status && FULFILLMENT_LABELS[status]) || status || 'Order Placed'
+
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  cod: 'Cash on Delivery',
+  stripe: 'Card (Stripe)',
+}
+
+const PAYMENT_STATUS_LABELS: Record<string, string> = {
+  pending: 'Unpaid',
+  succeeded: 'Paid',
+  failed: 'Failed',
+  cancelled: 'Cancelled',
+  expired: 'Expired',
+  refunded: 'Refunded',
+}
+
+const paymentMethodLabel = (method?: string | null) =>
+  (method && PAYMENT_METHOD_LABELS[method]) || method || 'Unknown'
+
+const paymentStatusLabel = (status?: string | null) =>
+  (status && PAYMENT_STATUS_LABELS[status]) || status || 'Unknown'
 
 type CustomerDetail = {
   id: number | string
@@ -173,6 +195,20 @@ export const CustomerSearchPanel: React.FC = () => {
     }
   }
 
+  async function markOrderPaid(orderId: number | string) {
+    const res = await fetch(`/api/customer-search/orders/${orderId}/mark-paid`, { method: 'PATCH' })
+    if (!res.ok) {
+      const body = await res.json().catch(() => null)
+      throw new Error(body?.error || `Request failed (${res.status})`)
+    }
+    setCustomerOrders((prev) =>
+      prev.map((order) => (order.id === orderId ? { ...order, paymentStatus: 'succeeded' } : order)),
+    )
+    setSelectedGuestOrder((prev) =>
+      prev && prev.id === orderId ? { ...prev, paymentStatus: 'succeeded' } : prev,
+    )
+  }
+
   function selectOrder(order: OrderSuggestion) {
     if (order.customer) {
       loadCustomer(order.customer)
@@ -249,6 +285,7 @@ export const CustomerSearchPanel: React.FC = () => {
                 </span>
                 <span className="customer-search__result-status">
                   {fulfillmentLabel(order.currentFulfillmentStatus)}
+                  {order.paymentMethod ? ` · ${paymentStatusLabel(order.paymentStatus)}` : ''}
                 </span>
               </button>
             ))}
@@ -304,7 +341,7 @@ export const CustomerSearchPanel: React.FC = () => {
           </p>
           {customerOrders.length === 0 && <p className="customer-search__status">No orders yet.</p>}
           {customerOrders.map((order) => (
-            <OrderCard key={order.id} order={order} />
+            <OrderCard key={order.id} order={order} onMarkPaid={markOrderPaid} />
           ))}
         </div>
       )}
@@ -312,14 +349,33 @@ export const CustomerSearchPanel: React.FC = () => {
       {selectedGuestOrder && !isLoadingDetail && (
         <div className="customer-detail">
           <p className="customer-detail__section-title">Guest order — no account on file</p>
-          <OrderCard order={selectedGuestOrder} />
+          <OrderCard order={selectedGuestOrder} onMarkPaid={markOrderPaid} />
         </div>
       )}
     </div>
   )
 }
 
-const OrderCard: React.FC<{ order: OrderDetail }> = ({ order }) => {
+const OrderCard: React.FC<{
+  order: OrderDetail
+  onMarkPaid: (orderId: number | string) => Promise<void>
+}> = ({ order, onMarkPaid }) => {
+  const [isMarkingPaid, setIsMarkingPaid] = useState(false)
+  const [markPaidError, setMarkPaidError] = useState<string | null>(null)
+  const isUnpaidCod = order.paymentMethod === 'cod' && order.paymentStatus === 'pending'
+
+  async function handleMarkPaid() {
+    setIsMarkingPaid(true)
+    setMarkPaidError(null)
+    try {
+      await onMarkPaid(order.id)
+    } catch (err) {
+      setMarkPaidError(err instanceof Error ? err.message : 'Could not mark this order as paid.')
+    } finally {
+      setIsMarkingPaid(false)
+    }
+  }
+
   return (
     <div className="customer-order">
       <div className="customer-order__header">
@@ -330,6 +386,29 @@ const OrderCard: React.FC<{ order: OrderDetail }> = ({ order }) => {
         <span>{formatMoney(order.amount, order.currency)}</span>
         <span className="customer-search__result-meta">{formatDate(order.createdAt)}</span>
       </div>
+
+      {order.paymentMethod && (
+        <p className="customer-order__address">
+          Payment: {paymentMethodLabel(order.paymentMethod)} ·{' '}
+          <strong>{paymentStatusLabel(order.paymentStatus)}</strong>
+          {isUnpaidCod && (
+            <>
+              {' — '}
+              <button
+                type="button"
+                className="customer-search__mark-paid"
+                disabled={isMarkingPaid}
+                onClick={handleMarkPaid}
+              >
+                {isMarkingPaid ? 'Marking as Paid…' : 'Mark as Paid'}
+              </button>
+            </>
+          )}
+          {markPaidError && (
+            <span className="customer-search__status"> {markPaidError}</span>
+          )}
+        </p>
+      )}
 
       {order.fulfillmentEvents && order.fulfillmentEvents.length > 0 && (
         <ul className="customer-order__items">

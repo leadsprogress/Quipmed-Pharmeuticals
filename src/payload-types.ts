@@ -1194,11 +1194,15 @@ export interface Transaction {
         id?: string | null;
       }[]
     | null;
-  paymentMethod?: 'stripe' | null;
+  paymentMethod?: ('stripe' | 'cod') | null;
   stripe?: {
     customerID?: string | null;
     paymentIntentID?: string | null;
   };
+  /**
+   * No online payment was taken for this order — cash is collected on delivery. Change status to "Succeeded" once the payment has been collected.
+   */
+  cod?: {};
   billingAddress?: {
     title?: string | null;
     firstName?: string | null;
@@ -2411,6 +2415,7 @@ export interface TransactionsSelect<T extends boolean = true> {
         customerID?: T;
         paymentIntentID?: T;
       };
+  cod?: T | {};
   billingAddress?:
     | T
     | {

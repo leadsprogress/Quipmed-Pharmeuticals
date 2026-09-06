@@ -41,12 +41,13 @@ export const CheckoutPage: React.FC = () => {
   const [email, setEmail] = useState('')
   const [emailEditable, setEmailEditable] = useState(true)
   const [paymentData, setPaymentData] = useState<null | Record<string, unknown>>(null)
-  const { initiatePayment } = usePayments()
+  const { confirmOrder, initiatePayment } = usePayments()
   const { addresses } = useAddresses()
   const [shippingAddress, setShippingAddress] = useState<Partial<Address>>()
   const [billingAddress, setBillingAddress] = useState<Partial<Address>>()
   const [billingAddressSameAsShipping, setBillingAddressSameAsShipping] = useState(true)
   const [isProcessingPayment, setProcessingPayment] = useState(false)
+  const [isPlacingCodOrder, setIsPlacingCodOrder] = useState(false)
 
   const cartIsEmpty = !cart || !cart.items || !cart.items.length
 
@@ -104,6 +105,49 @@ export const CheckoutPage: React.FC = () => {
     },
     [billingAddress, billingAddressSameAsShipping, shippingAddress],
   )
+
+  // Cash on Delivery has no external gateway to hand off to — initiate and confirm happen back
+  // to back in this one click, instead of the redirect-based Stripe flow above.
+  const placeCodOrder = useCallback(async () => {
+    setIsPlacingCodOrder(true)
+    setError(null)
+    try {
+      const resolvedShippingAddress = billingAddressSameAsShipping ? billingAddress : shippingAddress
+
+      const initiateResult = (await initiatePayment('cod', {
+        additionalData: {
+          ...(email ? { customerEmail: email } : {}),
+          billingAddress,
+          shippingAddress: resolvedShippingAddress,
+        },
+      })) as Record<string, unknown>
+
+      const transactionID = initiateResult?.['transactionID']
+
+      const confirmResult = (await confirmOrder('cod', {
+        additionalData: {
+          ...(email ? { customerEmail: email } : {}),
+          transactionID,
+          shippingAddress: resolvedShippingAddress,
+        },
+      })) as Record<string, unknown>
+
+      if (confirmResult && 'orderID' in confirmResult && confirmResult['orderID']) {
+        const accessToken = 'accessToken' in confirmResult ? (confirmResult['accessToken'] as string) : ''
+        const queryParams = new URLSearchParams()
+        if (email) queryParams.set('email', email)
+        if (accessToken) queryParams.set('accessToken', accessToken)
+        const queryString = queryParams.toString()
+        router.push(`/orders/${confirmResult['orderID']}${queryString ? `?${queryString}` : ''}`)
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'An error occurred while placing your order.'
+      setError(errorMessage)
+      toast.error(errorMessage)
+      setIsPlacingCodOrder(false)
+    }
+  }, [billingAddress, billingAddressSameAsShipping, confirmOrder, email, initiatePayment, router, shippingAddress])
 
   if (!stripe) return null
 
@@ -270,16 +314,29 @@ export const CheckoutPage: React.FC = () => {
         )}
 
         {!paymentData && (
-          <Button
-            className="self-start"
-            disabled={!canGoToPayment}
-            onClick={(e) => {
-              e.preventDefault()
-              void initiatePaymentIntent('stripe')
-            }}
-          >
-            Go to payment
-          </Button>
+          <div className="flex flex-wrap items-center gap-4">
+            <Button
+              className="self-start"
+              disabled={!canGoToPayment || isPlacingCodOrder}
+              onClick={(e) => {
+                e.preventDefault()
+                void initiatePaymentIntent('stripe')
+              }}
+            >
+              Pay Online
+            </Button>
+            <Button
+              className="self-start"
+              variant="outline"
+              disabled={!canGoToPayment || isPlacingCodOrder}
+              onClick={(e) => {
+                e.preventDefault()
+                void placeCodOrder()
+              }}
+            >
+              {isPlacingCodOrder ? 'Placing Order…' : 'Cash on Delivery'}
+            </Button>
+          </div>
         )}
 
         {!paymentData?.['clientSecret'] && error && (

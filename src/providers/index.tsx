@@ -50,6 +50,7 @@ export const Providers: React.FC<{
               stripeAdapterClient({
                 publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
               }),
+              { name: 'cod', label: 'Cash on Delivery', initiatePayment: true, confirmOrder: true },
             ]}
           >
             {children}

@@ -16,22 +16,22 @@ export const CallToOrder: React.FC<Props> = ({ label, heading, phoneLabel, phone
 
   return (
     <div className="container pb-2 pt-2">
-      <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-secondary/40 bg-card px-6 py-4 sm:flex-row sm:items-center sm:px-10">
-        <p className="text-xl font-semibold leading-tight text-foreground sm:whitespace-nowrap sm:text-2xl">
+      <div className="flex flex-col items-center justify-between gap-4 rounded-3xl border border-secondary/40 bg-card px-4 py-4 text-center sm:flex-row sm:items-center sm:gap-6 sm:px-10 sm:text-left">
+        <p className="text-base font-semibold leading-tight text-foreground sm:whitespace-nowrap sm:text-2xl">
           {label || 'Place'} {heading || 'Your Order Via'}
         </p>
 
         <a
           href={telHref}
           data-cursor-hover
-          className={`flex items-center gap-4 ${!telHref ? 'pointer-events-none' : ''}`}
+          className={`flex items-center gap-3 sm:gap-4 ${!telHref ? 'pointer-events-none' : ''}`}
         >
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#25D366]/15 text-[#25D366]">
-            <PhoneIcon className="h-6 w-6 fill-current" />
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#25D366]/15 text-[#25D366] sm:h-14 sm:w-14">
+            <PhoneIcon className="h-5 w-5 fill-current sm:h-6 sm:w-6" />
           </span>
-          <span>
-            <span className="block text-sm text-muted-foreground">{phoneLabel || 'Call Us On'}</span>
-            <span className="block text-lg font-semibold text-foreground sm:text-xl">{displayPhone}</span>
+          <span className="text-left">
+            <span className="block text-xs text-muted-foreground sm:text-sm">{phoneLabel || 'Call Us On'}</span>
+            <span className="block text-sm font-semibold text-foreground sm:text-xl">{displayPhone}</span>
           </span>
         </a>
       </div>

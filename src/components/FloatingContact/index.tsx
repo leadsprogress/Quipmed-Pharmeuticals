@@ -15,10 +15,10 @@ export const FloatingContact: React.FC = async () => {
       rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
       aria-label="Chat with us on WhatsApp"
       data-cursor-hover
-      className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform duration-300 hover:scale-110"
+      className="fixed bottom-3 right-3 z-30 flex h-11 w-11 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform duration-300 hover:scale-110 sm:bottom-6 sm:right-6 sm:h-14 sm:w-14"
     >
       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#25D366] opacity-40" />
-      <i className="fa-brands fa-whatsapp relative text-2xl" />
+      <i className="fa-brands fa-whatsapp relative text-lg sm:text-2xl" />
     </Link>
   )
 }

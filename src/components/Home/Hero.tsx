@@ -94,7 +94,7 @@ export const Hero: React.FC<Props> = ({
   }, [])
 
   return (
-    <div className="relative overflow-hidden pb-[4px] pt-[4px]" ref={rootRef}>
+    <div className="relative overflow-hidden pb-[4px] pt-4" ref={rootRef}>
       <div
         data-hero-blob
         aria-hidden

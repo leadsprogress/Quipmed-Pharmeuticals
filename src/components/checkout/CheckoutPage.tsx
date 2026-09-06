@@ -109,7 +109,7 @@ export const CheckoutPage: React.FC = () => {
 
   if (cartIsEmpty && isProcessingPayment) {
     return (
-      <div className="py-12 w-full items-center justify-center">
+      <div className="py-6 w-full items-center justify-center md:py-12">
         <div className="prose dark:prose-invert text-center max-w-none self-center mb-8">
           <p>Processing your payment...</p>
         </div>
@@ -120,7 +120,7 @@ export const CheckoutPage: React.FC = () => {
 
   if (cartIsEmpty) {
     return (
-      <div className="prose dark:prose-invert py-12 w-full items-center">
+      <div className="prose dark:prose-invert py-6 w-full items-center md:py-12">
         <p>Your cart is empty.</p>
         <Link href="/search">Continue shopping?</Link>
       </div>
@@ -130,7 +130,7 @@ export const CheckoutPage: React.FC = () => {
   return (
     <div className="flex flex-col items-stretch justify-stretch my-8 md:flex-row grow gap-10 md:gap-6 lg:gap-8">
       <div className="basis-full lg:basis-2/3 flex flex-col gap-8 justify-stretch">
-        <h2 className="font-medium text-3xl">Contact</h2>
+        <h2 className="font-medium text-2xl sm:text-3xl">Contact</h2>
         {!user && (
           <div className=" bg-accent dark:bg-black rounded-lg p-4 w-full flex items-center">
             <div className="prose dark:prose-invert">
@@ -187,7 +187,7 @@ export const CheckoutPage: React.FC = () => {
           </div>
         )}
 
-        <h2 className="font-medium text-3xl">Address</h2>
+        <h2 className="font-medium text-2xl sm:text-3xl">Address</h2>
 
         {billingAddress ? (
           <div>
@@ -302,7 +302,7 @@ export const CheckoutPage: React.FC = () => {
           {/* @ts-ignore */}
           {paymentData && paymentData?.['clientSecret'] && (
             <div className="pb-16">
-              <h2 className="font-medium text-3xl">Payment</h2>
+              <h2 className="font-medium text-2xl sm:text-3xl">Payment</h2>
               {error && <p>{`Error: ${error}`}</p>}
               <Elements
                 options={{
@@ -353,7 +353,7 @@ export const CheckoutPage: React.FC = () => {
 
       {!cartIsEmpty && (
         <div className="basis-full lg:basis-1/3 lg:pl-8 p-8 border-none bg-primary/5 flex flex-col gap-8 rounded-lg">
-          <h2 className="text-3xl font-medium">Your cart</h2>
+          <h2 className="text-2xl font-medium sm:text-3xl">Your cart</h2>
           {cart?.items?.map((item, index) => {
             if (typeof item.product === 'object' && item.product) {
               const {
@@ -433,7 +433,7 @@ export const CheckoutPage: React.FC = () => {
           <hr />
           <div className="flex justify-between items-center gap-2">
             <span className="uppercase">Total</span>{' '}
-            <Price className="text-3xl font-medium" amount={cart.subtotal || 0} />
+            <Price className="text-2xl font-medium sm:text-3xl" amount={cart.subtotal || 0} />
           </div>
         </div>
       )}

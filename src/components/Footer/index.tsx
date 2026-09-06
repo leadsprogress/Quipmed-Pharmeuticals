@@ -60,7 +60,7 @@ export async function Footer() {
 
   return (
     <footer className="border-t border-border bg-muted/40 text-sm text-muted-foreground">
-      <div className="container grid grid-cols-2 gap-8 py-12 md:grid-cols-4">
+      <div className="container grid grid-cols-2 gap-8 py-8 md:grid-cols-4 md:py-12">
         <div className="col-span-2 md:col-span-1">
           <Link href="/">
             <Image

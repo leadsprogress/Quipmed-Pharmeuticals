@@ -54,7 +54,7 @@ export function CartModal() {
         {!cart || cart?.items?.length === 0 ? (
           <div className="text-center flex flex-col items-center gap-2">
             <ShoppingCart className="h-16" />
-            <p className="text-center text-2xl font-bold">Your cart is empty.</p>
+            <p className="text-center text-xl font-bold sm:text-2xl">Your cart is empty.</p>
           </div>
         ) : (
           <div className="grow flex px-4">

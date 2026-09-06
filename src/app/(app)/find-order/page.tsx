@@ -13,7 +13,7 @@ export default async function FindOrderPage() {
   const { user } = await payload.auth({ headers })
 
   return (
-    <div className="container py-16">
+    <div className="container py-8 md:py-16">
       <FindOrderForm initialEmail={user?.email} />
     </div>
   )

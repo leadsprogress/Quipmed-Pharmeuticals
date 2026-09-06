@@ -49,7 +49,7 @@ export const PromoTilesClient: React.FC<{ tiles: Tile[] }> = ({ tiles }) => {
   if (!tiles?.length) return null
 
   return (
-    <div className="container py-12" ref={ref}>
+    <div className="container py-6 md:py-12" ref={ref}>
       <div className={`grid gap-6 ${tiles.length > 1 ? 'md:grid-cols-2' : ''}`}>
         {tiles.map((tile, i) => (
           <div

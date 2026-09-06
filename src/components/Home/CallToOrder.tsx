@@ -31,7 +31,7 @@ export const CallToOrder: React.FC<Props> = ({ label, heading, phoneLabel, phone
           </span>
           <span>
             <span className="block text-sm text-muted-foreground">{phoneLabel || 'Call Us On'}</span>
-            <span className="block text-xl font-semibold text-foreground">{displayPhone}</span>
+            <span className="block text-lg font-semibold text-foreground sm:text-xl">{displayPhone}</span>
           </span>
         </a>
       </div>

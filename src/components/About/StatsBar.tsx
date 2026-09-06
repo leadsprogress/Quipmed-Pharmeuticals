@@ -54,20 +54,20 @@ export const StatsBar: React.FC<Props> = ({ items }) => {
   }, [])
 
   return (
-    <div ref={ref} className="container py-16">
+    <div ref={ref} className="container py-8 md:py-16">
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {STATS.map((stat, i) => (
           <div
             data-stat-card
             key={stat.label}
-            className="rounded-2xl border border-border bg-card p-6 text-center"
+            className="rounded-2xl border border-border bg-card p-4 text-center sm:p-6"
           >
             <i
               className={`fa-solid ${stat.icon} text-2xl ${
                 i % 2 === 0 ? 'text-primary' : 'text-secondary'
               }`}
             />
-            <p className="mt-3 text-3xl font-bold">
+            <p className="mt-3 text-2xl font-bold sm:text-3xl">
               <span data-stat-value={stat.value}>0</span>
               {stat.suffix}
             </p>

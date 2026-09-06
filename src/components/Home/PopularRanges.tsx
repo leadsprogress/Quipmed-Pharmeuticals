@@ -36,7 +36,7 @@ export const PopularRanges: React.FC<Props> = ({ heading, subheading, ranges }) 
   const active = nonEmptyRanges[activeIndex]
 
   return (
-    <div className="container py-16">
+    <div className="container py-8 md:py-16">
       <div className="mb-10 text-center">
         <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
           {heading || 'Popular Ranges'}
@@ -86,7 +86,7 @@ export const PopularRanges: React.FC<Props> = ({ heading, subheading, ranges }) 
             key={subcategory.id}
             href={`/shop?category=${subcategory.id}`}
             data-cursor-hover
-            className="group flex flex-col items-center gap-3 rounded-xl border border-transparent bg-muted/40 px-4 py-6 text-center transition-colors hover:border-primary/40 hover:bg-muted"
+            className="group flex flex-col items-center gap-3 rounded-xl border border-transparent bg-muted/40 px-3 py-4 text-center transition-colors hover:border-primary/40 hover:bg-muted sm:px-4 sm:py-6"
           >
             <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-primary-foreground text-muted-foreground sm:h-20 sm:w-20">
               {subcategory.icon && typeof subcategory.icon === 'object' ? (

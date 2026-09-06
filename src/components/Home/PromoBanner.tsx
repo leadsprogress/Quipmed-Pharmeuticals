@@ -16,7 +16,7 @@ export const PromoBanner: React.FC<Props> = ({ eyebrow, heading, body, image }) 
       : 'https://lh3.googleusercontent.com/XBJ-EJe28bINdMVw8NaCo1YfOWCxmNQ8mpMea-OwAt15LfrgsBXlwwUfnzOQSZn96YXuxch3q_Ho07SYM8IlFFuNYdqt1TWPW6PUpXA=w1600-rw'
 
   return (
-    <div className="relative flex min-h-[420px] items-center justify-center overflow-hidden px-4 py-24 text-center md:min-h-[520px]">
+    <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden px-4 py-10 text-center md:min-h-[520px] md:py-24">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imageSrc}

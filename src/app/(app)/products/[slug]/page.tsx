@@ -118,14 +118,14 @@ export default async function ProductPage({ params }: Args) {
         }}
         type="application/ld+json"
       />
-      <div className="container pt-8 pb-8">
+      <div className="container pt-4 pb-4 sm:pt-8 sm:pb-8">
         <Button asChild variant="ghost" className="mb-4">
           <Link href="/shop">
             <ChevronLeftIcon />
             All products
           </Link>
         </Button>
-        <div className="flex flex-col gap-12 rounded-lg border p-8 md:py-12 lg:flex-row lg:gap-8 bg-primary-foreground">
+        <div className="flex flex-col gap-12 rounded-lg border p-4 sm:p-8 md:py-12 lg:flex-row lg:gap-8 bg-primary-foreground">
           <div className="h-full w-full basis-full lg:sticky lg:top-24 lg:basis-1/2 lg:self-start">
             <Suspense
               fallback={
@@ -177,7 +177,7 @@ function RelatedProducts({ products }: { products: Product[] }) {
 
   return (
     <div className="py-8">
-      <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
+      <h2 className="mb-4 text-xl font-bold sm:text-2xl">Related Products</h2>
       <div className="flex w-full gap-4 overflow-x-auto pb-2 pt-1">
         {products.map((product) => (
           <TiltCard key={product.id} product={product} />

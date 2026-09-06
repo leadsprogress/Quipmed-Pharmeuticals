@@ -38,7 +38,7 @@ export const HealthHighlightsClient: React.FC<{ heading?: string | null; cards: 
   }, [])
 
   return (
-    <div className="container py-16" ref={ref}>
+    <div className="container py-8 md:py-16" ref={ref}>
       {heading && <h2 className="mb-8 text-2xl font-semibold tracking-tight md:text-3xl">{heading}</h2>}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card, i) => (

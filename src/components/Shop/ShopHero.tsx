@@ -34,7 +34,7 @@ export const ShopHero: React.FC<{ count: number }> = ({ count }) => {
   return (
     <div
       ref={ref}
-      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-background to-secondary/15 px-8 py-12 text-center"
+      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-background to-secondary/15 px-4 py-8 text-center sm:px-8 sm:py-12"
     >
       <div data-shop-hero-copy>
         <span className="inline-block rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">

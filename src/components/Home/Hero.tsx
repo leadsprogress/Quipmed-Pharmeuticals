@@ -151,7 +151,7 @@ export const Hero: React.FC<Props> = ({
             )}
           </div>
           <div className="absolute bottom-4 left-4 rounded-2xl bg-card p-4 shadow-lg">
-            <p className="text-2xl font-bold text-primary">
+            <p className="text-xl font-bold text-primary sm:text-2xl">
               <span data-count-to={statValue ?? 290} data-count-suffix={statSuffix ?? '+'}>
                 0
               </span>

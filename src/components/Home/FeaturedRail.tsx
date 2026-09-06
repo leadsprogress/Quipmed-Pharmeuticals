@@ -196,7 +196,7 @@ export const FeaturedRail: React.FC<{ heading: string; products: Product[] }> = 
   if (!products.length) return null
 
   return (
-    <div ref={sectionRef} className="relative overflow-hidden py-16">
+    <div ref={sectionRef} className="relative overflow-hidden py-8 md:py-16">
       {/* Ambient background — soft, off-brand blobs for depth; not the loud fa-icon backdrop
           used elsewhere, this section reads as more premium/editorial. */}
       <div

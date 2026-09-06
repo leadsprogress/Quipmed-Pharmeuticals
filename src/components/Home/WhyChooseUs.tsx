@@ -85,11 +85,11 @@ export const WhyChooseUs: React.FC<Props> = ({ heading, rows }) => {
   }, [])
 
   return (
-    <div className="container py-16" ref={sectionRef}>
+    <div className="container py-8 md:py-16" ref={sectionRef}>
       <h2 className="mb-12 font-display text-2xl font-semibold tracking-tight md:text-3xl">
         {heading || 'Why Choose Amulya Medicals'}
       </h2>
-      <div className="space-y-20">
+      <div className="space-y-10 md:space-y-20">
         {ROWS.map((row, i) => (
           <div
             data-why-row

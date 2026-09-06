@@ -83,7 +83,7 @@ export const HealthAndVisit: React.FC<Props> = ({
 
   return (
     <div ref={ref}>
-      <div className="container py-16">
+      <div className="container py-8 md:py-16">
         <h2 className="mb-8 font-display text-2xl font-semibold tracking-tight md:text-3xl">
           {guidesHeading || 'Health & Wellness Guides'}
         </h2>
@@ -114,10 +114,10 @@ export const HealthAndVisit: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="container pb-20">
+      <div className="container pb-10 md:pb-20">
         <div
           data-visit-card
-          className="grid gap-8 rounded-3xl bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-8 md:grid-cols-2 md:p-12"
+          className="grid gap-8 rounded-3xl bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4 md:grid-cols-2 md:p-12"
         >
           <div>
             <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
@@ -147,7 +147,7 @@ export const HealthAndVisit: React.FC<Props> = ({
                 className="h-64 w-full border-0 md:h-full md:min-h-[280px]"
               />
             ) : (
-              <div className="flex h-64 items-center justify-center p-8 text-center md:h-full">
+              <div className="flex h-64 items-center justify-center p-4 text-center md:h-full md:p-8">
                 <div>
                   <i className="fa-solid fa-location-dot text-4xl text-primary" />
                   <p className="mt-3 text-sm text-muted-foreground">

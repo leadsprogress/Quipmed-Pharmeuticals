@@ -5,7 +5,7 @@ import { OpenCartButton } from '@/components/Cart/OpenCart'
 import { Search } from '@/components/Search'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect, useRef, useState } from 'react'
 
 import type { Category, Header as HeaderType } from '@/payload-types'
 import { AccountLink } from './AccountLink'
@@ -18,6 +18,49 @@ type Props = {
   header: HeaderType | null
 }
 
+// How far (px) the user has to scroll in one direction before the header reacts — avoids it
+// flickering hidden/visible on tiny scroll jitters (e.g. mobile momentum scrolling).
+const SCROLL_DELTA_THRESHOLD = 8
+// Always show the header while within this many px of the top, regardless of direction.
+const REVEAL_NEAR_TOP = 80
+
+function useAutoHideOnScroll() {
+  const [hidden, setHidden] = useState(false)
+  const lastScrollY = useRef(0)
+
+  useEffect(() => {
+    lastScrollY.current = window.scrollY
+    let ticking = false
+
+    const update = () => {
+      const currentScrollY = window.scrollY
+      const delta = currentScrollY - lastScrollY.current
+
+      if (currentScrollY <= REVEAL_NEAR_TOP) {
+        setHidden(false)
+      } else if (delta > SCROLL_DELTA_THRESHOLD) {
+        setHidden(true)
+      } else if (delta < -SCROLL_DELTA_THRESHOLD) {
+        setHidden(false)
+      }
+
+      lastScrollY.current = currentScrollY
+      ticking = false
+    }
+
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(update)
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  return hidden
+}
+
 export function HeaderClient({ categories, header }: Props) {
   const logo = header?.logo && typeof header.logo === 'object' ? header.logo : null
   // Relative, not prefixed with NEXT_PUBLIC_SERVER_URL — next/image rejects a same-origin
@@ -26,9 +69,14 @@ export function HeaderClient({ categories, header }: Props) {
   const logoSrc = logo?.url || '/logo/logo-transparent.png'
   const searchPlaceholder = header?.searchPlaceholder || 'Search for products...'
   const announcement = header?.announcementBar
+  const hidden = useAutoHideOnScroll()
 
   return (
-    <div className="relative z-20 border-b border-border bg-background">
+    <div
+      className={`sticky top-0 z-40 border-b border-border bg-background transition-transform duration-300 ${
+        hidden ? '-translate-y-full' : 'translate-y-0'
+      }`}
+    >
       {announcement?.enabled && announcement.text ? (
         <div className="bg-primary py-2 text-center text-xs font-medium text-primary-foreground">
           {announcement.linkUrl ? (

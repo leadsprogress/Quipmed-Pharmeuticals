@@ -13,7 +13,7 @@ export const FlipProductCard: React.FC<{ product: Partial<Product> }> = ({ produ
 
   return (
     <div data-flip-card className="group [perspective:1200px]">
-      <div className="relative h-72 w-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+      <div className="relative aspect-[4/5] w-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
         {/* Front */}
         <div className="absolute inset-0 flex flex-col overflow-hidden rounded-2xl border border-border bg-card [backface-visibility:hidden]">
           <div className="flex flex-1 items-center justify-center bg-primary-foreground text-muted-foreground">

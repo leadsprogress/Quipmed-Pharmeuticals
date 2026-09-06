@@ -12,8 +12,16 @@ export const PopularRangesBlock: Block = {
       minRows: 1,
       fields: [
         { name: 'label', type: 'text', required: true },
-        { name: 'category', type: 'relationship', relationTo: 'categories', required: true },
-        { name: 'limit', type: 'number', defaultValue: 8 },
+        {
+          name: 'category',
+          type: 'relationship',
+          relationTo: 'categories',
+          required: true,
+          admin: {
+            description:
+              'A top-level category (e.g. "Cardiac Range"). Its subcategories are shown when this tab is selected — medicines are never listed directly in this section.',
+          },
+        },
       ],
     },
   ],

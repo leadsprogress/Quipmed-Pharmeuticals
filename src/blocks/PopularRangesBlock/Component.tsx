@@ -1,4 +1,4 @@
-import type { Media, PopularRangesBlock as PopularRangesBlockProps, Product } from '@/payload-types'
+import type { Category, Media, PopularRangesBlock as PopularRangesBlockProps } from '@/payload-types'
 import type { DefaultDocumentIDType } from 'payload'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -17,28 +17,26 @@ export const PopularRangesBlockComponent: React.FC<
     (ranges || []).map(async (range) => {
       const categoryId = typeof range.category === 'object' && range.category ? range.category.id : range.category
 
-      let products: Product[] = []
+      let subcategories: Category[] = []
       let icon: Media | null = null
 
       if (categoryId) {
-        const [productResult, category] = await Promise.all([
+        const [subcategoryResult, category] = await Promise.all([
           payload.find({
-            collection: 'products',
+            collection: 'categories',
             depth: 1,
-            draft: false,
-            limit: range.limit || 8,
             overrideAccess: false,
-            where: {
-              and: [{ _status: { equals: 'published' } }, { categories: { in: [categoryId] } }],
-            },
+            limit: 100,
+            sort: 'title',
+            where: { parent: { equals: categoryId } },
           }),
           payload.findByID({ collection: 'categories', id: categoryId, depth: 1 }).catch(() => null),
         ])
-        products = productResult.docs
+        subcategories = subcategoryResult.docs
         icon = category?.icon && typeof category.icon === 'object' ? category.icon : null
       }
 
-      return { label: range.label, icon, products }
+      return { label: range.label, icon, categoryId, subcategories }
     }),
   )
 

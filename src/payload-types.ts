@@ -144,6 +144,7 @@ export interface Config {
     pages: Page;
     categories: Category;
     media: Media;
+    'product-image-imports': ProductImageImport;
     forms: Form;
     'form-submissions': FormSubmission;
     addresses: Address;
@@ -177,6 +178,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'product-image-imports': ProductImageImportsSelect<false> | ProductImageImportsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     addresses: AddressesSelect<false> | AddressesSelect<true>;
@@ -637,6 +639,10 @@ export interface ArchiveBlock {
 export interface Category {
   id: number;
   title: string;
+  /**
+   * Leave empty for a top-level range (e.g. "Cardiac Range"). Set this to make a category a subcategory shown under its parent in the "Popular Ranges" section.
+   */
+  parent?: (number | null) | Category;
   /**
    * Square icon/photo shown in the "Shop by category" grid on the homepage.
    */
@@ -1135,8 +1141,10 @@ export interface PopularRangesBlock {
   ranges?:
     | {
         label: string;
+        /**
+         * A top-level category (e.g. "Cardiac Range"). Its subcategories are shown when this tab is selected — medicines are never listed directly in this section.
+         */
         category: number | Category;
-        limit?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -1304,6 +1312,78 @@ export interface Address {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-image-imports".
+ */
+export interface ProductImageImport {
+  id: number;
+  filename: string;
+  pageCount: number;
+  /**
+   * Local temp directory holding the rendered page PNGs / crop previews for this job.
+   */
+  tempDir: string;
+  dryRun?: boolean | null;
+  allowReplaceExisting?: boolean | null;
+  jobStatus?: ('pending' | 'processing' | 'completed' | 'failed') | null;
+  pages?:
+    | {
+        pageNumber: number;
+        status?:
+          | (
+              | 'PENDING'
+              | 'PROCESSING'
+              | 'MATCHED'
+              | 'CROPPED'
+              | 'UPLOADED'
+              | 'COMPLETED'
+              | 'NEEDS_REVIEW'
+              | 'FAILED'
+              | 'SKIPPED'
+            )
+          | null;
+        detectedProductName?: string | null;
+        composition?: string | null;
+        strength?: string | null;
+        packSize?: string | null;
+        mrp?: string | null;
+        claudeConfidence?: number | null;
+        claudeNotes?: string | null;
+        cropBox?: {
+          present?: boolean | null;
+          x?: number | null;
+          y?: number | null;
+          width?: number | null;
+          height?: number | null;
+        };
+        pageWidth?: number | null;
+        pageHeight?: number | null;
+        matchedProduct?: (number | null) | Product;
+        matchConfidence?: number | null;
+        matchMethod?: ('exact_normalized' | 'slug' | 'fuzzy' | 'composition_secondary' | 'manual' | 'none') | null;
+        validation?: {
+          valid?: boolean | null;
+          confidence?: number | null;
+          reason?: string | null;
+        };
+        /**
+         * Snapshot of gallery[0].image before this import, for revert.
+         */
+        previousGalleryImage?: (number | null) | Media;
+        /**
+         * Whether the product had any gallery row at all before this import (vs. one being created).
+         */
+        hadGalleryBeforeImport?: boolean | null;
+        uploadedMedia?: (number | null) | Media;
+        imported?: boolean | null;
+        error?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions".
  */
 export interface FormSubmission {
@@ -1358,6 +1438,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'product-image-imports';
+        value: number | ProductImageImport;
       } | null)
     | ({
         relationTo: 'forms';
@@ -1889,7 +1973,6 @@ export interface PopularRangesBlockSelect<T extends boolean = true> {
     | {
         label?: T;
         category?: T;
-        limit?: T;
         id?: T;
       };
   id?: T;
@@ -1912,6 +1995,7 @@ export interface CallToOrderBlockSelect<T extends boolean = true> {
  */
 export interface CategoriesSelect<T extends boolean = true> {
   title?: T;
+  parent?: T;
   icon?: T;
   slug?: T;
   updatedAt?: T;
@@ -1935,6 +2019,60 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-image-imports_select".
+ */
+export interface ProductImageImportsSelect<T extends boolean = true> {
+  filename?: T;
+  pageCount?: T;
+  tempDir?: T;
+  dryRun?: T;
+  allowReplaceExisting?: T;
+  jobStatus?: T;
+  pages?:
+    | T
+    | {
+        pageNumber?: T;
+        status?: T;
+        detectedProductName?: T;
+        composition?: T;
+        strength?: T;
+        packSize?: T;
+        mrp?: T;
+        claudeConfidence?: T;
+        claudeNotes?: T;
+        cropBox?:
+          | T
+          | {
+              present?: T;
+              x?: T;
+              y?: T;
+              width?: T;
+              height?: T;
+            };
+        pageWidth?: T;
+        pageHeight?: T;
+        matchedProduct?: T;
+        matchConfidence?: T;
+        matchMethod?: T;
+        validation?:
+          | T
+          | {
+              valid?: T;
+              confidence?: T;
+              reason?: T;
+            };
+        previousGalleryImage?: T;
+        hadGalleryBeforeImport?: T;
+        uploadedMedia?: T;
+        imported?: T;
+        error?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

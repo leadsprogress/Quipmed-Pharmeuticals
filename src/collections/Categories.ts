@@ -21,6 +21,17 @@ export const Categories: CollectionConfig = {
       required: true,
     },
     {
+      name: 'parent',
+      type: 'relationship',
+      relationTo: 'categories',
+      admin: {
+        position: 'sidebar',
+        description:
+          'Leave empty for a top-level range (e.g. "Cardiac Range"). Set this to make a category a subcategory shown under its parent in the "Popular Ranges" section.',
+      },
+      filterOptions: ({ id }) => (id ? { id: { not_equals: id } } : true),
+    },
+    {
       name: 'icon',
       type: 'upload',
       relationTo: 'media',

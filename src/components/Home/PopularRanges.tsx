@@ -1,13 +1,18 @@
 'use client'
 
 import { gsap } from 'gsap'
+import Link from 'next/link'
 import React, { useLayoutEffect, useRef, useState } from 'react'
 
 import { Media } from '@/components/Media'
-import type { Media as MediaType, Product } from '@/payload-types'
-import { ProductRailCard } from './ProductRailCard'
+import type { Category, Media as MediaType } from '@/payload-types'
 
-type Range = { label: string; icon?: MediaType | null; products: Product[] }
+type Range = {
+  label: string
+  icon?: MediaType | null
+  categoryId?: number | string | null
+  subcategories: Category[]
+}
 
 type Props = {
   heading?: string | null
@@ -16,7 +21,7 @@ type Props = {
 }
 
 export const PopularRanges: React.FC<Props> = ({ heading, subheading, ranges }) => {
-  const nonEmptyRanges = ranges.filter((r) => r.products.length > 0)
+  const nonEmptyRanges = ranges.filter((r) => r.subcategories.length > 0)
   const [activeIndex, setActiveIndex] = useState(0)
   const gridRef = useRef<HTMLDivElement>(null)
 
@@ -76,8 +81,24 @@ export const PopularRanges: React.FC<Props> = ({ heading, subheading, ranges }) 
       </div>
 
       <div ref={gridRef} className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-        {active.products.map((product) => (
-          <ProductRailCard key={product.id} product={product} fixedWidth={false} />
+        {active.subcategories.map((subcategory) => (
+          <Link
+            key={subcategory.id}
+            href={`/shop?category=${subcategory.id}`}
+            data-cursor-hover
+            className="group flex flex-col items-center gap-3 rounded-xl border border-transparent bg-muted/40 px-4 py-6 text-center transition-colors hover:border-primary/40 hover:bg-muted"
+          >
+            <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-primary-foreground text-muted-foreground sm:h-20 sm:w-20">
+              {subcategory.icon && typeof subcategory.icon === 'object' ? (
+                <Media resource={subcategory.icon} imgClassName="h-full w-full object-cover" />
+              ) : (
+                <i className="fa-solid fa-capsules text-xl" />
+              )}
+            </span>
+            <span className="text-sm font-medium transition-colors group-hover:text-primary">
+              {subcategory.title}
+            </span>
+          </Link>
         ))}
       </div>
     </div>

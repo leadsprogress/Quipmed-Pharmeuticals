@@ -98,7 +98,7 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
         {subheading && <p className="mt-3 text-muted-foreground">{subheading}</p>}
       </div>
 
-      <div className="grid grid-cols-2 items-start gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8">
+      <div className="flex flex-wrap items-start justify-center gap-x-4 gap-y-8">
         {categories.map((category, i) => {
           const photo =
             category.icon && typeof category.icon === 'object' ? category.icon : null
@@ -111,7 +111,7 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
               data-cursor-hover
               key={category.id}
               href={`/shop?category=${category.id}`}
-              className="group flex flex-col items-center gap-3 rounded-2xl p-3 text-center transition-transform duration-300 hover:-translate-y-1"
+              className="group flex basis-[calc((100%-1rem)/2)] flex-col items-center gap-3 rounded-2xl p-3 text-center transition-transform duration-300 hover:-translate-y-1 sm:basis-[calc((100%-2rem)/3)] md:basis-[calc((100%-3rem)/4)] lg:basis-[calc((100%-7rem)/8)]"
             >
               <div
                 className={`relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-full shadow-sm transition-shadow duration-300 group-hover:shadow-lg ${bg}`}

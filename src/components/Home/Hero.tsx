@@ -94,7 +94,7 @@ export const Hero: React.FC<Props> = ({
   }, [])
 
   return (
-    <div className="relative overflow-hidden pt-4 md:flex md:h-[650px] md:flex-col md:justify-center md:pt-0" ref={rootRef}>
+    <div className="relative overflow-hidden" ref={rootRef}>
       <div
         data-hero-blob
         aria-hidden
@@ -107,19 +107,19 @@ export const Hero: React.FC<Props> = ({
       />
       <SectionBackdrop icon="fa-mortar-pestle" side="right" />
 
-      <div className="relative mx-auto grid w-full max-w-[1700px] flex-1 gap-10 px-4 pb-8 pt-16 md:grid-cols-2 md:items-center md:overflow-hidden md:px-8 md:pb-0 md:pt-0">
+      <div className="relative mx-auto grid w-full max-w-[1700px] gap-6 px-4 md:grid-cols-2 md:items-center md:gap-10 md:overflow-hidden md:px-8">
         <div data-hero-copy>
           <span className="inline-block rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">
             {eyebrow || 'Your neighbourhood pharmacy, online'}
           </span>
-          <h1 className="mt-4 font-display text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             {heading || 'Genuine Products, Delivered to Your Door'}
           </h1>
-          <p className="mt-4 max-w-lg text-muted-foreground">
+          <p className="mt-3 max-w-lg text-muted-foreground">
             {subtext ||
               'Amulya Medicals brings its trusted in-store catalog online — cardiac, diabetic, orthopedic and everyday essentials, delivered fast across Hyderabad.'}
           </p>
-          <div className="mt-7 flex flex-wrap gap-4">
+          <div className="mt-5 flex flex-wrap gap-4">
             <Link
               href={primaryCtaUrl || '/shop'}
               data-cursor-hover
@@ -130,8 +130,8 @@ export const Hero: React.FC<Props> = ({
           </div>
         </div>
 
-        <div data-hero-copy className="relative md:h-[420px] md:min-h-0 md:overflow-hidden">
-          <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-xl md:aspect-auto md:h-full">
+        <div data-hero-copy className="relative md:h-[280px] md:min-h-0 md:overflow-hidden">
+          <div className="aspect-[16/10] w-full overflow-hidden rounded-3xl shadow-xl md:aspect-auto md:h-full">
             {image && typeof image === 'object' ? (
               <Media
                 resource={image}
@@ -161,7 +161,7 @@ export const Hero: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="container grid grid-cols-2 gap-4 py-4 md:grid-cols-4">
+      <div className="container mt-4 grid grid-cols-2 gap-4 md:mt-6 md:grid-cols-4">
         {TRUST_ITEMS.map((item, i) => (
           <div data-trust-item key={item.title} className="flex items-center gap-3 text-left">
             <span

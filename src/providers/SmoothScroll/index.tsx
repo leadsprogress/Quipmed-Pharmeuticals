@@ -3,15 +3,26 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
 import Lenis from 'lenis'
-import React, { useEffect } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const LenisContext = createContext<Lenis | null>(null)
+
+/**
+ * Access the page's Lenis smooth-scroll instance — used to stop()/start() it while an overlay
+ * (a modal, a slide-out menu) is open, since Lenis drives scrolling itself and isn't paused by
+ * the standard `overflow: hidden` body-scroll-lock technique those overlays use.
+ */
+export const useLenis = () => useContext(LenisContext)
 
 /**
  * Drives GSAP's ScrollTrigger off Lenis's smooth-scroll raf loop instead of the native
  * scroll event, so pinned/scrubbed animations stay in sync with the smoothed scroll position.
  */
 export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [lenis, setLenis] = useState<Lenis | null>(null)
+
   useEffect(() => {
     const isCoarsePointer =
       typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
@@ -21,16 +32,17 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     if (reducedMotion) return
 
-    const lenis = new Lenis({
+    const instance = new Lenis({
       duration: isCoarsePointer ? 0.9 : 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     })
 
-    lenis.on('scroll', ScrollTrigger.update)
+    setLenis(instance)
+    instance.on('scroll', ScrollTrigger.update)
 
     const onTick = (time: number) => {
-      lenis.raf(time * 1000)
+      instance.raf(time * 1000)
     }
     gsap.ticker.add(onTick)
     gsap.ticker.lagSmoothing(0)
@@ -49,7 +61,8 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
     resizeObserver.observe(document.body)
 
     return () => {
-      lenis.destroy()
+      instance.destroy()
+      setLenis(null)
       gsap.ticker.remove(onTick)
       window.removeEventListener('load', refresh)
       clearTimeout(resizeTimer)
@@ -57,5 +70,5 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   }, [])
 
-  return <>{children}</>
+  return <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>
 }

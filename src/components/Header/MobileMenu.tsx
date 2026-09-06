@@ -18,6 +18,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { useAuth } from '@/providers/Auth'
+import { useLenis } from '@/providers/SmoothScroll'
 import { MenuIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
@@ -54,6 +55,7 @@ export function MobileMenu({ categories, navGroups }: Props) {
   }, [categories])
 
   const { user } = useAuth()
+  const lenis = useLenis()
 
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -75,14 +77,25 @@ export function MobileMenu({ categories, navGroups }: Props) {
     setIsOpen(false)
   }, [pathname, searchParams])
 
+  // Radix's own body-scroll-lock (overflow: hidden) doesn't stop Lenis, which drives scrolling
+  // itself via its own wheel/touch listeners — so the page behind the sheet kept scrolling.
+  // Pausing/resuming Lenis alongside the sheet's open state fixes that.
+  useEffect(() => {
+    if (isOpen) {
+      lenis?.stop()
+    } else {
+      lenis?.start()
+    }
+  }, [isOpen, lenis])
+
   return (
     <Sheet onOpenChange={setIsOpen} open={isOpen}>
       <SheetTrigger className="relative flex h-11 w-11 items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors">
         <MenuIcon className="h-4" />
       </SheetTrigger>
 
-      <SheetContent side="left" className="px-4">
-        <SheetHeader className="flex-row items-center justify-between px-0 pr-10 pt-4 pb-0">
+      <SheetContent side="left" className="w-[82%] gap-0 px-4 sm:max-w-md">
+        <SheetHeader className="flex-row items-center justify-between border-b border-border px-0 pr-10 pb-4 pt-4">
           <div>
             <SheetTitle>Amulya Medicals</SheetTitle>
             <SheetDescription />
@@ -90,10 +103,10 @@ export function MobileMenu({ categories, navGroups }: Props) {
           <ThemeToggle />
         </SheetHeader>
 
-        <div className="flex flex-1 flex-col gap-5 overflow-y-auto py-4">
+        <div className="no-scrollbar flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto py-4">
           {groups.map((group) => (
             <div key={group.label}>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <p className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {group.label}
               </p>
               <Accordion type="multiple">
@@ -102,11 +115,11 @@ export function MobileMenu({ categories, navGroups }: Props) {
 
                   if (subcategories.length === 0) {
                     return (
-                      <div key={category.id} className="py-1.5">
+                      <div key={category.id} className="border-b last:border-b-0">
                         <Link
                           href={`/shop?category=${category.id}`}
                           onClick={closeMobileMenu}
-                          className="text-sm"
+                          className="block rounded-md px-1 py-3 text-sm font-medium transition-colors hover:bg-muted"
                         >
                           {category.title}
                         </Link>
@@ -116,17 +129,17 @@ export function MobileMenu({ categories, navGroups }: Props) {
 
                   return (
                     <AccordionItem key={category.id} value={String(category.id)}>
-                      <AccordionTrigger className="py-1.5 text-sm font-normal hover:no-underline">
+                      <AccordionTrigger className="rounded-md px-1 py-3 text-sm font-medium hover:bg-muted hover:no-underline">
                         {category.title}
                       </AccordionTrigger>
-                      <AccordionContent className="pl-4">
-                        <ul className="flex flex-col">
+                      <AccordionContent className="pb-2 pl-3">
+                        <ul className="flex flex-col gap-0.5 border-l border-border pl-3">
                           {subcategories.map((subcategory) => (
-                            <li key={subcategory.id} className="py-1.5">
+                            <li key={subcategory.id}>
                               <Link
                                 href={`/shop?category=${subcategory.id}`}
                                 onClick={closeMobileMenu}
-                                className="text-sm text-muted-foreground"
+                                className="block rounded-md px-2 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                               >
                                 {subcategory.title}
                               </Link>
@@ -140,15 +153,18 @@ export function MobileMenu({ categories, navGroups }: Props) {
               </Accordion>
             </div>
           ))}
-          <Link href="/shop" onClick={closeMobileMenu} className="text-sm font-semibold text-primary">
+          <Link
+            href="/shop"
+            onClick={closeMobileMenu}
+            className="block rounded-md px-1 py-3 text-sm font-semibold text-primary transition-colors hover:bg-muted"
+          >
             All Products
           </Link>
         </div>
 
         {user ? (
-          <div className="mt-4">
+          <div className="border-t border-border pt-4">
             <h2 className="text-lg mb-4">My account</h2>
-            <hr className="my-2" />
             <ul className="flex flex-col gap-2">
               <li>
                 <Link href="/orders">Orders</Link>
@@ -167,7 +183,7 @@ export function MobileMenu({ categories, navGroups }: Props) {
             </ul>
           </div>
         ) : (
-          <div>
+          <div className="border-t border-border pt-4">
             <h2 className="text-lg mb-4">My account</h2>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
               <Button asChild className="w-full sm:flex-1" variant="outline">

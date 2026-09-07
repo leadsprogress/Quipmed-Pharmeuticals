@@ -157,6 +157,20 @@ export const plugins: Plugin[] = [
     },
     products: {
       productsCollectionOverride: ProductsCollection,
+      variants: {
+        variantTypesCollectionOverride: ({ defaultCollection }) => ({
+          ...defaultCollection,
+          admin: { ...defaultCollection.admin, group: 'Ecommerce' },
+        }),
+        variantOptionsCollectionOverride: ({ defaultCollection }) => ({
+          ...defaultCollection,
+          admin: { ...defaultCollection.admin, group: 'Ecommerce' },
+        }),
+        variantsCollectionOverride: ({ defaultCollection }) => ({
+          ...defaultCollection,
+          admin: { ...defaultCollection.admin, group: 'Ecommerce' },
+        }),
+      },
     },
   }),
 ]

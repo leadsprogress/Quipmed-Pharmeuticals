@@ -26,6 +26,8 @@ async function findProducts({ category, page, searchValue, sort }: GetProductsAr
       gallery: true,
       categories: true,
       priceInINR: true,
+      compareAtPrice: true,
+      tags: true,
       composition: true,
       packing: true,
     },

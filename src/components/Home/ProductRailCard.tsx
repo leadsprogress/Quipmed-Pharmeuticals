@@ -3,6 +3,7 @@ import React from 'react'
 
 import { Media } from '@/components/Media'
 import { Price } from '@/components/Price'
+import { ProductBadges } from '@/components/product/ProductBadges'
 import type { Product } from '@/payload-types'
 
 export const ProductRailCard: React.FC<{ product: Product; fixedWidth?: boolean }> = ({
@@ -22,7 +23,8 @@ export const ProductRailCard: React.FC<{ product: Product; fixedWidth?: boolean 
         fixedWidth ? 'w-56 shrink-0 md:w-64' : 'w-full'
       }`}
     >
-      <div className="aspect-square w-full overflow-hidden bg-muted">
+      <div className="relative aspect-square w-full overflow-hidden bg-muted">
+        <ProductBadges tags={product.tags} />
         {galleryImage ? (
           <Media
             resource={galleryImage}
@@ -47,7 +49,11 @@ export const ProductRailCard: React.FC<{ product: Product; fixedWidth?: boolean 
           <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{product.composition}</p>
         )}
         {typeof product.priceInINR === 'number' && (
-          <Price amount={product.priceInINR} className="mt-2 text-sm font-bold text-primary" />
+          <Price
+            amount={product.priceInINR}
+            compareAtAmount={product.compareAtPrice}
+            className="mt-2 text-sm font-bold text-primary"
+          />
         )}
       </div>
     </Link>

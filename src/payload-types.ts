@@ -145,6 +145,7 @@ export interface Config {
     categories: Category;
     media: Media;
     'product-image-imports': ProductImageImport;
+    'product-tags': ProductTag;
     forms: Form;
     'form-submissions': FormSubmission;
     addresses: Address;
@@ -179,6 +180,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'product-image-imports': ProductImageImportsSelect<false> | ProductImageImportsSelect<true>;
+    'product-tags': ProductTagsSelect<false> | ProductTagsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     addresses: AddressesSelect<false> | AddressesSelect<true>;
@@ -386,6 +388,10 @@ export interface Product {
   priceInINREnabled?: boolean | null;
   priceInINR?: number | null;
   /**
+   * Optional "was" price shown crossed out next to the price on product cards, in paise (e.g. ₹499 = 49900). Leave blank to auto-fill +15% over the price (rounded up to the nearest ₹10) when saved — you can still override it manually at any time.
+   */
+  compareAtPrice?: number | null;
+  /**
    * Active ingredient / salt composition, e.g. "DAPAGLIFLOZIN 5 MG"
    */
   composition?: string | null;
@@ -411,6 +417,10 @@ export interface Product {
     description?: string | null;
   };
   categories?: (number | Category)[] | null;
+  /**
+   * Badges shown top-left on this product's cards (e.g. "Bestseller", "New").
+   */
+  tags?: (number | ProductTag)[] | null;
   slug: string;
   updatedAt: string;
   createdAt: string;
@@ -1277,6 +1287,19 @@ export interface Variant {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Badges (e.g. "Bestseller", "New") you can assign to products, shown top-left on product cards.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-tags".
+ */
+export interface ProductTag {
+  id: number;
+  label: string;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "transactions".
  */
@@ -1538,6 +1561,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'product-image-imports';
         value: number | ProductImageImport;
+      } | null)
+    | ({
+        relationTo: 'product-tags';
+        value: number | ProductTag;
       } | null)
     | ({
         relationTo: 'forms';
@@ -2192,6 +2219,16 @@ export interface ProductImageImportsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-tags_select".
+ */
+export interface ProductTagsSelect<T extends boolean = true> {
+  label?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "forms_select".
  */
 export interface FormsSelect<T extends boolean = true> {
@@ -2427,6 +2464,7 @@ export interface ProductsSelect<T extends boolean = true> {
   variants?: T;
   priceInINREnabled?: T;
   priceInINR?: T;
+  compareAtPrice?: T;
   composition?: T;
   packing?: T;
   packType?: T;
@@ -2440,6 +2478,7 @@ export interface ProductsSelect<T extends boolean = true> {
         description?: T;
       };
   categories?: T;
+  tags?: T;
   slug?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2781,6 +2820,7 @@ export interface CollectionQueryWidget {
       | 'pages'
       | 'categories'
       | 'media'
+      | 'product-tags'
       | 'forms'
       | 'form-submissions'
       | 'variants'
@@ -2817,6 +2857,7 @@ export interface ActivityWidget {
           | 'pages'
           | 'categories'
           | 'media'
+          | 'product-tags'
           | 'forms'
           | 'form-submissions'
           | 'variants'

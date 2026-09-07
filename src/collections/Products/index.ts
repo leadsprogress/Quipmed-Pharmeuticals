@@ -3,6 +3,7 @@ import { Content } from '@/blocks/Content/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { revalidateProduct, revalidateProductDelete } from './hooks/revalidateProduct'
+import { setCompareAtPrice } from './hooks/setCompareAtPrice'
 import { CollectionOverride } from '@payloadcms/plugin-ecommerce/types'
 import {
   MetaDescriptionField,
@@ -24,6 +25,7 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
   ...defaultCollection,
   hooks: {
     ...defaultCollection?.hooks,
+    beforeChange: [...(defaultCollection?.hooks?.beforeChange ?? []), setCompareAtPrice],
     afterChange: [...(defaultCollection?.hooks?.afterChange ?? []), revalidateProduct],
     afterDelete: [...(defaultCollection?.hooks?.afterDelete ?? []), revalidateProductDelete],
   },
@@ -55,6 +57,8 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
     enableVariants: true,
     gallery: true,
     priceInINR: true,
+    compareAtPrice: true,
+    tags: true,
     inventory: true,
     meta: true,
   },
@@ -149,6 +153,15 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
           fields: [
             ...defaultCollection.fields,
             {
+              name: 'compareAtPrice',
+              type: 'number',
+              min: 0,
+              admin: {
+                description:
+                  'Optional "was" price shown crossed out next to the price on product cards, in paise (e.g. ₹499 = 49900). Leave blank to auto-fill +15% over the price (rounded up to the nearest ₹10) when saved — you can still override it manually at any time.',
+              },
+            },
+            {
               name: 'composition',
               type: 'text',
               admin: {
@@ -240,6 +253,16 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
       },
       hasMany: true,
       relationTo: 'categories',
+    },
+    {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'product-tags',
+      hasMany: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Badges shown top-left on this product\'s cards (e.g. "Bestseller", "New").',
+      },
     },
     {
       name: 'slug',

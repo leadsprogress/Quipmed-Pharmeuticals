@@ -2,6 +2,8 @@
 import { useCurrency } from '@payloadcms/plugin-ecommerce/client/react'
 import React, { useMemo } from 'react'
 
+import { cn } from '@/utilities/cn'
+
 type BaseProps = {
   className?: string
   currencyCodeClassName?: string
@@ -10,6 +12,7 @@ type BaseProps = {
 
 type PriceFixed = {
   amount: number
+  compareAtAmount?: number | null
   currencyCode?: string
   highestAmount?: never
   lowestAmount?: never
@@ -17,6 +20,7 @@ type PriceFixed = {
 
 type PriceRange = {
   amount?: never
+  compareAtAmount?: never
   currencyCode?: string
   highestAmount: number
   lowestAmount: number
@@ -27,6 +31,7 @@ type Props = BaseProps & (PriceFixed | PriceRange)
 export const Price = ({
   amount,
   className,
+  compareAtAmount,
   highestAmount,
   lowestAmount,
   currencyCode: currencyCodeFromProps,
@@ -44,9 +49,19 @@ export const Price = ({
   }, [currencyCodeFromProps, supportedCurrencies])
 
   if (typeof amount === 'number') {
+    const showCompareAt = typeof compareAtAmount === 'number' && compareAtAmount > amount
+
     return (
-      <Element className={className} suppressHydrationWarning>
+      <Element
+        className={cn(showCompareAt && 'inline-flex items-baseline gap-2', className)}
+        suppressHydrationWarning
+      >
         {formatCurrency(amount, { currency: currencyToUse })}
+        {showCompareAt && (
+          <span className="text-xs font-normal text-muted-foreground line-through">
+            {formatCurrency(compareAtAmount, { currency: currencyToUse })}
+          </span>
+        )}
       </Element>
     )
   }

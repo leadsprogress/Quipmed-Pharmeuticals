@@ -7,6 +7,7 @@ import React, { useRef } from 'react'
 import type { Media as MediaType, Product } from '@/payload-types'
 import { Media } from '@/components/Media'
 import { Price } from '@/components/Price'
+import { ProductBadges } from '@/components/product/ProductBadges'
 
 export const TiltCard: React.FC<{ product: Product }> = ({ product }) => {
   const cardRef = useRef<HTMLDivElement>(null)
@@ -47,6 +48,7 @@ export const TiltCard: React.FC<{ product: Product }> = ({ product }) => {
         className="flex aspect-square w-full flex-col overflow-hidden rounded-2xl border border-border bg-card [transform-style:preserve-3d]"
       >
         <div className="relative flex flex-1 items-center justify-center bg-primary-foreground text-muted-foreground">
+          <ProductBadges tags={product.tags} />
           {image ? (
             <Media resource={image} fill imgClassName="object-cover" />
           ) : (
@@ -56,7 +58,11 @@ export const TiltCard: React.FC<{ product: Product }> = ({ product }) => {
         <div className="p-3">
           <p className="line-clamp-1 text-xs font-semibold">{product.title}</p>
           {typeof product.priceInINR === 'number' && (
-            <Price amount={product.priceInINR} className="text-xs font-bold text-primary" />
+            <Price
+              amount={product.priceInINR}
+              compareAtAmount={product.compareAtPrice}
+              className="text-xs font-bold text-primary"
+            />
           )}
         </div>
       </div>

@@ -3,6 +3,7 @@ import React from 'react'
 
 import { Media } from '@/components/Media'
 import { Price } from '@/components/Price'
+import { ProductBadges } from '@/components/product/ProductBadges'
 import type { Product } from '@/payload-types'
 
 export const FlipProductCard: React.FC<{ product: Partial<Product> }> = ({ product }) => {
@@ -22,6 +23,7 @@ export const FlipProductCard: React.FC<{ product: Partial<Product> }> = ({ produ
         {/* Front */}
         <div className="absolute inset-0 flex flex-col overflow-hidden rounded-2xl border border-border bg-card [backface-visibility:hidden]">
           <div className="relative flex flex-1 items-center justify-center bg-primary-foreground text-muted-foreground">
+            <ProductBadges tags={product.tags} />
             {galleryImage ? (
               <Media resource={galleryImage} fill imgClassName="object-cover" />
             ) : (
@@ -31,7 +33,11 @@ export const FlipProductCard: React.FC<{ product: Partial<Product> }> = ({ produ
           <div className="p-4">
             <p className="line-clamp-1 text-sm font-semibold">{product.title}</p>
             {typeof product.priceInINR === 'number' && (
-              <Price amount={product.priceInINR} className="mt-1 text-sm font-bold text-primary" />
+              <Price
+                amount={product.priceInINR}
+                compareAtAmount={product.compareAtPrice}
+                className="mt-1 text-sm font-bold text-primary"
+              />
             )}
           </div>
         </div>

@@ -28,6 +28,7 @@ import { Categories } from '@/collections/Categories'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
 import { ProductImageImports } from '@/collections/ProductImageImports'
+import { ProductTags } from '@/collections/ProductTags'
 import { Users } from '@/collections/Users'
 import { customerSearchEndpoints } from '@/endpoints/customerSearch'
 import { productImageImporterEndpoints } from '@/endpoints/productImageImporter'
@@ -64,7 +65,7 @@ export default buildConfig({
     },
     user: Users.slug,
   },
-  collections: [Users, Pages, Categories, Media, ProductImageImports],
+  collections: [Users, Pages, Categories, Media, ProductImageImports, ProductTags],
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || '',

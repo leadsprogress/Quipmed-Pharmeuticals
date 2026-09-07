@@ -21,9 +21,9 @@ export const FlipProductCard: React.FC<{ product: Partial<Product> }> = ({ produ
       <div className="relative aspect-[4/5] w-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
         {/* Front */}
         <div className="absolute inset-0 flex flex-col overflow-hidden rounded-2xl border border-border bg-card [backface-visibility:hidden]">
-          <div className="flex flex-1 items-center justify-center bg-primary-foreground text-muted-foreground">
+          <div className="relative flex flex-1 items-center justify-center bg-primary-foreground text-muted-foreground">
             {galleryImage ? (
-              <Media resource={galleryImage} imgClassName="h-full w-full object-cover" />
+              <Media resource={galleryImage} fill imgClassName="object-cover" />
             ) : (
               <i className="fa-solid fa-capsules text-4xl" />
             )}

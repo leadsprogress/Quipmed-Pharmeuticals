@@ -46,9 +46,9 @@ export const TiltCard: React.FC<{ product: Product }> = ({ product }) => {
         onMouseLeave={onMouseLeave}
         className="flex aspect-square w-full flex-col overflow-hidden rounded-2xl border border-border bg-card [transform-style:preserve-3d]"
       >
-        <div className="flex flex-1 items-center justify-center bg-primary-foreground text-muted-foreground">
+        <div className="relative flex flex-1 items-center justify-center bg-primary-foreground text-muted-foreground">
           {image ? (
-            <Media resource={image} imgClassName="h-full w-full object-cover" />
+            <Media resource={image} fill imgClassName="object-cover" />
           ) : (
             <i className="fa-solid fa-capsules text-3xl" />
           )}

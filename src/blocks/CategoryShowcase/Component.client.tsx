@@ -10,34 +10,9 @@ import type { Category } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Background tint (revealed on hover, once the photo/overlay fade out) paired with a matching
-// icon color for that same state — index-matched, not derived, so Tailwind's static scanner sees
-// every full class name literally in this file.
+// Background tint revealed on hover once the photo fades — index-matched, not derived, so
+// Tailwind's static scanner sees every full class name literally in this file.
 const TILE_BG = ['bg-primary/10', 'bg-secondary/15', 'bg-accent']
-const TILE_ICON_HOVER_COLOR = ['group-hover:text-primary', 'group-hover:text-secondary', 'group-hover:text-accent-foreground']
-
-const CATEGORY_ICONS: Record<string, string> = {
-  'cardiac range': 'fa-heart-pulse',
-  'diabetic range': 'fa-droplet',
-  'orthopedic range': 'fa-bone',
-  'other critical range': 'fa-briefcase-medical',
-  'injectable range': 'fa-syringe',
-  opthalmic: 'fa-eye',
-  antibiotics: 'fa-capsules',
-  'antiinflammatory & analgesics': 'fa-tablets',
-  'pediatric range': 'fa-baby',
-  dermatology: 'fa-hand-dots',
-  'supplements & immunity booster': 'fa-shield-virus',
-  'respiratory & anti-allergics': 'fa-lungs',
-  'ayurvedic & herbal': 'fa-leaf',
-  gynecologist: 'fa-venus',
-  'new launches': 'fa-star',
-}
-
-function iconForCategory(title?: string | null): string {
-  if (!title) return 'fa-pills'
-  return CATEGORY_ICONS[title.toLowerCase()] ?? 'fa-pills'
-}
 
 // Fallback used until a category has its own photo uploaded in Admin → Categories → Icon —
 // sampling a unique image per category via random keyword search proved unreliable (returned
@@ -102,7 +77,6 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
           const photo =
             category.icon && typeof category.icon === 'object' ? category.icon : null
           const bg = TILE_BG[i % TILE_BG.length]
-          const iconHoverColor = TILE_ICON_HOVER_COLOR[i % TILE_ICON_HOVER_COLOR.length]
 
           return (
             <Link
@@ -133,17 +107,6 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
                     className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500 group-hover:opacity-0"
                   />
                 )}
-
-                {/* Dark scrim over the photo so the icon reads clearly by default — fades out
-                    together with the photo on hover. */}
-                <div
-                  aria-hidden
-                  className="absolute inset-0 bg-black/45 transition-opacity duration-500 group-hover:opacity-0"
-                />
-
-                <i
-                  className={`fa-solid ${iconForCategory(category.title)} relative z-10 text-lg text-white transition-all duration-300 group-hover:scale-110 sm:text-2xl ${iconHoverColor}`}
-                />
               </div>
               <span className="flex min-h-[2.5rem] w-full items-start justify-center break-words text-xs font-medium leading-tight sm:text-sm">
                 {category.title}

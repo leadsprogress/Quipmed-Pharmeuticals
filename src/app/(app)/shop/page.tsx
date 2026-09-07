@@ -1,7 +1,9 @@
 import { ShopGrid } from '@/components/Shop/ShopGrid'
+import { FilterItemDropdown } from '@/components/layout/search/filter/FilterItemDropdown'
+import { sorting } from '@/lib/constants'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 export const metadata = {
   description: 'Search for products in the store.',
@@ -84,6 +86,14 @@ export default async function ShopPage({ searchParams }: Props) {
 
   return (
     <div>
+      <div className="mb-4 flex justify-end md:hidden">
+        <Suspense fallback={null}>
+          <div className="w-44">
+            <FilterItemDropdown list={sorting} />
+          </div>
+        </Suspense>
+      </div>
+
       {searchValue ? (
         <p className="mb-4">
           {products.docs?.length === 0

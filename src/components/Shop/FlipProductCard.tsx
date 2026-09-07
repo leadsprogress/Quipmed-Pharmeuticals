@@ -12,7 +12,12 @@ export const FlipProductCard: React.FC<{ product: Partial<Product> }> = ({ produ
       : null
 
   return (
-    <div data-flip-card className="group [perspective:1200px]">
+    <Link
+      href={`/products/${product.slug}`}
+      data-flip-card
+      data-cursor-hover
+      className="group block [perspective:1200px]"
+    >
       <div className="relative aspect-[4/5] w-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
         {/* Front */}
         <div className="absolute inset-0 flex flex-col overflow-hidden rounded-2xl border border-border bg-card [backface-visibility:hidden]">
@@ -40,15 +45,11 @@ export const FlipProductCard: React.FC<{ product: Partial<Product> }> = ({ produ
             )}
             {product.packing && <p className="mt-2 text-xs opacity-75">Pack: {product.packing}</p>}
           </div>
-          <Link
-            href={`/products/${product.slug}`}
-            data-cursor-hover
-            className="inline-block rounded-full bg-background px-4 py-2 text-center text-xs font-semibold text-foreground transition-transform hover:scale-105"
-          >
+          <span className="inline-block rounded-full bg-background px-4 py-2 text-center text-xs font-semibold text-foreground transition-transform group-hover:scale-105">
             View Details
-          </Link>
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

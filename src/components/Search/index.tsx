@@ -200,13 +200,17 @@ export const Search: React.FC<Props> = ({ className, placeholder = 'Search for p
           onFocus={() => setIsOpen(true)}
           onKeyDown={onKeyDown}
         />
-        <div className="absolute right-0 top-0 mr-3 flex h-full items-center">
+        <button
+          type="submit"
+          aria-label="Search"
+          className="absolute right-0 top-0 mr-3 flex h-full items-center text-muted-foreground transition-colors hover:text-foreground"
+        >
           {isLoading ? (
-            <Loader2Icon className="h-4 w-4 animate-spin text-muted-foreground" />
+            <Loader2Icon className="h-4 w-4 animate-spin" />
           ) : (
             <SearchIcon className="h-4 w-4" />
           )}
-        </div>
+        </button>
       </form>
 
       {showDropdown && (

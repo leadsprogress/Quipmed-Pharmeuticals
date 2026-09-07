@@ -1,5 +1,4 @@
 import { ShopGrid } from '@/components/Shop/ShopGrid'
-import { ShopHero } from '@/components/Shop/ShopHero'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -85,10 +84,6 @@ export default async function ShopPage({ searchParams }: Props) {
 
   return (
     <div>
-      <div className="mb-10">
-        <ShopHero count={products.totalDocs} />
-      </div>
-
       {searchValue ? (
         <p className="mb-4">
           {products.docs?.length === 0

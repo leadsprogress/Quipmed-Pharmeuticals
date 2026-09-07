@@ -26,6 +26,7 @@ export const CategoryItem: React.FC<Props> = ({ category }) => {
     } else {
       params.set('category', String(category.id))
     }
+    params.delete('page')
 
     const newParams = params.toString()
 

@@ -1,8 +1,8 @@
 import { ShopGrid } from '@/components/Shop/ShopGrid'
+import { ShopPagination } from '@/components/Shop/ShopPagination'
 import { FilterItemDropdown } from '@/components/layout/search/filter/FilterItemDropdown'
 import { sorting } from '@/lib/constants'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getCachedProducts } from '@/utilities/getCachedProducts'
 import React, { Suspense } from 'react'
 
 export const metadata = {
@@ -17,72 +17,24 @@ type Props = {
 }
 
 export default async function ShopPage({ searchParams }: Props) {
-  const { q: searchValue, sort, category: rawCategory } = await searchParams
+  const { q: searchValue, sort, category: rawCategory, page: rawPage } = await searchParams
   // Category filtering matches by relationship ID (see Categories.client.tsx) — guard against
   // any malformed/non-numeric value reaching the DB query, which otherwise throws a hard 500.
   const category =
     typeof rawCategory === 'string' && /^\d+$/.test(rawCategory) ? rawCategory : undefined
-  const payload = await getPayload({ config: configPromise })
+  const parsedPage = typeof rawPage === 'string' ? parseInt(rawPage, 10) : 1
+  const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1
+  const sortValue = typeof sort === 'string' ? sort : undefined
+  const searchValueString = typeof searchValue === 'string' ? searchValue : undefined
 
-  const products = await payload.find({
-    collection: 'products',
-    draft: false,
-    overrideAccess: false,
-    select: {
-      title: true,
-      slug: true,
-      gallery: true,
-      categories: true,
-      priceInINR: true,
-      composition: true,
-      packing: true,
-    },
-    ...(sort ? { sort } : { sort: 'title' }),
-    ...(searchValue || category
-      ? {
-          where: {
-            and: [
-              {
-                _status: {
-                  equals: 'published',
-                },
-              },
-              // `description` is a richText (JSON) field — Postgres can't run `like` against
-              // it directly (throws a hard query error), so search plain-text fields only.
-              ...(searchValue
-                ? [
-                    {
-                      or: [
-                        {
-                          title: {
-                            like: searchValue,
-                          },
-                        },
-                        {
-                          composition: {
-                            like: searchValue,
-                          },
-                        },
-                      ],
-                    },
-                  ]
-                : []),
-              ...(category
-                ? [
-                    {
-                      categories: {
-                        contains: category,
-                      },
-                    },
-                  ]
-                : []),
-            ],
-          },
-        }
-      : {}),
+  const products = await getCachedProducts({
+    category,
+    page,
+    searchValue: searchValueString,
+    sort: sortValue,
   })
 
-  const resultsText = products.docs.length > 1 ? 'results' : 'result'
+  const resultsText = products.totalDocs > 1 ? 'results' : 'result'
 
   return (
     <div>
@@ -96,9 +48,9 @@ export default async function ShopPage({ searchParams }: Props) {
 
       {searchValue ? (
         <p className="mb-4">
-          {products.docs?.length === 0
+          {products.totalDocs === 0
             ? 'There are no products that match '
-            : `Showing ${products.docs.length} ${resultsText} for `}
+            : `Showing ${products.totalDocs} ${resultsText} for `}
           <span className="font-bold">&quot;{searchValue}&quot;</span>
         </p>
       ) : null}
@@ -108,6 +60,18 @@ export default async function ShopPage({ searchParams }: Props) {
       )}
 
       {products?.docs.length > 0 ? <ShopGrid products={products.docs} /> : null}
+
+      <ShopPagination
+        currentParams={{
+          q: searchValueString,
+          sort: sortValue,
+          category,
+        }}
+        hasNextPage={products.hasNextPage}
+        hasPrevPage={products.hasPrevPage}
+        page={products.page ?? page}
+        totalPages={products.totalPages}
+      />
     </div>
   )
 }

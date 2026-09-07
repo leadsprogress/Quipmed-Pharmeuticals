@@ -2,6 +2,7 @@ import { CallToAction } from '@/blocks/CallToAction/config'
 import { Content } from '@/blocks/Content/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import { revalidateProduct, revalidateProductDelete } from './hooks/revalidateProduct'
 import { CollectionOverride } from '@payloadcms/plugin-ecommerce/types'
 import {
   MetaDescriptionField,
@@ -21,6 +22,11 @@ import { DefaultDocumentIDType, Where } from 'payload'
 
 export const ProductsCollection: CollectionOverride = ({ defaultCollection }) => ({
   ...defaultCollection,
+  hooks: {
+    ...defaultCollection?.hooks,
+    afterChange: [...(defaultCollection?.hooks?.afterChange ?? []), revalidateProduct],
+    afterDelete: [...(defaultCollection?.hooks?.afterDelete ?? []), revalidateProductDelete],
+  },
   admin: {
     ...defaultCollection?.admin,
     defaultColumns: ['title', 'enableVariants', '_status', 'variants.variants'],

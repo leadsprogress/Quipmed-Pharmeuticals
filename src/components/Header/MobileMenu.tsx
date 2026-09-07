@@ -19,13 +19,12 @@ import {
 } from '@/components/ui/sheet'
 import { useAuth } from '@/providers/Auth'
 import { useLenis } from '@/providers/SmoothScroll'
-import { MenuIcon } from 'lucide-react'
+import { LogOutIcon, MapPinIcon, MenuIcon, PackageIcon, UserIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { buildNavGroups } from './megaMenuGroups'
-import { ThemeToggle } from './ThemeToggle'
 
 interface Props {
   categories: Category[]
@@ -95,15 +94,15 @@ export function MobileMenu({ categories, navGroups }: Props) {
       </SheetTrigger>
 
       <SheetContent side="left" className="w-[82%] gap-0 px-4 sm:max-w-md">
-        <SheetHeader className="flex-row items-center justify-between border-b border-border px-0 pr-10 pb-4 pt-4">
-          <div>
-            <SheetTitle>Amulya Medicals</SheetTitle>
-            <SheetDescription />
-          </div>
-          <ThemeToggle />
+        <SheetHeader className="border-b border-border px-0 pr-10 pb-4 pt-4">
+          <SheetTitle>Amulya Medicals</SheetTitle>
+          <SheetDescription />
         </SheetHeader>
 
-        <div className="no-scrollbar flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto py-4">
+        <div
+          data-lenis-prevent
+          className="no-scrollbar flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto overscroll-contain py-4"
+        >
           {groups.map((group) => (
             <div key={group.label}>
               <p className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -160,42 +159,66 @@ export function MobileMenu({ categories, navGroups }: Props) {
           >
             All Products
           </Link>
-        </div>
 
-        {user ? (
-          <div className="border-t border-border pt-4">
-            <h2 className="text-lg mb-4">My account</h2>
-            <ul className="flex flex-col gap-2">
-              <li>
-                <Link href="/orders">Orders</Link>
-              </li>
-              <li>
-                <Link href="/account/addresses">Addresses</Link>
-              </li>
-              <li>
-                <Link href="/account">Manage account</Link>
-              </li>
-              <li className="mt-6">
-                <Button asChild variant="outline">
-                  <Link href="/logout">Log out</Link>
+          <div className="mt-2 rounded-xl bg-muted/50 p-3">
+            <h2 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              My account
+            </h2>
+            {user ? (
+              <ul className="flex flex-col gap-0.5">
+                <li>
+                  <Link
+                    href="/orders"
+                    onClick={closeMobileMenu}
+                    className="flex items-center gap-2.5 rounded-md px-2 py-2.5 text-sm font-medium transition-colors hover:bg-background"
+                  >
+                    <PackageIcon className="h-4 w-4 text-muted-foreground" />
+                    Orders
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/account/addresses"
+                    onClick={closeMobileMenu}
+                    className="flex items-center gap-2.5 rounded-md px-2 py-2.5 text-sm font-medium transition-colors hover:bg-background"
+                  >
+                    <MapPinIcon className="h-4 w-4 text-muted-foreground" />
+                    Addresses
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/account"
+                    onClick={closeMobileMenu}
+                    className="flex items-center gap-2.5 rounded-md px-2 py-2.5 text-sm font-medium transition-colors hover:bg-background"
+                  >
+                    <UserIcon className="h-4 w-4 text-muted-foreground" />
+                    Manage account
+                  </Link>
+                </li>
+                <li className="mt-1 border-t border-border pt-2">
+                  <Link
+                    href="/logout"
+                    onClick={closeMobileMenu}
+                    className="flex items-center gap-2.5 rounded-md px-2 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-background"
+                  >
+                    <LogOutIcon className="h-4 w-4" />
+                    Log out
+                  </Link>
+                </li>
+              </ul>
+            ) : (
+              <div className="flex flex-col gap-2 p-1">
+                <Button asChild className="w-full" variant="outline" onClick={closeMobileMenu}>
+                  <Link href="/login">Log in</Link>
                 </Button>
-              </li>
-            </ul>
+                <Button asChild className="w-full" onClick={closeMobileMenu}>
+                  <Link href="/create-account">Create an account</Link>
+                </Button>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="border-t border-border pt-4">
-            <h2 className="text-lg mb-4">My account</h2>
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
-              <Button asChild className="w-full sm:flex-1" variant="outline">
-                <Link href="/login">Log in</Link>
-              </Button>
-              <span className="text-center text-sm text-muted-foreground sm:text-base">or</span>
-              <Button asChild className="w-full sm:flex-1">
-                <Link href="/create-account">Create an account</Link>
-              </Button>
-            </div>
-          </div>
-        )}
+        </div>
       </SheetContent>
     </Sheet>
   )

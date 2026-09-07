@@ -114,8 +114,8 @@ export function HeaderClient({ categories, header }: Props) {
           </Suspense>
         </div>
 
-        <div className="ml-auto flex items-center gap-5">
-          <ThemeToggle className="hidden md:flex" />
+        <div className="ml-auto flex items-center gap-3 md:gap-5">
+          <ThemeToggle />
           <AccountLink />
           <Suspense fallback={<OpenCartButton />}>
             <Cart />

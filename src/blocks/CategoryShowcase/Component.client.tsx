@@ -10,10 +10,6 @@ import type { Category } from '@/payload-types'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Background tint revealed on hover once the photo fades — index-matched, not derived, so
-// Tailwind's static scanner sees every full class name literally in this file.
-const TILE_BG = ['bg-primary/10', 'bg-secondary/15', 'bg-accent']
-
 // Fallback used until a category has its own photo uploaded in Admin → Categories → Icon —
 // sampling a unique image per category via random keyword search proved unreliable (returned
 // unrelated stock photos for several categories), so every category shares this one until real
@@ -68,15 +64,18 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
   return (
     <section className="container pb-16 pt-4" ref={sectionRef}>
       <div data-category-heading className="mb-10 text-center">
-        {heading && <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">{heading}</h2>}
-        {subheading && <p className="mt-3 text-muted-foreground">{subheading}</p>}
+        {heading && (
+          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">{heading}</h2>
+        )}
+        {subheading && (
+          <p className="mt-3 text-sm text-muted-foreground sm:text-base">{subheading}</p>
+        )}
       </div>
 
       <div className="flex flex-wrap items-start justify-center gap-x-4 gap-y-8">
-        {categories.map((category, i) => {
+        {categories.map((category) => {
           const photo =
             category.icon && typeof category.icon === 'object' ? category.icon : null
-          const bg = TILE_BG[i % TILE_BG.length]
 
           return (
             <Link
@@ -86,17 +85,14 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
               href={`/shop?category=${category.id}`}
               className="group flex min-w-0 basis-[calc((100%-2rem)/3)] flex-col items-center gap-2 rounded-2xl p-1 text-center transition-transform duration-300 hover:-translate-y-1 sm:gap-3 sm:p-3 md:basis-[calc((100%-3rem)/4)] lg:basis-[calc((100%-7rem)/8)]"
             >
-              <div
-                className={`relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-full shadow-sm transition-shadow duration-300 group-hover:shadow-lg ${bg}`}
-              >
+              <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-full bg-muted shadow-sm transition-shadow duration-300 group-hover:shadow-lg">
                 {/* Photo — the category's own uploaded image if there is one, otherwise a shared
-                    placeholder. Visible by default, fades out on hover to reveal the plain tile
-                    color underneath. */}
+                    placeholder. Desaturates on hover instead of fading away. */}
                 {photo ? (
                   <Media
                     resource={photo}
                     fill
-                    imgClassName="absolute inset-0 h-full w-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                    imgClassName="absolute inset-0 h-full w-full object-cover grayscale-0 transition-all duration-500 group-hover:grayscale"
                   />
                 ) : (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -104,7 +100,7 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
                     src={CATEGORY_FALLBACK_IMAGE}
                     alt=""
                     aria-hidden
-                    className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                    className="absolute inset-0 h-full w-full object-cover grayscale-0 transition-all duration-500 group-hover:grayscale"
                   />
                 )}
               </div>

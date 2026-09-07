@@ -15,7 +15,7 @@ export const CallToOrder: React.FC<Props> = ({ label, heading, phoneLabel, phone
   const telHref = phone ? `tel:${phone.replace(/[^\d+]/g, '')}` : undefined
 
   return (
-    <div className="container pb-2 pt-2">
+    <div className="container pb-2 pt-0 sm:pt-2">
       <div className="flex flex-col items-center justify-between gap-4 rounded-3xl border border-secondary/40 bg-card px-4 py-4 text-center sm:flex-row sm:items-center sm:gap-6 sm:px-10 sm:text-left">
         <p className="text-base font-semibold leading-tight text-foreground sm:whitespace-nowrap sm:text-2xl">
           {label || 'Place'} {heading || 'Your Order Via'}

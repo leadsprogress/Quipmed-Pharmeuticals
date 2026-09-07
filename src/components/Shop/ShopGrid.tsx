@@ -25,7 +25,7 @@ export const ShopGrid: React.FC<{ products: Partial<Product>[] }> = ({ products 
   }, [products])
 
   return (
-    <div ref={ref} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div ref={ref} className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
       {products.map((product) => (
         <FlipProductCard key={product.id} product={product} />
       ))}

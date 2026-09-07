@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const FAQBlock: Block = {
   slug: 'faq',
   interfaceName: 'FAQBlock',
   fields: [
+    displayOnMobileField,
     {
       name: 'items',
       type: 'array',

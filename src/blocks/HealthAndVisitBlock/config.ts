@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const HealthAndVisitBlock: Block = {
   slug: 'healthAndVisit',
   interfaceName: 'HealthAndVisitBlock',
   fields: [
+    displayOnMobileField,
     { name: 'guidesHeading', type: 'text' },
     {
       name: 'guides',

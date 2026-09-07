@@ -86,9 +86,18 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               const isSelfSpaced = blockType && SELF_SPACED_BLOCKS.has(blockType)
+              // Every block config carries a `displayOnMobile` checkbox (defaults to true) — see
+              // src/fields/displayOnMobile.ts. `hidden md:block` keeps the block fully out of
+              // mobile layout (no reserved space) while leaving tablet/desktop untouched.
+              const hideOnMobile = 'displayOnMobile' in block && block.displayOnMobile === false
 
               return (
-                <div className={isSelfSpaced ? undefined : 'my-16'} key={index}>
+                <div
+                  className={[isSelfSpaced ? '' : 'my-16', hideOnMobile ? 'hidden md:block' : '']
+                    .filter(Boolean)
+                    .join(' ')}
+                  key={index}
+                >
                   {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                   {/* @ts-ignore - weird type mismatch here */}
                   <Block id={toKebabCase(blockName!)} {...block} />

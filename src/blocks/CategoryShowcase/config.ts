@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const CategoryShowcase: Block = {
   slug: 'categoryShowcase',
   interfaceName: 'CategoryShowcaseBlock',
   fields: [
+    displayOnMobileField,
     {
       name: 'heading',
       type: 'text',

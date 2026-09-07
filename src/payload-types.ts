@@ -476,6 +476,10 @@ export interface VariantType {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   richText?: LexicalRichText<LexicalNodes_03B47A70> | null;
   links?:
     | {
@@ -576,6 +580,10 @@ export interface Page {
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
@@ -607,6 +615,10 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   media: number | Media;
   id?: string | null;
   blockName?: string | null;
@@ -617,6 +629,10 @@ export interface MediaBlock {
  * via the `definition` "ArchiveBlock".
  */
 export interface ArchiveBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   introContent?: LexicalRichText<LexicalNodes_03B47A70> | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'products' | null;
@@ -656,6 +672,10 @@ export interface Category {
  * via the `definition` "CarouselBlock".
  */
 export interface CarouselBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'products' | null;
   categories?: (number | Category)[] | null;
@@ -688,6 +708,10 @@ export interface CarouselBlock {
  * via the `definition` "ThreeItemGridBlock".
  */
 export interface ThreeItemGridBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   products?: (number | Product)[] | null;
   id?: string | null;
   blockName?: string | null;
@@ -698,6 +722,10 @@ export interface ThreeItemGridBlock {
  * via the `definition` "BannerBlock".
  */
 export interface BannerBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   style: 'info' | 'warning' | 'error' | 'success';
   content: LexicalRichText<LexicalNodes_BCFC362F>;
   id?: string | null;
@@ -709,6 +737,10 @@ export interface BannerBlock {
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   form: number | Form;
   enableIntro?: boolean | null;
   introContent?: LexicalRichText<LexicalNodes_03B47A70> | null;
@@ -877,6 +909,10 @@ export interface Textarea {
  * via the `definition` "CategoryShowcaseBlock".
  */
 export interface CategoryShowcaseBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   heading?: string | null;
   subheading?: string | null;
   categories?: (number | Category)[] | null;
@@ -889,6 +925,10 @@ export interface CategoryShowcaseBlock {
  * via the `definition` "TrustBarBlock".
  */
 export interface TrustBarBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   items?:
     | {
         title: string;
@@ -905,6 +945,10 @@ export interface TrustBarBlock {
  * via the `definition` "PromoTilesBlock".
  */
 export interface PromoTilesBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   tiles?:
     | {
         heading: string;
@@ -924,6 +968,10 @@ export interface PromoTilesBlock {
  * via the `definition` "HealthHighlightsBlock".
  */
 export interface HealthHighlightsBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   heading?: string | null;
   cards?:
     | {
@@ -942,6 +990,10 @@ export interface HealthHighlightsBlock {
  * via the `definition` "FAQBlock".
  */
 export interface FAQBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   items?:
     | {
         question: string;
@@ -958,6 +1010,10 @@ export interface FAQBlock {
  * via the `definition` "StatsBlock".
  */
 export interface StatsBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   items?:
     | {
         /**
@@ -982,6 +1038,10 @@ export interface StatsBlock {
  * via the `definition` "ValueCardsBlock".
  */
 export interface ValueCardsBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   items?:
     | {
         /**
@@ -1002,6 +1062,10 @@ export interface ValueCardsBlock {
  * via the `definition` "TimelineBlock".
  */
 export interface TimelineBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   items?:
     | {
         title: string;
@@ -1018,6 +1082,10 @@ export interface TimelineBlock {
  * via the `definition` "ContactBlockType".
  */
 export interface ContactBlockType {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'contactInfo';
@@ -1027,6 +1095,10 @@ export interface ContactBlockType {
  * via the `definition` "HomeHeroBlock".
  */
 export interface HomeHeroBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   eyebrow?: string | null;
   heading?: string | null;
   subtext?: string | null;
@@ -1056,6 +1128,10 @@ export interface HomeHeroBlock {
  * via the `definition` "WhyChooseUsBlock".
  */
 export interface WhyChooseUsBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   heading?: string | null;
   rows?:
     | {
@@ -1078,6 +1154,10 @@ export interface WhyChooseUsBlock {
  * via the `definition` "PromoBannerBlock".
  */
 export interface PromoBannerBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   eyebrow?: string | null;
   heading?: string | null;
   body?: string | null;
@@ -1091,6 +1171,10 @@ export interface PromoBannerBlock {
  * via the `definition` "HealthAndVisitBlock".
  */
 export interface HealthAndVisitBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   guidesHeading?: string | null;
   guides?:
     | {
@@ -1117,6 +1201,10 @@ export interface HealthAndVisitBlock {
  * via the `definition` "FeaturedRailBlock".
  */
 export interface FeaturedRailBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   heading: string;
   /**
    * Products from this category are shown in the rail.
@@ -1132,6 +1220,10 @@ export interface FeaturedRailBlock {
  * via the `definition` "PopularRangesBlock".
  */
 export interface PopularRangesBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   heading?: string | null;
   subheading?: string | null;
   ranges?:
@@ -1153,6 +1245,10 @@ export interface PopularRangesBlock {
  * via the `definition` "CallToOrderBlock".
  */
 export interface CallToOrderBlock {
+  /**
+   * Uncheck to hide this entire section on mobile screens. Still shown on tablet/desktop.
+   */
+  displayOnMobile?: boolean | null;
   label?: string | null;
   heading?: string | null;
   phoneLabel?: string | null;
@@ -1627,6 +1723,7 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "CallToActionBlock_select".
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   richText?: T;
   links?:
     | T
@@ -1651,6 +1748,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
  * via the `definition` "ContentBlock_select".
  */
 export interface ContentBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   columns?:
     | T
     | {
@@ -1677,6 +1775,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "MediaBlock_select".
  */
 export interface MediaBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   media?: T;
   id?: T;
   blockName?: T;
@@ -1686,6 +1785,7 @@ export interface MediaBlockSelect<T extends boolean = true> {
  * via the `definition` "ArchiveBlock_select".
  */
 export interface ArchiveBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   introContent?: T;
   populateBy?: T;
   relationTo?: T;
@@ -1700,6 +1800,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
  * via the `definition` "CarouselBlock_select".
  */
 export interface CarouselBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   populateBy?: T;
   relationTo?: T;
   categories?: T;
@@ -1715,6 +1816,7 @@ export interface CarouselBlockSelect<T extends boolean = true> {
  * via the `definition` "ThreeItemGridBlock_select".
  */
 export interface ThreeItemGridBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   products?: T;
   id?: T;
   blockName?: T;
@@ -1724,6 +1826,7 @@ export interface ThreeItemGridBlockSelect<T extends boolean = true> {
  * via the `definition` "BannerBlock_select".
  */
 export interface BannerBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   style?: T;
   content?: T;
   id?: T;
@@ -1734,6 +1837,7 @@ export interface BannerBlockSelect<T extends boolean = true> {
  * via the `definition` "FormBlock_select".
  */
 export interface FormBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   form?: T;
   enableIntro?: T;
   introContent?: T;
@@ -1745,6 +1849,7 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "CategoryShowcaseBlock_select".
  */
 export interface CategoryShowcaseBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   heading?: T;
   subheading?: T;
   categories?: T;
@@ -1756,6 +1861,7 @@ export interface CategoryShowcaseBlockSelect<T extends boolean = true> {
  * via the `definition` "TrustBarBlock_select".
  */
 export interface TrustBarBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   items?:
     | T
     | {
@@ -1771,6 +1877,7 @@ export interface TrustBarBlockSelect<T extends boolean = true> {
  * via the `definition` "PromoTilesBlock_select".
  */
 export interface PromoTilesBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   tiles?:
     | T
     | {
@@ -1789,6 +1896,7 @@ export interface PromoTilesBlockSelect<T extends boolean = true> {
  * via the `definition` "HealthHighlightsBlock_select".
  */
 export interface HealthHighlightsBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   heading?: T;
   cards?:
     | T
@@ -1806,6 +1914,7 @@ export interface HealthHighlightsBlockSelect<T extends boolean = true> {
  * via the `definition` "FAQBlock_select".
  */
 export interface FAQBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   items?:
     | T
     | {
@@ -1821,6 +1930,7 @@ export interface FAQBlockSelect<T extends boolean = true> {
  * via the `definition` "StatsBlock_select".
  */
 export interface StatsBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   items?:
     | T
     | {
@@ -1838,6 +1948,7 @@ export interface StatsBlockSelect<T extends boolean = true> {
  * via the `definition` "ValueCardsBlock_select".
  */
 export interface ValueCardsBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   items?:
     | T
     | {
@@ -1854,6 +1965,7 @@ export interface ValueCardsBlockSelect<T extends boolean = true> {
  * via the `definition` "TimelineBlock_select".
  */
 export interface TimelineBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   items?:
     | T
     | {
@@ -1869,6 +1981,7 @@ export interface TimelineBlockSelect<T extends boolean = true> {
  * via the `definition` "ContactBlockType_select".
  */
 export interface ContactBlockTypeSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   id?: T;
   blockName?: T;
 }
@@ -1877,6 +1990,7 @@ export interface ContactBlockTypeSelect<T extends boolean = true> {
  * via the `definition` "HomeHeroBlock_select".
  */
 export interface HomeHeroBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   eyebrow?: T;
   heading?: T;
   subtext?: T;
@@ -1902,6 +2016,7 @@ export interface HomeHeroBlockSelect<T extends boolean = true> {
  * via the `definition` "WhyChooseUsBlock_select".
  */
 export interface WhyChooseUsBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   heading?: T;
   rows?:
     | T
@@ -1920,6 +2035,7 @@ export interface WhyChooseUsBlockSelect<T extends boolean = true> {
  * via the `definition` "PromoBannerBlock_select".
  */
 export interface PromoBannerBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   eyebrow?: T;
   heading?: T;
   body?: T;
@@ -1932,6 +2048,7 @@ export interface PromoBannerBlockSelect<T extends boolean = true> {
  * via the `definition` "HealthAndVisitBlock_select".
  */
 export interface HealthAndVisitBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   guidesHeading?: T;
   guides?:
     | T
@@ -1951,6 +2068,7 @@ export interface HealthAndVisitBlockSelect<T extends boolean = true> {
  * via the `definition` "FeaturedRailBlock_select".
  */
 export interface FeaturedRailBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   heading?: T;
   category?: T;
   limit?: T;
@@ -1962,6 +2080,7 @@ export interface FeaturedRailBlockSelect<T extends boolean = true> {
  * via the `definition` "PopularRangesBlock_select".
  */
 export interface PopularRangesBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   heading?: T;
   subheading?: T;
   ranges?:
@@ -1979,6 +2098,7 @@ export interface PopularRangesBlockSelect<T extends boolean = true> {
  * via the `definition` "CallToOrderBlock_select".
  */
 export interface CallToOrderBlockSelect<T extends boolean = true> {
+  displayOnMobile?: T;
   label?: T;
   heading?: T;
   phoneLabel?: T;

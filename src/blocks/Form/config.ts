@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 import {
   FixedToolbarFeature,
@@ -11,6 +12,7 @@ export const FormBlock: Block = {
   slug: 'formBlock',
   interfaceName: 'FormBlock',
   fields: [
+    displayOnMobileField,
     {
       name: 'form',
       type: 'relationship',

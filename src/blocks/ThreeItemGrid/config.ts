@@ -1,8 +1,10 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const ThreeItemGrid: Block = {
   slug: 'threeItemGrid',
   fields: [
+    displayOnMobileField,
     {
       name: 'products',
       type: 'relationship',

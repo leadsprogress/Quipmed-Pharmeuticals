@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const HeroBlock: Block = {
   slug: 'homeHero',
   interfaceName: 'HomeHeroBlock',
   fields: [
+    displayOnMobileField,
     { name: 'eyebrow', type: 'text' },
     { name: 'heading', type: 'text' },
     { name: 'subtext', type: 'textarea' },

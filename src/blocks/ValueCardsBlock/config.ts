@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const ValueCardsBlock: Block = {
   slug: 'valueCards',
   interfaceName: 'ValueCardsBlock',
   fields: [
+    displayOnMobileField,
     {
       name: 'items',
       type: 'array',

@@ -1,4 +1,5 @@
 import type { Block, Field } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 import {
   FixedToolbarFeature,
@@ -65,6 +66,7 @@ export const Content: Block = {
   slug: 'content',
   interfaceName: 'ContentBlock',
   fields: [
+    displayOnMobileField,
     {
       name: 'columns',
       type: 'array',

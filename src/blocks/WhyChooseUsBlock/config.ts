@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const WhyChooseUsBlock: Block = {
   slug: 'whyChooseUs',
   interfaceName: 'WhyChooseUsBlock',
   fields: [
+    displayOnMobileField,
     { name: 'heading', type: 'text' },
     {
       name: 'rows',

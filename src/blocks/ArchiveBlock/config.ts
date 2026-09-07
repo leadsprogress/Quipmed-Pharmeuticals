@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 import {
   FixedToolbarFeature,
@@ -11,6 +12,7 @@ export const Archive: Block = {
   slug: 'archive',
   interfaceName: 'ArchiveBlock',
   fields: [
+    displayOnMobileField,
     {
       name: 'introContent',
       type: 'richText',

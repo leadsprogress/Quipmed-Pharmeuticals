@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 import {
   FixedToolbarFeature,
@@ -13,6 +14,7 @@ export const CallToAction: Block = {
   slug: 'cta',
   interfaceName: 'CallToActionBlock',
   fields: [
+    displayOnMobileField,
     {
       name: 'richText',
       type: 'richText',

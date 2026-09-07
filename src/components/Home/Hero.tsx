@@ -109,13 +109,13 @@ export const Hero: React.FC<Props> = ({
 
       <div className="container relative grid gap-6 md:grid-cols-[3fr_2fr] md:items-center md:gap-10 md:overflow-hidden">
         <div data-hero-copy>
-          <span className="inline-block rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">
+          <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary sm:px-4 sm:text-xs">
             {eyebrow || 'Your neighbourhood pharmacy, online'}
           </span>
-          <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+          <h1 className="mt-3 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
             {heading || 'Genuine Products, Delivered to Your Door'}
           </h1>
-          <p className="mt-3 max-w-lg text-muted-foreground">
+          <p className="mt-3 max-w-lg text-sm text-muted-foreground md:text-base">
             {subtext ||
               'Amulya Medicals brings its trusted in-store catalog online — cardiac, diabetic, orthopedic and everyday essentials, delivered fast across Hyderabad.'}
           </p>
@@ -123,14 +123,17 @@ export const Hero: React.FC<Props> = ({
             <Link
               href={primaryCtaUrl || '/shop'}
               data-cursor-hover
-              className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-105"
+              className="rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-105 sm:px-6 sm:py-3 sm:text-sm"
             >
               {primaryCtaLabel || 'Shop Now'}
             </Link>
           </div>
         </div>
 
-        <div data-hero-copy className="relative md:h-[280px] md:min-h-0 md:overflow-hidden">
+        <div
+          data-hero-copy
+          className="relative hidden md:block md:h-[280px] md:min-h-0 md:overflow-hidden"
+        >
           <div className="aspect-[16/10] w-full overflow-hidden rounded-3xl shadow-xl md:aspect-auto md:h-full">
             {image && typeof image === 'object' ? (
               <Media
@@ -161,7 +164,7 @@ export const Hero: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="container mb-4 mt-4 grid grid-cols-2 gap-4 md:mb-6 md:mt-6 md:grid-cols-4">
+      <div className="container mb-4 mt-4 hidden grid-cols-2 gap-4 md:mb-6 md:mt-6 md:grid md:grid-cols-4">
         {TRUST_ITEMS.map((item, i) => (
           <div data-trust-item key={item.title} className="flex items-center gap-3 text-left">
             <span

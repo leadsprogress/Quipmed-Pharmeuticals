@@ -1,8 +1,10 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const Carousel: Block = {
   slug: 'carousel',
   fields: [
+    displayOnMobileField,
     {
       name: 'populateBy',
       type: 'select',

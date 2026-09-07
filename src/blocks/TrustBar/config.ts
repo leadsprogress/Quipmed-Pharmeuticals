@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const TrustBar: Block = {
   slug: 'trustBar',
   interfaceName: 'TrustBarBlock',
   fields: [
+    displayOnMobileField,
     {
       name: 'items',
       type: 'array',

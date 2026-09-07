@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const PopularRangesBlock: Block = {
   slug: 'popularRanges',
   interfaceName: 'PopularRangesBlock',
   fields: [
+    displayOnMobileField,
     { name: 'heading', type: 'text', defaultValue: 'Popular Ranges' },
     { name: 'subheading', type: 'text', defaultValue: 'Trusted therapeutic ranges, chosen by our customers.' },
     {

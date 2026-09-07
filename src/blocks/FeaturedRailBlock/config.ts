@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 export const FeaturedRailBlock: Block = {
   slug: 'featuredRail',
   interfaceName: 'FeaturedRailBlock',
   fields: [
+    displayOnMobileField,
     { name: 'heading', type: 'text', required: true, defaultValue: 'New Launches' },
     {
       name: 'category',

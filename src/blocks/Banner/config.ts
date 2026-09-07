@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { displayOnMobileField } from '@/fields/displayOnMobile'
 
 import {
   FixedToolbarFeature,
@@ -9,6 +10,7 @@ import {
 export const Banner: Block = {
   slug: 'banner',
   fields: [
+    displayOnMobileField,
     {
       name: 'style',
       type: 'select',

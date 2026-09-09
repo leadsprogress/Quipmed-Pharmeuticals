@@ -1195,6 +1195,14 @@ export interface HealthAndVisitBlock {
         tag?: string | null;
         title: string;
         excerpt: string;
+        /**
+         * Show a photo on this card. Uncheck to fall back to the compact icon-only card.
+         */
+        showImage?: boolean | null;
+        /**
+         * Leave blank to show a placeholder photo until you upload a real one.
+         */
+        image?: (number | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -2084,6 +2092,8 @@ export interface HealthAndVisitBlockSelect<T extends boolean = true> {
         tag?: T;
         title?: T;
         excerpt?: T;
+        showImage?: T;
+        image?: T;
         id?: T;
       };
   visitHeading?: T;

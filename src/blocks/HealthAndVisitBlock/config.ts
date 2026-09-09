@@ -16,6 +16,23 @@ export const HealthAndVisitBlock: Block = {
         { name: 'tag', type: 'text' },
         { name: 'title', type: 'text', required: true },
         { name: 'excerpt', type: 'textarea', required: true },
+        {
+          name: 'showImage',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            description: 'Show a photo on this card. Uncheck to fall back to the compact icon-only card.',
+          },
+        },
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description: 'Leave blank to show a placeholder photo until you upload a real one.',
+            condition: (_, siblingData) => siblingData?.showImage !== false,
+          },
+        },
       ],
     },
     {

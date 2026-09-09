@@ -3,7 +3,7 @@ import { Content } from '@/blocks/Content/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { revalidateProduct, revalidateProductDelete } from './hooks/revalidateProduct'
-import { setCompareAtPrice } from './hooks/setCompareAtPrice'
+import { syncPricing } from './hooks/syncPricing'
 import { CollectionOverride } from '@payloadcms/plugin-ecommerce/types'
 import {
   MetaDescriptionField,
@@ -25,7 +25,7 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
   ...defaultCollection,
   hooks: {
     ...defaultCollection?.hooks,
-    beforeChange: [...(defaultCollection?.hooks?.beforeChange ?? []), setCompareAtPrice],
+    beforeChange: [...(defaultCollection?.hooks?.beforeChange ?? []), syncPricing],
     afterChange: [...(defaultCollection?.hooks?.afterChange ?? []), revalidateProduct],
     afterDelete: [...(defaultCollection?.hooks?.afterDelete ?? []), revalidateProductDelete],
   },
@@ -58,6 +58,7 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
     gallery: true,
     priceInINR: true,
     compareAtPrice: true,
+    discountPercent: true,
     showDiscountBadge: true,
     tags: true,
     inventory: true,
@@ -159,15 +160,22 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
               min: 0,
               admin: {
                 description:
-                  'Optional "was" price shown crossed out next to the price on product cards, in paise (e.g. ₹499 = 49900). Leave blank to auto-fill +15% over the price (rounded up to the nearest ₹10) when saved — you can still override it manually at any time.',
+                  'Optional "was" price shown crossed out next to the price on product cards, in paise (e.g. ₹499 = 49900). Leave blank to auto-fill +15% over the price (rounded up to the nearest ₹10) when saved. Linked to Discount % below — editing either one updates the other.',
+                components: {
+                  Field: '@/components/admin/CompareAtPriceField#CompareAtPriceField',
+                },
               },
             },
             {
-              name: 'discountPreview',
-              type: 'ui',
+              name: 'discountPercent',
+              type: 'number',
+              min: 0,
+              max: 99,
               admin: {
+                description:
+                  'The "X% off" badge shown on product cards. Linked to "Was" price above — editing either one updates the other.',
                 components: {
-                  Field: '@/components/admin/DiscountPreview#DiscountPreview',
+                  Field: '@/components/admin/DiscountPercentField#DiscountPercentField',
                 },
               },
             },

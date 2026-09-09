@@ -390,9 +390,13 @@ export interface Product {
   priceInINREnabled?: boolean | null;
   priceInINR?: number | null;
   /**
-   * Optional "was" price shown crossed out next to the price on product cards, in paise (e.g. ₹499 = 49900). Leave blank to auto-fill +15% over the price (rounded up to the nearest ₹10) when saved — you can still override it manually at any time.
+   * Optional "was" price shown crossed out next to the price on product cards, in paise (e.g. ₹499 = 49900). Leave blank to auto-fill +15% over the price (rounded up to the nearest ₹10) when saved. Linked to Discount % below — editing either one updates the other.
    */
   compareAtPrice?: number | null;
+  /**
+   * The "X% off" badge shown on product cards. Linked to "Was" price above — editing either one updates the other.
+   */
+  discountPercent?: number | null;
   /**
    * Show the "X% off" badge on this product's cards. Also gated by the site-wide toggle in Admin → Settings.
    */
@@ -2481,6 +2485,7 @@ export interface ProductsSelect<T extends boolean = true> {
   priceInINREnabled?: T;
   priceInINR?: T;
   compareAtPrice?: T;
+  discountPercent?: T;
   showDiscountBadge?: T;
   composition?: T;
   packing?: T;

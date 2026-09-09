@@ -1,0 +1,18 @@
+@layer payload-default {
+  .linked-pricing-field__input {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: var(--radius-medium, 4px);
+    border: var(--stroke-width-small, 1px) solid var(--color-border, #ccc);
+    background: var(--color-bg, #fff);
+    color: var(--color-text, #000);
+  }
+
+  .linked-pricing-field__hint {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: var(--theme-elevation-500, #666);
+  }
+}

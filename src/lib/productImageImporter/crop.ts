@@ -56,16 +56,27 @@ const WEBP_QUALITY = 86
 // touches pixel content beyond crop/trim/resize — no color, generative, or content changes; fit:
 // 'cover' preserves aspect ratio (crops overflow, never distorts/stretches).
 export async function cropAndOptimize(pagePng: Buffer, box: BoundingBox): Promise<Buffer> {
-  const cropped = sharp(pagePng).extract({
+  const extracted = {
     left: Math.round(box.x),
     top: Math.round(box.y),
     width: Math.round(box.width),
     height: Math.round(box.height),
-  })
+  }
 
-  const trimmed = cropped.trim({ background: '#ffffff', threshold: 12 })
+  // libvips' trim throws "bad extract area" rather than a no-op when it can't find a trimmable
+  // border to compute (e.g. content already touches the crop edges) — that's a legitimate outcome
+  // here, not a real error, so fall back to the untrimmed crop instead of failing the whole page.
+  let trimmedBuffer: Buffer
+  try {
+    trimmedBuffer = await sharp(pagePng)
+      .extract(extracted)
+      .trim({ background: '#ffffff', threshold: 12 })
+      .toBuffer()
+  } catch {
+    trimmedBuffer = await sharp(pagePng).extract(extracted).toBuffer()
+  }
 
-  return trimmed
+  return sharp(trimmedBuffer)
     .resize(OUTPUT_SIZE, OUTPUT_SIZE, { fit: 'cover', position: 'centre' })
     .webp({ quality: WEBP_QUALITY })
     .toBuffer()

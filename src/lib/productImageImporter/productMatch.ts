@@ -60,6 +60,27 @@ const MIN_SUGGESTION_SIMILARITY = 0.55
 // At/above this, a fuzzy (or composition-boosted) match is trusted automatically.
 export const AUTO_MATCH_CONFIDENCE = 0.85
 
+// Two names that differ only in a dosage/strength number (e.g. "Pracpol 250" vs "Pracpol 650")
+// can score above AUTO_MATCH_CONFIDENCE on plain string similarity — one digit out of a dozen
+// characters barely moves the score, but it's a completely different product. Extracted purely
+// for this comparison; doesn't affect the string similarity score itself.
+function numberTokens(input: string): string[] {
+  return input.match(/\d+/g) ?? []
+}
+
+function hasConflictingNumbers(a: string, b: string): boolean {
+  const numsA = numberTokens(a)
+  const numsB = numberTokens(b)
+  if (numsA.length === 0 || numsB.length === 0) return false
+  const setB = new Set(numsB)
+  // Conflicting if neither name's numbers are a subset of the other's — e.g. "250" alone vs "650"
+  // alone conflicts, but "40" vs "40 12.5" doesn't (the shorter name just omitted a second number).
+  const aSubsetOfB = numsA.every((n) => setB.has(n))
+  const setA = new Set(numsA)
+  const bSubsetOfA = numsB.every((n) => setA.has(n))
+  return !aSubsetOfB && !bSubsetOfA
+}
+
 export function matchProduct(
   detected: { name: string; composition?: string | null },
   candidates: MatchCandidate[],
@@ -99,8 +120,17 @@ export function matchProduct(
     return { product: null, confidence: best?.score ?? 0, method: 'none' }
   }
 
-  if (best.score >= AUTO_MATCH_CONFIDENCE) {
+  const conflictingNumbers = hasConflictingNumbers(normDetected, normalizeName(best.candidate.title))
+
+  if (best.score >= AUTO_MATCH_CONFIDENCE && !conflictingNumbers) {
     return { product: best.candidate, confidence: best.score, method: 'fuzzy' }
+  }
+
+  // High string similarity but a conflicting strength/dosage number — never auto-apply, even if
+  // composition also happens to look similar (formulations at different strengths often share
+  // most of their composition text). Still surfaced as a suggestion for manual review.
+  if (conflictingNumbers) {
+    return { product: best.candidate, confidence: Math.min(best.score, AUTO_MATCH_CONFIDENCE - 0.01), method: 'none' }
   }
 
   if (detected.composition && best.candidate.composition) {

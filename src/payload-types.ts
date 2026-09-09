@@ -203,10 +203,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    settings: Setting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    settings: SettingsSelect<false> | SettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -391,6 +393,10 @@ export interface Product {
    * Optional "was" price shown crossed out next to the price on product cards, in paise (e.g. ₹499 = 49900). Leave blank to auto-fill +15% over the price (rounded up to the nearest ₹10) when saved — you can still override it manually at any time.
    */
   compareAtPrice?: number | null;
+  /**
+   * Show the "X% off" badge on this product's cards. Also gated by the site-wide toggle in Admin → Settings.
+   */
+  showDiscountBadge?: boolean | null;
   /**
    * Active ingredient / salt composition, e.g. "DAPAGLIFLOZIN 5 MG"
    */
@@ -2475,6 +2481,7 @@ export interface ProductsSelect<T extends boolean = true> {
   priceInINREnabled?: T;
   priceInINR?: T;
   compareAtPrice?: T;
+  showDiscountBadge?: T;
   composition?: T;
   packing?: T;
   packType?: T;
@@ -2741,6 +2748,19 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: number;
+  /**
+   * Show the "X% off" badge on product cards site-wide. Uncheck to hide it everywhere, even on products that have their own discount badge enabled below.
+   */
+  enableDiscountBadges?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -2804,6 +2824,16 @@ export interface FooterSelect<T extends boolean = true> {
         id?: T;
       };
   copyrightName?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  enableDiscountBadges?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

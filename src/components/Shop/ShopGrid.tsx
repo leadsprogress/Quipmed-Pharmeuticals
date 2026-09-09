@@ -6,7 +6,10 @@ import React, { useLayoutEffect, useRef } from 'react'
 import type { Product } from '@/payload-types'
 import { FlipProductCard } from './FlipProductCard'
 
-export const ShopGrid: React.FC<{ products: Partial<Product>[] }> = ({ products }) => {
+export const ShopGrid: React.FC<{ products: Partial<Product>[]; discountBadgesEnabled?: boolean }> = ({
+  products,
+  discountBadgesEnabled = true,
+}) => {
   const ref = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
@@ -27,7 +30,7 @@ export const ShopGrid: React.FC<{ products: Partial<Product>[] }> = ({ products 
   return (
     <div ref={ref} className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
       {products.map((product) => (
-        <FlipProductCard key={product.id} product={product} />
+        <FlipProductCard key={product.id} product={product} discountBadgesEnabled={discountBadgesEnabled} />
       ))}
     </div>
   )

@@ -2,6 +2,7 @@ import { ShopGrid } from '@/components/Shop/ShopGrid'
 import { ShopPagination } from '@/components/Shop/ShopPagination'
 import { FilterItemDropdown } from '@/components/layout/search/filter/FilterItemDropdown'
 import { sorting } from '@/lib/constants'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getCachedProducts } from '@/utilities/getCachedProducts'
 import React, { Suspense } from 'react'
 
@@ -27,12 +28,17 @@ export default async function ShopPage({ searchParams }: Props) {
   const sortValue = typeof sort === 'string' ? sort : undefined
   const searchValueString = typeof searchValue === 'string' ? searchValue : undefined
 
-  const products = await getCachedProducts({
-    category,
-    page,
-    searchValue: searchValueString,
-    sort: sortValue,
-  })
+  const [products, settings] = await Promise.all([
+    getCachedProducts({
+      category,
+      page,
+      searchValue: searchValueString,
+      sort: sortValue,
+    }),
+    getCachedGlobal('settings', 0)(),
+  ])
+
+  const discountBadgesEnabled = settings?.enableDiscountBadges !== false
 
   const resultsText = products.totalDocs > 1 ? 'results' : 'result'
 
@@ -59,7 +65,9 @@ export default async function ShopPage({ searchParams }: Props) {
         <p className="mb-4">No products found. Please try different filters.</p>
       )}
 
-      {products?.docs.length > 0 ? <ShopGrid products={products.docs} /> : null}
+      {products?.docs.length > 0 ? (
+        <ShopGrid products={products.docs} discountBadgesEnabled={discountBadgesEnabled} />
+      ) : null}
 
       <ShopPagination
         currentParams={{

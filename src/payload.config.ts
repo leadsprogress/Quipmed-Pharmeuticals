@@ -34,6 +34,7 @@ import { customerSearchEndpoints } from '@/endpoints/customerSearch'
 import { productImageImporterEndpoints } from '@/endpoints/productImageImporter'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
+import { Settings } from '@/globals/Settings'
 import { plugins } from './plugins'
 
 const filename = fileURLToPath(import.meta.url)
@@ -108,7 +109,7 @@ export default buildConfig({
     },
   }),
   //email: nodemailerAdapter(),
-  globals: [Header, Footer],
+  globals: [Header, Footer, Settings],
   plugins,
   secret: process.env.PAYLOAD_SECRET || '',
   storage: [

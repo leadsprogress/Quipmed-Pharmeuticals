@@ -58,6 +58,7 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
     gallery: true,
     priceInINR: true,
     compareAtPrice: true,
+    showDiscountBadge: true,
     tags: true,
     inventory: true,
     meta: true,
@@ -159,6 +160,24 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
               admin: {
                 description:
                   'Optional "was" price shown crossed out next to the price on product cards, in paise (e.g. ₹499 = 49900). Leave blank to auto-fill +15% over the price (rounded up to the nearest ₹10) when saved — you can still override it manually at any time.',
+              },
+            },
+            {
+              name: 'discountPreview',
+              type: 'ui',
+              admin: {
+                components: {
+                  Field: '@/components/admin/DiscountPreview#DiscountPreview',
+                },
+              },
+            },
+            {
+              name: 'showDiscountBadge',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description:
+                  'Show the "X% off" badge on this product\'s cards. Also gated by the site-wide toggle in Admin → Settings.',
               },
             },
             {

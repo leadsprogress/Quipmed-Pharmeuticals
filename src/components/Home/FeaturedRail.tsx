@@ -10,10 +10,11 @@ import { ProductRailCard } from './ProductRailCard'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export const FeaturedRail: React.FC<{ heading: string; products: Product[] }> = ({
-  heading,
-  products,
-}) => {
+export const FeaturedRail: React.FC<{
+  heading: string
+  products: Product[]
+  discountBadgesEnabled?: boolean
+}> = ({ heading, products, discountBadgesEnabled = true }) => {
   const sectionRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const blobARef = useRef<HTMLDivElement>(null)
@@ -262,7 +263,7 @@ export const FeaturedRail: React.FC<{ heading: string; products: Product[] }> = 
           >
             {products.map((product) => (
               <div key={product.id} className="snap-start">
-                <ProductRailCard product={product} />
+                <ProductRailCard product={product} discountBadgesEnabled={discountBadgesEnabled} />
               </div>
             ))}
             {/* Trailing spacer so the last card can scroll fully clear of the edge fade. */}

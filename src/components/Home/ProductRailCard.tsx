@@ -3,17 +3,21 @@ import React from 'react'
 
 import { Media } from '@/components/Media'
 import { Price } from '@/components/Price'
+import { DiscountBadge } from '@/components/product/DiscountBadge'
 import { ProductBadges } from '@/components/product/ProductBadges'
 import type { Product } from '@/payload-types'
+import { getDiscountPercent } from '@/utilities/getDiscountPercent'
 
-export const ProductRailCard: React.FC<{ product: Product; fixedWidth?: boolean }> = ({
-  product,
-  fixedWidth = true,
-}) => {
+export const ProductRailCard: React.FC<{
+  product: Product
+  fixedWidth?: boolean
+  discountBadgesEnabled?: boolean
+}> = ({ product, fixedWidth = true, discountBadgesEnabled = true }) => {
   const galleryImage =
     product.gallery?.[0]?.image && typeof product.gallery[0].image === 'object'
       ? product.gallery[0].image
       : null
+  const discountPercent = getDiscountPercent(product, discountBadgesEnabled)
 
   return (
     <Link
@@ -25,6 +29,7 @@ export const ProductRailCard: React.FC<{ product: Product; fixedWidth?: boolean 
     >
       <div className="relative aspect-square w-full overflow-hidden bg-muted">
         <ProductBadges tags={product.tags} />
+        <DiscountBadge percent={discountPercent} />
         {galleryImage ? (
           <Media
             resource={galleryImage}

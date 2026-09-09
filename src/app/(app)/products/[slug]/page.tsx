@@ -5,6 +5,7 @@ import { Gallery } from '@/components/product/Gallery'
 import { ProductDescription } from '@/components/product/ProductDescription'
 import { StickyAddToCartBar } from '@/components/product/StickyAddToCartBar'
 import { TiltCard } from '@/components/product/TiltCard'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
@@ -109,6 +110,8 @@ export default async function ProductPage({ params }: Args) {
 
   const relatedProducts =
     product.relatedProducts?.filter((relatedProduct) => typeof relatedProduct === 'object') ?? []
+  const settings = await getCachedGlobal('settings', 0)()
+  const discountBadgesEnabled = settings?.enableDiscountBadges !== false
 
   return (
     <React.Fragment>
@@ -163,7 +166,10 @@ export default async function ProductPage({ params }: Args) {
 
       {relatedProducts.length ? (
         <div className="container">
-          <RelatedProducts products={relatedProducts as Product[]} />
+          <RelatedProducts
+            products={relatedProducts as Product[]}
+            discountBadgesEnabled={discountBadgesEnabled}
+          />
         </div>
       ) : (
         <></>
@@ -172,7 +178,13 @@ export default async function ProductPage({ params }: Args) {
   )
 }
 
-function RelatedProducts({ products }: { products: Product[] }) {
+function RelatedProducts({
+  products,
+  discountBadgesEnabled,
+}: {
+  products: Product[]
+  discountBadgesEnabled: boolean
+}) {
   if (!products.length) return null
 
   return (
@@ -180,7 +192,7 @@ function RelatedProducts({ products }: { products: Product[] }) {
       <h2 className="mb-4 text-xl font-bold sm:text-2xl">Related Products</h2>
       <div className="flex w-full gap-4 overflow-x-auto pb-2 pt-1">
         {products.map((product) => (
-          <TiltCard key={product.id} product={product} />
+          <TiltCard key={product.id} product={product} discountBadgesEnabled={discountBadgesEnabled} />
         ))}
       </div>
     </div>

@@ -5,6 +5,7 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 import { FeaturedRail } from '@/components/Home/FeaturedRail'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 
 export const FeaturedRailBlockComponent: React.FC<
   FeaturedRailBlockProps & {
@@ -30,5 +31,8 @@ export const FeaturedRailBlockComponent: React.FC<
     products = result.docs
   }
 
-  return <FeaturedRail heading={heading} products={products} />
+  const settings = await getCachedGlobal('settings', 0)()
+  const discountBadgesEnabled = settings?.enableDiscountBadges !== false
+
+  return <FeaturedRail heading={heading} products={products} discountBadgesEnabled={discountBadgesEnabled} />
 }

@@ -7,12 +7,18 @@ import React, { useRef } from 'react'
 import type { Media as MediaType, Product } from '@/payload-types'
 import { Media } from '@/components/Media'
 import { Price } from '@/components/Price'
+import { DiscountBadge } from '@/components/product/DiscountBadge'
 import { ProductBadges } from '@/components/product/ProductBadges'
+import { getDiscountPercent } from '@/utilities/getDiscountPercent'
 
-export const TiltCard: React.FC<{ product: Product }> = ({ product }) => {
+export const TiltCard: React.FC<{ product: Product; discountBadgesEnabled?: boolean }> = ({
+  product,
+  discountBadgesEnabled = true,
+}) => {
   const cardRef = useRef<HTMLDivElement>(null)
   const image =
     typeof product.meta?.image === 'object' && product.meta.image ? (product.meta.image as MediaType) : null
+  const discountPercent = getDiscountPercent(product, discountBadgesEnabled)
 
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const card = cardRef.current
@@ -49,6 +55,7 @@ export const TiltCard: React.FC<{ product: Product }> = ({ product }) => {
       >
         <div className="relative flex flex-1 items-center justify-center bg-primary-foreground text-muted-foreground">
           <ProductBadges tags={product.tags} />
+          <DiscountBadge percent={discountPercent} />
           {image ? (
             <Media resource={image} fill imgClassName="object-cover" />
           ) : (

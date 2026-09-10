@@ -65,7 +65,7 @@ export const CategoryShowcaseClient: React.FC<Props> = ({ heading, subheading, c
     <section className="container pb-16 pt-4" ref={sectionRef}>
       <div data-category-heading className="mb-10 text-center">
         {heading && (
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">{heading}</h2>
+          <h2 className="text-xl font-semibold tracking-tight sm:text-3xl md:text-4xl">{heading}</h2>
         )}
         {subheading && (
           <p className="mt-3 text-sm text-muted-foreground sm:text-base">{subheading}</p>

@@ -108,7 +108,7 @@ export const HealthAndVisit: React.FC<Props> = ({
   return (
     <div ref={ref}>
       <div className="container py-8 md:py-16">
-        <h2 className="mb-8 font-display text-2xl font-semibold tracking-tight md:text-3xl">
+        <h2 className="mb-8 font-display text-xl font-semibold tracking-tight md:text-3xl">
           {guidesHeading || 'Health & Wellness Guides'}
         </h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -170,7 +170,7 @@ export const HealthAndVisit: React.FC<Props> = ({
           className="grid gap-8 rounded-3xl bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4 md:grid-cols-2 md:p-12"
         >
           <div>
-            <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
+            <h2 className="font-display text-xl font-semibold tracking-tight md:text-3xl">
               {visitHeading || 'Visit Us'}
             </h2>
             <p className="mt-3 max-w-md text-muted-foreground">

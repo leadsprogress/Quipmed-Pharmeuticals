@@ -213,7 +213,7 @@ export const FeaturedRail: React.FC<{
 
       <div className="container relative">
         <div className="mb-8 flex items-end justify-between gap-4">
-          <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
+          <h2 className="font-display text-xl font-semibold tracking-tight md:text-3xl">
             {heading}
           </h2>
 

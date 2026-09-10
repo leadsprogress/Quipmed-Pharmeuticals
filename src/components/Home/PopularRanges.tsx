@@ -38,13 +38,13 @@ export const PopularRanges: React.FC<Props> = ({ heading, subheading, ranges }) 
   return (
     <div className="container py-8 md:py-16">
       <div className="mb-10 text-center">
-        <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
+        <h2 className="font-display text-xl font-semibold tracking-tight md:text-3xl">
           {heading || 'Popular Ranges'}
         </h2>
         {subheading ? <p className="mt-2 text-muted-foreground">{subheading}</p> : null}
       </div>
 
-      <div className="mb-10 flex flex-wrap justify-center gap-6 sm:gap-10">
+      <div className="mb-10 grid grid-cols-3 justify-items-center gap-2 sm:flex sm:flex-wrap sm:justify-center sm:gap-10">
         {nonEmptyRanges.map((range, i) => {
           const isActive = i === activeIndex
           return (
@@ -56,7 +56,7 @@ export const PopularRanges: React.FC<Props> = ({ heading, subheading, ranges }) 
               className="flex flex-col items-center gap-2"
             >
               <span
-                className={`flex h-16 w-16 items-center justify-center rounded-full border-2 bg-muted transition-colors sm:h-20 sm:w-20 ${
+                className={`flex h-14 w-14 items-center justify-center rounded-full border-2 bg-muted transition-colors sm:h-20 sm:w-20 ${
                   isActive ? 'border-primary' : 'border-transparent'
                 }`}
               >
@@ -69,7 +69,7 @@ export const PopularRanges: React.FC<Props> = ({ heading, subheading, ranges }) 
                 </span>
               </span>
               <span
-                className={`text-sm font-medium transition-colors ${
+                className={`text-center text-xs font-medium transition-colors sm:text-sm ${
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >

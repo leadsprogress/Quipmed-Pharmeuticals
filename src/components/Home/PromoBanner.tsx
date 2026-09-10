@@ -30,10 +30,10 @@ export const PromoBanner: React.FC<Props> = ({ eyebrow, heading, body, image }) 
         <span className="inline-block rounded-full bg-background/15 px-4 py-1 text-xs font-semibold">
           {eyebrow || 'Refills made simple'}
         </span>
-        <h2 className="mt-4 font-display text-3xl font-bold md:text-4xl">
+        <h2 className="mt-4 font-display text-xl font-bold md:text-4xl">
           {heading || 'Never Run Out Of Your Regular Order'}
         </h2>
-        <p className="mt-4 text-background/80">
+        <p className="mt-4 text-sm text-background/80 md:text-base">
           {body ||
             'Keep an eye on your regular medicines — our pharmacists are on hand whenever you need a refill, no re-explaining required.'}
         </p>

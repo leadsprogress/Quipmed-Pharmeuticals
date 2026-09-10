@@ -43,7 +43,7 @@ export const SectionBackdrop: React.FC<{
         side === 'right' ? 'right-0 translate-x-1/4' : 'left-0 -translate-x-1/4'
       } ${className}`}
     >
-      <i className={`fa-solid ${icon} text-[24rem] text-primary/10`} />
+      <i className={`fa-solid ${icon} text-[10rem] text-primary/10 md:text-[24rem]`} />
     </div>
   )
 }

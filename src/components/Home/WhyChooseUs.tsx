@@ -85,23 +85,23 @@ export const WhyChooseUs: React.FC<Props> = ({ heading, rows }) => {
   }, [])
 
   return (
-    <div className="container py-8 md:py-16" ref={sectionRef}>
-      <h2 className="mb-12 font-display text-2xl font-semibold tracking-tight md:text-3xl">
+    <div className="container py-6 md:py-16" ref={sectionRef}>
+      <h2 className="mb-6 font-display text-xl font-semibold tracking-tight md:mb-12 md:text-3xl">
         {heading || 'Why Choose Amulya Medicals'}
       </h2>
-      <div className="space-y-10 md:space-y-20">
+      <div className="space-y-6 md:space-y-20">
         {ROWS.map((row, i) => (
           <div
             data-why-row
             key={row.title}
-            className={`relative grid items-center gap-8 overflow-hidden md:grid-cols-2 ${i % 2 === 1 ? 'md:[direction:rtl]' : ''}`}
+            className={`relative grid items-center gap-3 overflow-hidden md:grid-cols-2 md:gap-8 ${i % 2 === 1 ? 'md:[direction:rtl]' : ''}`}
           >
             <SectionBackdrop icon={row.icon || 'fa-capsules'} side={i % 2 === 1 ? 'left' : 'right'} />
-            <div data-why-image className="relative overflow-hidden rounded-3xl [direction:ltr]">
+            <div data-why-image className="relative overflow-hidden rounded-2xl [direction:ltr] md:rounded-3xl">
               {row.image && typeof row.image === 'object' ? (
                 <Media
                   resource={row.image}
-                  imgClassName="h-80 w-full scale-110 object-cover"
+                  imgClassName="h-36 w-full scale-110 object-cover md:h-80"
                   width={800}
                   height={600}
                 />
@@ -112,13 +112,13 @@ export const WhyChooseUs: React.FC<Props> = ({ heading, rows }) => {
                   alt={row.title}
                   width={800}
                   height={600}
-                  className="h-80 w-full scale-110 object-cover"
+                  className="h-36 w-full scale-110 object-cover md:h-80"
                 />
               )}
             </div>
             <div data-why-copy className="relative [direction:ltr]">
-              <h3 className="font-display text-xl font-semibold md:text-2xl">{row.title}</h3>
-              <p className="mt-3 text-muted-foreground">{row.body}</p>
+              <h3 className="font-display text-base font-semibold md:text-2xl">{row.title}</h3>
+              <p className="mt-1 text-sm text-muted-foreground md:mt-3 md:text-base">{row.body}</p>
             </div>
           </div>
         ))}

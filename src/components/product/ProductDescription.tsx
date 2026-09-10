@@ -9,6 +9,7 @@ import React, { Suspense } from 'react'
 import { VariantSelector } from './VariantSelector'
 import { useCurrency } from '@payloadcms/plugin-ecommerce/client/react'
 import { StockIndicator } from '@/components/product/StockIndicator'
+import { ProductBadges } from '@/components/product/ProductBadges'
 
 export function ProductDescription({
   product,
@@ -62,6 +63,7 @@ export function ProductDescription({
 
   return (
     <div className="flex flex-col gap-6">
+      <ProductBadges tags={product.tags} variant="inline" />
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <h1 className="text-lg font-medium sm:text-xl md:text-2xl">{product.title}</h1>
         <div className="flex items-center gap-2 uppercase font-mono">

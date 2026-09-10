@@ -29,7 +29,9 @@ export const ThreeItemGridItem: React.FC<Props> = ({ item, size }) => {
             position: size === 'full' ? 'center' : 'bottom',
             title: item.title,
           }}
-          media={item.meta?.image}
+          media={
+            typeof item.gallery?.[0]?.image === 'object' ? item.gallery[0].image : item.meta?.image
+          }
         />
       </Link>
     </div>

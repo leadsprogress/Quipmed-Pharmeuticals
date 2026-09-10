@@ -16,8 +16,11 @@ export const TiltCard: React.FC<{ product: Product; discountBadgesEnabled?: bool
   discountBadgesEnabled = true,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null)
-  const image =
+  const galleryImage =
+    typeof product.gallery?.[0]?.image === 'object' ? (product.gallery[0].image as MediaType) : null
+  const metaImage =
     typeof product.meta?.image === 'object' && product.meta.image ? (product.meta.image as MediaType) : null
+  const image = galleryImage || metaImage
   const discountPercent = getDiscountPercent(product, discountBadgesEnabled)
 
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {

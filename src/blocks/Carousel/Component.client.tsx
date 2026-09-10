@@ -38,7 +38,11 @@ export const CarouselClient: React.FC<{ products: Product[] }> = async ({ produc
                   amount: product.priceInINR!,
                   title: product.title,
                 }}
-                media={product.meta?.image}
+                media={
+                  typeof product.gallery?.[0]?.image === 'object'
+                    ? product.gallery[0].image
+                    : product.meta?.image
+                }
               />
             </Link>
           </CarouselItem>

@@ -9,9 +9,10 @@ type GetProductsArgs = {
   page: number
   searchValue?: string
   sort?: string
+  tag?: string
 }
 
-async function findProducts({ category, page, searchValue, sort }: GetProductsArgs) {
+async function findProducts({ category, page, searchValue, sort, tag }: GetProductsArgs) {
   const payload = await getPayload({ config: configPromise })
 
   return payload.find({
@@ -33,7 +34,7 @@ async function findProducts({ category, page, searchValue, sort }: GetProductsAr
       packing: true,
     },
     sort: sort || 'title',
-    ...(searchValue || category
+    ...(searchValue || category || tag
       ? {
           where: {
             and: [
@@ -67,6 +68,15 @@ async function findProducts({ category, page, searchValue, sort }: GetProductsAr
                     {
                       categories: {
                         contains: category,
+                      },
+                    },
+                  ]
+                : []),
+              ...(tag
+                ? [
+                    {
+                      tags: {
+                        contains: tag,
                       },
                     },
                   ]

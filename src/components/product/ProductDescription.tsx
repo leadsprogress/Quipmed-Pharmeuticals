@@ -10,7 +10,13 @@ import { VariantSelector } from './VariantSelector'
 import { useCurrency } from '@payloadcms/plugin-ecommerce/client/react'
 import { StockIndicator } from '@/components/product/StockIndicator'
 
-export function ProductDescription({ product }: { product: Product }) {
+export function ProductDescription({
+  product,
+  discountPercent,
+}: {
+  product: Product
+  discountPercent?: number | null
+}) {
   const { currency } = useCurrency()
   let amount = 0,
     lowestAmount = 0,
@@ -51,16 +57,24 @@ export function ProductDescription({ product }: { product: Product }) {
     amount = product[priceField]
   }
 
+  const compareAtAmount =
+    !hasVariants && currency.code === 'INR' ? product.compareAtPrice : undefined
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <h1 className="text-lg font-medium sm:text-xl md:text-2xl">{product.title}</h1>
-        <div className="uppercase font-mono">
+        <div className="flex items-center gap-2 uppercase font-mono">
           {hasVariants ? (
             <Price highestAmount={highestAmount} lowestAmount={lowestAmount} />
           ) : (
-            <Price amount={amount} />
+            <Price amount={amount} compareAtAmount={compareAtAmount} />
           )}
+          {discountPercent ? (
+            <span className="rounded-full bg-destructive px-2 py-0.5 text-[11px] font-semibold normal-case text-destructive-foreground">
+              {discountPercent}% OFF
+            </span>
+          ) : null}
         </div>
       </div>
       {product.description ? (

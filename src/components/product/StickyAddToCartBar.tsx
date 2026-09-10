@@ -48,7 +48,7 @@ export const StickyAddToCartBar: React.FC<{
           <Price amount={price} className="text-sm font-bold text-primary" />
         </div>
         <div className="shrink-0">
-          <AddToCart product={product} />
+          <AddToCart product={product} compact />
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { ProductDescription } from '@/components/product/ProductDescription'
 import { StickyAddToCartBar } from '@/components/product/StickyAddToCartBar'
 import { TiltCard } from '@/components/product/TiltCard'
 import { getCachedGlobal } from '@/utilities/getGlobals'
+import { getDiscountPercent } from '@/utilities/getDiscountPercent'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
@@ -112,6 +113,7 @@ export default async function ProductPage({ params }: Args) {
     product.relatedProducts?.filter((relatedProduct) => typeof relatedProduct === 'object') ?? []
   const settings = await getCachedGlobal('settings', 0)()
   const discountBadgesEnabled = settings?.enableDiscountBadges !== false
+  const discountPercent = getDiscountPercent(product, discountBadgesEnabled)
 
   return (
     <React.Fragment>
@@ -153,7 +155,7 @@ export default async function ProductPage({ params }: Args) {
           </div>
 
           <div className="basis-full lg:basis-1/2">
-            <ProductDescription product={product} />
+            <ProductDescription product={product} discountPercent={discountPercent} />
           </div>
         </div>
       </div>

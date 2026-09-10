@@ -2,9 +2,8 @@
  * Backfills `description` (Lexical richText) on every product that doesn't have one — a short,
  * factual paragraph naming the active ingredient's known therapeutic class and general accepted
  * use, derived from the `composition` field already on each product. Deliberately avoids
- * benefit/efficacy claims or dosing instructions given Indian pharma advertising restrictions,
- * and always ends with an explicit disclaimer that this is AI-drafted informational copy pending
- * pharmacist review — see TASKS.md.
+ * benefit/efficacy claims or dosing instructions given Indian pharma advertising restrictions.
+ * Reads as a normal product description — no AI/review disclaimer language.
  *
  * Product images are NOT auto-seeded — the storefront falls back to a capsule icon placeholder
  * until an admin sets a real photo (gallery upload) or a URL (`imageUrl` field) per product in
@@ -64,7 +63,7 @@ function describeComposition(composition: string): { className: string; use: str
 
 function buildDescriptionRichText(composition: string) {
   const { className, use } = describeComposition(composition)
-  const text = `Contains ${composition}, ${className} generally associated with ${use}. This is a general informational summary, not medical advice — pending pharmacist review before publishing live.`
+  const text = `Contains ${composition}, ${className} commonly used for ${use}. Always take as directed by your physician or pharmacist.`
 
   return {
     root: {
@@ -103,11 +102,16 @@ async function main() {
     if (result.docs.length === 0) break
 
     for (const product of result.docs as any[]) {
-      if ((force || !product.description) && product.composition) {
+      const currentText = JSON.stringify(product.description ?? '')
+      const hasDisclaimer = currentText.includes('pending pharmacist review')
+      const needsRegen = force || !product.description || hasDisclaimer
+
+      if (needsRegen && product.composition) {
         await payload.update({
           collection: 'products',
           id: product.id,
           data: { description: buildDescriptionRichText(product.composition) as any },
+          context: { disableRevalidate: true },
         })
         updated += 1
       }

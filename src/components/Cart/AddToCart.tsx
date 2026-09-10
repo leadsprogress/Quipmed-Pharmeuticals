@@ -5,16 +5,20 @@ import type { Product, Variant } from '@/payload-types'
 
 import { useCart } from '@payloadcms/plugin-ecommerce/client/react'
 import clsx from 'clsx'
-import { useSearchParams } from 'next/navigation'
-import React, { useCallback, useMemo } from 'react'
+import { ShoppingCart, Zap } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 type Props = {
   product: Product
+  compact?: boolean
 }
 
-export function AddToCart({ product }: Props) {
+export function AddToCart({ product, compact = false }: Props) {
   const { addItem, cart, isLoading } = useCart()
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const [isBuyingNow, setIsBuyingNow] = useState(false)
 
   const variants = product.variants?.docs || []
 
@@ -49,6 +53,25 @@ export function AddToCart({ product }: Props) {
       })
     },
     [addItem, product, selectedVariant],
+  )
+
+  const buyNow = useCallback(
+    (e: React.FormEvent<HTMLButtonElement>) => {
+      e.preventDefault()
+      setIsBuyingNow(true)
+
+      addItem({
+        product: product.id,
+        variant: selectedVariant?.id ?? undefined,
+      })
+        .then(() => {
+          router.push('/checkout')
+        })
+        .finally(() => {
+          setIsBuyingNow(false)
+        })
+    },
+    [addItem, product, selectedVariant, router],
   )
 
   const disabled = useMemo<boolean>(() => {
@@ -95,17 +118,33 @@ export function AddToCart({ product }: Props) {
   }, [selectedVariant, cart?.items, product])
 
   return (
-    <Button
-      aria-label="Add to cart"
-      variant={'outline'}
-      className={clsx({
-        'hover:opacity-90': true,
-      })}
-      disabled={disabled || isLoading}
-      onClick={addToCart}
-      type="submit"
-    >
-      Add To Cart
-    </Button>
+    <div className="flex items-center gap-2">
+      <Button
+        aria-label="Add to cart"
+        variant={'outline'}
+        size={compact ? 'sm' : 'default'}
+        className={clsx('gap-2', {
+          'hover:opacity-90': true,
+        })}
+        disabled={disabled || isLoading}
+        onClick={addToCart}
+        type="submit"
+      >
+        <ShoppingCart className="size-4" />
+        <span className={compact ? 'hidden sm:inline' : undefined}>Add To Cart</span>
+      </Button>
+      <Button
+        aria-label="Buy now"
+        variant={'default'}
+        size={compact ? 'sm' : 'default'}
+        className="gap-2 hover:opacity-90"
+        disabled={disabled || isLoading || isBuyingNow}
+        onClick={buyNow}
+        type="submit"
+      >
+        <Zap className="size-4" />
+        <span className={compact ? 'hidden sm:inline' : undefined}>Buy Now</span>
+      </Button>
+    </div>
   )
 }

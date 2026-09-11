@@ -33,6 +33,14 @@ export function CartModal() {
     setIsOpen(false)
   }, [pathname])
 
+  useEffect(() => {
+    // Lets the "Cart" entry in the search bar's page results open this drawer without a route to
+    // link to (the cart is a slide-over, not a real page) or prop-drilling through the header.
+    const handleOpenCart = () => setIsOpen(true)
+    window.addEventListener('open-cart', handleOpenCart)
+    return () => window.removeEventListener('open-cart', handleOpenCart)
+  }, [])
+
   const totalQuantity = useMemo(() => {
     if (!cart || !cart.items || !cart.items.length) return undefined
     return cart.items.reduce((quantity, item) => (item.quantity || 0) + quantity, 0)

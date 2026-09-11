@@ -3,7 +3,14 @@
 import { cn } from '@/utilities/cn'
 import { createUrl } from '@/utilities/createUrl'
 import { gsap } from 'gsap'
-import { HistoryIcon, Loader2Icon, SearchIcon, ShoppingCartIcon, XIcon } from 'lucide-react'
+import {
+  CheckIcon,
+  HistoryIcon,
+  Loader2Icon,
+  SearchIcon,
+  ShoppingCartIcon,
+  XIcon,
+} from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
@@ -39,10 +46,65 @@ const formatPrice = (amount?: number | null) => {
   }).format(amount / 100)
 }
 
+// Tracks its own "added N" count for this dropdown session — it's a quick-add convenience, not a
+// live readout of the cart's actual quantity for this product.
+const SearchAddToCartButton: React.FC<{ product: Product }> = ({ product }) => {
+  const { addItem } = useCart()
+  const [addedCount, setAddedCount] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const onClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsLoading(true)
+    addItem({ product: product.id })
+      .then(() => {
+        setAddedCount((count) => count + 1)
+        toast.success(`${product.title} added to cart.`)
+      })
+      .catch(() => {
+        toast.error('Could not add that to your cart.')
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={isLoading}
+      className={cn(
+        'flex shrink-0 cursor-pointer items-center gap-1 self-end rounded-full px-3 py-1 text-xs font-semibold transition-all duration-150 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70',
+        addedCount > 0
+          ? 'bg-primary/15 text-primary'
+          : 'bg-primary text-primary-foreground hover:bg-primary/90',
+      )}
+    >
+      {isLoading ? (
+        <>
+          <Loader2Icon className="h-3 w-3 animate-spin" />
+          Adding...
+        </>
+      ) : addedCount > 0 ? (
+        <>
+          <CheckIcon className="h-3 w-3" />
+          {`Added ${addedCount}`}
+        </>
+      ) : (
+        <>
+          <ShoppingCartIcon className="h-3 w-3" />
+          Add to Cart
+        </>
+      )}
+    </button>
+  )
+}
+
 export const Search: React.FC<Props> = ({ className, placeholder = 'Search for products...' }) => {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { addItem } = useCart()
 
   const [value, setValue] = useState(searchParams?.get('q') || '')
   const [results, setResults] = useState<Product[]>([])
@@ -158,18 +220,6 @@ export const Search: React.FC<Props> = ({ className, placeholder = 'Search for p
   const onSelectProduct = (query: string) => {
     if (query) setRecentSearches(addRecentSearch(query))
     setIsOpen(false)
-  }
-
-  const onAddToCart = (e: React.MouseEvent, product: Product) => {
-    e.preventDefault()
-    e.stopPropagation()
-    addItem({ product: product.id })
-      .then(() => {
-        toast.success(`${product.title} added to cart.`)
-      })
-      .catch(() => {
-        toast.error('Could not add that to your cart.')
-      })
   }
 
   const onSelectPage = (page: PageResult) => {
@@ -396,14 +446,7 @@ export const Search: React.FC<Props> = ({ className, placeholder = 'Search for p
                                 ) : null}
                               </div>
                             </Link>
-                            <button
-                              type="button"
-                              onClick={(e) => onAddToCart(e, product)}
-                              className="flex items-center gap-1 self-end rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-                            >
-                              <ShoppingCartIcon className="h-3 w-3" />
-                              Add to Cart
-                            </button>
+                            <SearchAddToCartButton product={product} />
                           </div>
                         </li>
                       )

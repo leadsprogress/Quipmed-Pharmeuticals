@@ -213,6 +213,32 @@
   body {
     @apply bg-background text-foreground min-h-[100vh] flex flex-col;
   }
+
+  /* Browsers (and Tailwind's preflight) default <button> to cursor:default, not pointer, so every
+     clickable element needs it set explicitly rather than relying on per-component classes. */
+  button:not(:disabled),
+  a,
+  label,
+  select,
+  summary,
+  [role='button']:not([aria-disabled='true']),
+  [role='tab'],
+  [role='switch'],
+  [role='checkbox'],
+  [role='radio'],
+  [data-cursor-hover],
+  input[type='button'],
+  input[type='submit'],
+  input[type='checkbox'],
+  input[type='radio'] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled='true'],
+  input:disabled {
+    cursor: not-allowed;
+  }
 }
 
 html {

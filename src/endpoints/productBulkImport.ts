@@ -21,7 +21,15 @@ const sampleEndpoint: Endpoint = {
   handler: async (req) => {
     if (!requireAdmin(req)) return forbidden()
 
-    const buffer = generateSampleWorkbook()
+    const [categories, tags] = await Promise.all([
+      req.payload.find({ collection: 'categories', limit: 0, sort: 'title', select: { title: true } }),
+      req.payload.find({ collection: 'product-tags', limit: 0, sort: 'label', select: { label: true } }),
+    ])
+
+    const buffer = await generateSampleWorkbook({
+      categoryTitles: categories.docs.map((c) => c.title),
+      tagLabels: tags.docs.map((t) => t.label),
+    })
     return new Response(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

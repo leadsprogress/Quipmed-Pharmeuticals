@@ -6,13 +6,21 @@ import React from 'react'
 
 import { checkRole } from '@/access/utilities'
 import type { User } from '@/payload-types'
+import { PACK_TYPE_OPTIONS } from '@/lib/productBulkImport/schema'
 import { ProductBulkImporterApp } from './App'
 import './index.css'
 
-export const ProductBulkImporterView: React.FC<AdminViewServerProps> = (props) => {
+export const ProductBulkImporterView: React.FC<AdminViewServerProps> = async (props) => {
   const { initPageResult, params, searchParams } = props
   const { req, visibleEntities } = initPageResult
   const isAdmin = checkRole(['admin'], req.user as User | undefined)
+
+  const [categories, tags] = isAdmin
+    ? await Promise.all([
+        req.payload.find({ collection: 'categories', limit: 0, sort: 'title', select: { title: true } }),
+        req.payload.find({ collection: 'product-tags', limit: 0, sort: 'label', select: { label: true } }),
+      ])
+    : [null, null]
 
   return (
     <DefaultTemplate
@@ -27,12 +35,16 @@ export const ProductBulkImporterView: React.FC<AdminViewServerProps> = (props) =
       <Gutter className="product-bulk-importer-view">
         <h1>Bulk Import Products</h1>
         <p className="product-bulk-importer-view__intro">
-          Fill in the sample spreadsheet with your products and drop it here. Existing products
-          (matched by Slug, or by an exact Title match) are updated — only the columns you filled
-          in are changed. Anything new is created.
+          Fill in the sample spreadsheet with your products and drop it here. A row matching an
+          existing product's exact Title updates it — only the columns you filled in are changed.
+          Anything new is created.
         </p>
         {isAdmin ? (
-          <ProductBulkImporterApp />
+          <ProductBulkImporterApp
+            categories={(categories?.docs ?? []).map((c) => c.title)}
+            tags={(tags?.docs ?? []).map((t) => t.label)}
+            packTypes={PACK_TYPE_OPTIONS}
+          />
         ) : (
           <p className="product-bulk-importer-view__forbidden">You do not have access to this page.</p>
         )}

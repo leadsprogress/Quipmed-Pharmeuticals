@@ -60,27 +60,29 @@ async function resolveTagIds(payload: Payload, labels: string[]): Promise<number
   return ids
 }
 
-async function resolveRelatedProductIds(
+const RELATED_PRODUCTS_LIMIT = 8
+
+// No "Related Products" column in the sheet — instead, every imported product with at least one
+// category automatically gets related to other existing products sharing that category, mirroring
+// how a Shopify-style "collection" naturally suggests its own related items.
+async function resolveRelatedProductsFromCategories(
   payload: Payload,
-  titles: string[],
-  warnings: string[],
+  categoryIds: number[],
+  excludeId: number | string | undefined,
 ): Promise<number[]> {
-  const ids: number[] = []
-  for (const title of titles) {
-    const result = await payload.find({
-      collection: 'products',
-      where: { title: { like: title } },
-      limit: 5,
-      overrideAccess: true,
-    })
-    const exact = result.docs.find((doc) => doc.title.toLowerCase() === title.toLowerCase())
-    if (exact) {
-      ids.push(exact.id as number)
-    } else {
-      warnings.push(`Related product "${title}" doesn't match any existing product — skipped.`)
-    }
-  }
-  return ids
+  if (categoryIds.length === 0) return []
+  const result = await payload.find({
+    collection: 'products',
+    where: {
+      and: [
+        { categories: { in: categoryIds } },
+        ...(excludeId ? [{ id: { not_equals: excludeId } }] : []),
+      ],
+    },
+    limit: RELATED_PRODUCTS_LIMIT,
+    overrideAccess: true,
+  })
+  return result.docs.map((doc) => doc.id as number)
 }
 
 async function resolveGallery(
@@ -114,26 +116,15 @@ export async function processRow(payload: Payload, row: ParsedRow): Promise<RowR
   const warnings: string[] = []
 
   try {
-    const existing = row.slug
-      ? await payload.find({
-          collection: 'products',
-          where: { slug: { equals: row.slug } },
-          limit: 1,
-          overrideAccess: true,
-        })
-      : await payload.find({
-          collection: 'products',
-          where: { title: { equals: row.title } },
-          limit: 1,
-          overrideAccess: true,
-        })
+    const existing = await payload.find({
+      collection: 'products',
+      where: { title: { equals: row.title } },
+      limit: 1,
+      overrideAccess: true,
+    })
 
     const existingProduct = existing.docs[0]
     const isUpdate = Boolean(existingProduct)
-
-    if (row.slug && !existingProduct) {
-      warnings.push(`No existing product found with slug "${row.slug}" — creating a new product instead.`)
-    }
 
     const categoryIds =
       row.categories.length > 0 ? await resolveCategoryIds(payload, row.categories, warnings) : undefined
@@ -143,8 +134,8 @@ export async function processRow(payload: Payload, row: ParsedRow): Promise<RowR
         ? await resolveGallery(payload, row.imageUrls, row.title, warnings)
         : undefined
     const relatedProductIds =
-      row.relatedProducts.length > 0
-        ? await resolveRelatedProductIds(payload, row.relatedProducts, warnings)
+      categoryIds && categoryIds.length > 0
+        ? await resolveRelatedProductsFromCategories(payload, categoryIds, existingProduct?.id)
         : undefined
 
     if (!isUpdate && (!gallery || gallery.length === 0)) {
@@ -166,6 +157,7 @@ export async function processRow(payload: Payload, row: ParsedRow): Promise<RowR
     if (row.composition) data.composition = row.composition
     if (row.packing) data.packing = row.packing
     if (row.packType) data.packType = row.packType
+    if (row.sku) data.sku = row.sku
     if (categoryIds) data.categories = categoryIds
     if (tagIds) data.tags = tagIds
     if (typeof row.compareAtPriceInRupees === 'number') {

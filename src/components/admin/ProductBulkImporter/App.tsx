@@ -28,7 +28,13 @@ function statusIcon(action: RowResult['action']) {
   }
 }
 
-export const ProductBulkImporterApp: React.FC = () => {
+type Props = {
+  categories: string[]
+  tags: string[]
+  packTypes: string[]
+}
+
+export const ProductBulkImporterApp: React.FC<Props> = ({ categories, tags, packTypes }) => {
   const [isUploading, setIsUploading] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -80,6 +86,12 @@ export const ProductBulkImporterApp: React.FC = () => {
       <a className="pbi__button" href="/api/product-bulk-import/sample" download>
         Download sample spreadsheet
       </a>
+
+      <div className="pbi__reference">
+        <ReferenceList title="Existing Categories" items={categories} />
+        <ReferenceList title="Existing Tags" items={tags} />
+        <ReferenceList title="Pack Types" items={packTypes} />
+      </div>
 
       <div
         className={`pbi__dropzone${isDragging ? ' pbi__dropzone--active' : ''}`}
@@ -159,6 +171,22 @@ export const ProductBulkImporterApp: React.FC = () => {
           </table>
         </div>
       ) : null}
+    </div>
+  )
+}
+
+const ReferenceList: React.FC<{ title: string; items: string[] }> = ({ title, items }) => {
+  if (items.length === 0) return null
+  return (
+    <div className="pbi__reference-list">
+      <h3 className="pbi__reference-title">{title}</h3>
+      <div className="pbi__reference-chips">
+        {items.map((item) => (
+          <span key={item} className="pbi__chip">
+            {item}
+          </span>
+        ))}
+      </div>
     </div>
   )
 }

@@ -81,8 +81,8 @@ export function parseWorkbook(buffer: Buffer): ParseResult {
 
     rows.push({
       rowNumber,
-      slug: cellText(record[COLUMNS.slug]) || undefined,
       title,
+      sku: cellText(record[COLUMNS.sku]) || undefined,
       description: cellText(record[COLUMNS.description]) || undefined,
       composition: cellText(record[COLUMNS.composition]) || undefined,
       packing: cellText(record[COLUMNS.packing]) || undefined,
@@ -94,9 +94,8 @@ export function parseWorkbook(buffer: Buffer): ParseResult {
       discountPercent: parseNumber(record[COLUMNS.discountPercent]),
       showDiscountBadge: parseBoolean(record[COLUMNS.showDiscountBadge]),
       inventory: parseNumber(record[COLUMNS.inventory]),
-      imageUrls: splitList(record[COLUMNS.imageUrls], ';'),
+      imageUrls: splitList(record[COLUMNS.imageUrls], ','),
       status: parseStatus(record[COLUMNS.status]),
-      relatedProducts: splitList(record[COLUMNS.relatedProducts], ','),
       metaTitle: cellText(record[COLUMNS.metaTitle]) || undefined,
       metaDescription: cellText(record[COLUMNS.metaDescription]) || undefined,
     })

@@ -412,6 +412,10 @@ export interface Product {
    */
   packType?: string | null;
   /**
+   * Unique product code. Leave blank to auto-generate one (e.g. "QM-4F82K9").
+   */
+  sku?: string | null;
+  /**
    * Temporary hotlinked mock image URL — shown when no real photo is uploaded to the gallery above. Paste any image URL, or leave blank.
    */
   imageUrl?: string | null;
@@ -2358,6 +2362,7 @@ export interface ProductsSelect<T extends boolean = true> {
   composition?: T;
   packing?: T;
   packType?: T;
+  sku?: T;
   imageUrl?: T;
   relatedProducts?: T;
   meta?:

@@ -2,6 +2,7 @@ import { CallToAction } from '@/blocks/CallToAction/config'
 import { Content } from '@/blocks/Content/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import { ensureSku } from './hooks/ensureSku'
 import { revalidateProduct, revalidateProductDelete } from './hooks/revalidateProduct'
 import { syncPricing } from './hooks/syncPricing'
 import { CollectionOverride } from '@payloadcms/plugin-ecommerce/types'
@@ -25,7 +26,7 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
   ...defaultCollection,
   hooks: {
     ...defaultCollection?.hooks,
-    beforeChange: [...(defaultCollection?.hooks?.beforeChange ?? []), syncPricing],
+    beforeChange: [...(defaultCollection?.hooks?.beforeChange ?? []), syncPricing, ensureSku],
     afterChange: [...(defaultCollection?.hooks?.afterChange ?? []), revalidateProduct],
     afterDelete: [...(defaultCollection?.hooks?.afterDelete ?? []), revalidateProductDelete],
   },
@@ -207,6 +208,14 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
               type: 'text',
               admin: {
                 description: 'e.g. "Tablet", "Injection" — optional',
+              },
+            },
+            {
+              name: 'sku',
+              type: 'text',
+              unique: true,
+              admin: {
+                description: 'Unique product code. Leave blank to auto-generate one (e.g. "QM-4F82K9").',
               },
             },
             {

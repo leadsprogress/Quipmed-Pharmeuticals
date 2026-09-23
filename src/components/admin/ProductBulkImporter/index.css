@@ -16,6 +16,12 @@
     max-width: 72rem;
   }
 
+  .pbi__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
   .pbi__button {
     align-self: flex-start;
     padding: 8px 16px;

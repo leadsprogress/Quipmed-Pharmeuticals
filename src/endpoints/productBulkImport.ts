@@ -4,6 +4,7 @@ import { revalidateTag } from 'next/cache'
 
 import { checkRole } from '@/access/utilities'
 import type { User } from '@/payload-types'
+import { generateExportWorkbook } from '@/lib/productBulkImport/generateExportWorkbook'
 import { generateSampleWorkbook } from '@/lib/productBulkImport/generateSampleWorkbook'
 import { parseWorkbook } from '@/lib/productBulkImport/parseWorkbook'
 import { processRow, type RowResult } from '@/lib/productBulkImport/processRow'
@@ -34,6 +35,33 @@ const sampleEndpoint: Endpoint = {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': 'attachment; filename="product-bulk-import-sample.xlsx"',
+      },
+    })
+  },
+}
+
+// GET /product-bulk-import/export — every product in the store, as an .xlsx using the exact same
+// columns as the import sample, so it can be edited and re-uploaded directly.
+const exportEndpoint: Endpoint = {
+  path: '/product-bulk-import/export',
+  method: 'get',
+  handler: async (req) => {
+    if (!requireAdmin(req)) return forbidden()
+
+    const { docs: products } = await req.payload.find({
+      collection: 'products',
+      draft: true,
+      limit: 0,
+      depth: 2,
+      overrideAccess: true,
+      sort: 'title',
+    })
+
+    const buffer = await generateExportWorkbook(products)
+    return new Response(new Uint8Array(buffer), {
+      headers: {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': 'attachment; filename="products-export.xlsx"',
       },
     })
   },
@@ -92,4 +120,4 @@ const uploadEndpoint: Endpoint = {
   },
 }
 
-export const productBulkImportEndpoints: Endpoint[] = [sampleEndpoint, uploadEndpoint]
+export const productBulkImportEndpoints: Endpoint[] = [sampleEndpoint, exportEndpoint, uploadEndpoint]

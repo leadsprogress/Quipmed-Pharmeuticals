@@ -404,6 +404,10 @@ export interface Product {
    */
   composition?: string | null;
   /**
+   * Manufacturer / brand name — optional.
+   */
+  vendor?: string | null;
+  /**
    * e.g. "10*10" (strips per box)
    */
   packing?: string | null;
@@ -2360,6 +2364,7 @@ export interface ProductsSelect<T extends boolean = true> {
   discountPercent?: T;
   showDiscountBadge?: T;
   composition?: T;
+  vendor?: T;
   packing?: T;
   packType?: T;
   sku?: T;

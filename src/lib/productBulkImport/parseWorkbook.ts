@@ -63,9 +63,9 @@ export function parseWorkbook(buffer: Buffer): ParseResult {
     // admin sees when they open the file in Excel/Sheets.
     const rowNumber = index + 2
     const title = cellText(record[COLUMNS.title])
-    const priceInRupees = parseNumber(record[COLUMNS.priceInRupees])
+    const variantPrice = parseNumber(record[COLUMNS.variantPrice])
 
-    if (!title && priceInRupees === undefined) {
+    if (!title && variantPrice === undefined) {
       // A fully blank row (trailing empty row in the sheet) — silently skip, not an error.
       return
     }
@@ -74,30 +74,32 @@ export function parseWorkbook(buffer: Buffer): ParseResult {
       errors.push({ rowNumber, message: `Missing "${COLUMNS.title}".` })
       return
     }
-    if (priceInRupees === undefined) {
-      errors.push({ rowNumber, message: `Missing or invalid "${COLUMNS.priceInRupees}".` })
+    if (variantPrice === undefined) {
+      errors.push({ rowNumber, message: `Missing or invalid "${COLUMNS.variantPrice}".` })
       return
     }
 
     rows.push({
       rowNumber,
+      handle: cellText(record[COLUMNS.handle]) || undefined,
       title,
-      sku: cellText(record[COLUMNS.sku]) || undefined,
-      description: cellText(record[COLUMNS.description]) || undefined,
+      bodyHtml: cellText(record[COLUMNS.bodyHtml]) || undefined,
+      vendor: cellText(record[COLUMNS.vendor]) || undefined,
+      productCategory: splitList(record[COLUMNS.productCategory], ','),
+      type: cellText(record[COLUMNS.type]) || undefined,
+      tags: splitList(record[COLUMNS.tags], ','),
+      variantSku: cellText(record[COLUMNS.variantSku]) || undefined,
+      variantInventoryQty: parseNumber(record[COLUMNS.variantInventoryQty]),
+      variantPrice,
+      variantCompareAtPrice: parseNumber(record[COLUMNS.variantCompareAtPrice]),
+      imageSrc: splitList(record[COLUMNS.imageSrc], ','),
+      seoTitle: cellText(record[COLUMNS.seoTitle]) || undefined,
+      seoDescription: cellText(record[COLUMNS.seoDescription]) || undefined,
+      status: parseStatus(record[COLUMNS.status]),
       composition: cellText(record[COLUMNS.composition]) || undefined,
       packing: cellText(record[COLUMNS.packing]) || undefined,
-      packType: cellText(record[COLUMNS.packType]) || undefined,
-      categories: splitList(record[COLUMNS.categories], ','),
-      tags: splitList(record[COLUMNS.tags], ','),
-      priceInRupees,
-      compareAtPriceInRupees: parseNumber(record[COLUMNS.compareAtPriceInRupees]),
       discountPercent: parseNumber(record[COLUMNS.discountPercent]),
       showDiscountBadge: parseBoolean(record[COLUMNS.showDiscountBadge]),
-      inventory: parseNumber(record[COLUMNS.inventory]),
-      imageUrls: splitList(record[COLUMNS.imageUrls], ','),
-      status: parseStatus(record[COLUMNS.status]),
-      metaTitle: cellText(record[COLUMNS.metaTitle]) || undefined,
-      metaDescription: cellText(record[COLUMNS.metaDescription]) || undefined,
     })
   })
 

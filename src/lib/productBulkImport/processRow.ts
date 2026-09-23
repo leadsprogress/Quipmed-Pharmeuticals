@@ -116,22 +116,36 @@ export async function processRow(payload: Payload, row: ParsedRow): Promise<RowR
   const warnings: string[] = []
 
   try {
-    const existing = await payload.find({
-      collection: 'products',
-      where: { title: { equals: row.title } },
-      limit: 1,
-      overrideAccess: true,
-    })
+    const byHandle = row.handle
+      ? await payload.find({
+          collection: 'products',
+          where: { slug: { equals: row.handle } },
+          limit: 1,
+          overrideAccess: true,
+        })
+      : null
+
+    const existing =
+      byHandle && byHandle.docs.length > 0
+        ? byHandle
+        : await payload.find({
+            collection: 'products',
+            where: { title: { equals: row.title } },
+            limit: 1,
+            overrideAccess: true,
+          })
 
     const existingProduct = existing.docs[0]
     const isUpdate = Boolean(existingProduct)
 
     const categoryIds =
-      row.categories.length > 0 ? await resolveCategoryIds(payload, row.categories, warnings) : undefined
+      row.productCategory.length > 0
+        ? await resolveCategoryIds(payload, row.productCategory, warnings)
+        : undefined
     const tagIds = row.tags.length > 0 ? await resolveTagIds(payload, row.tags) : undefined
     const gallery =
-      row.imageUrls.length > 0
-        ? await resolveGallery(payload, row.imageUrls, row.title, warnings)
+      row.imageSrc.length > 0
+        ? await resolveGallery(payload, row.imageSrc, row.title, warnings)
         : undefined
     const relatedProductIds =
       categoryIds && categoryIds.length > 0
@@ -143,40 +157,42 @@ export async function processRow(payload: Payload, row: ParsedRow): Promise<RowR
         rowNumber: row.rowNumber,
         title: row.title,
         action: 'error',
-        message: 'New products need at least one working Image URL.',
+        message: 'New products need at least one working Image Src URL.',
         warnings,
       }
     }
 
     const data: Record<string, unknown> = {
       title: row.title,
-      priceInINR: Math.round(row.priceInRupees * 100),
+      priceInINR: Math.round(row.variantPrice * 100),
       _status: row.status,
     }
-    if (row.description) data.description = plainTextToRichText(row.description)
+    if (row.handle && !isUpdate) data.slug = row.handle
+    if (row.bodyHtml) data.description = plainTextToRichText(row.bodyHtml)
+    if (row.vendor) data.vendor = row.vendor
     if (row.composition) data.composition = row.composition
     if (row.packing) data.packing = row.packing
-    if (row.packType) data.packType = row.packType
-    if (row.sku) data.sku = row.sku
+    if (row.type) data.packType = row.type
+    if (row.variantSku) data.sku = row.variantSku
     if (categoryIds) data.categories = categoryIds
     if (tagIds) data.tags = tagIds
-    if (typeof row.compareAtPriceInRupees === 'number') {
-      data.compareAtPrice = Math.round(row.compareAtPriceInRupees * 100)
+    if (typeof row.variantCompareAtPrice === 'number') {
+      data.compareAtPrice = Math.round(row.variantCompareAtPrice * 100)
     }
     if (typeof row.discountPercent === 'number') data.discountPercent = row.discountPercent
     if (typeof row.showDiscountBadge === 'boolean') data.showDiscountBadge = row.showDiscountBadge
-    if (typeof row.inventory === 'number') data.inventory = row.inventory
+    if (typeof row.variantInventoryQty === 'number') data.inventory = row.variantInventoryQty
     if (gallery) data.gallery = gallery
     if (relatedProductIds) data.relatedProducts = relatedProductIds
-    if (row.metaTitle || row.metaDescription) {
+    if (row.seoTitle || row.seoDescription) {
       // A group field like `meta` is replaced wholesale on update, not deep-merged — start from
       // whatever the product already has (e.g. an SEO image) so filling in just one of these two
       // columns doesn't blank out the other meta fields.
       const existingMeta = (isUpdate && existingProduct?.meta) || {}
       data.meta = {
         ...existingMeta,
-        ...(row.metaTitle ? { title: row.metaTitle } : {}),
-        ...(row.metaDescription ? { description: row.metaDescription } : {}),
+        ...(row.seoTitle ? { title: row.seoTitle } : {}),
+        ...(row.seoDescription ? { description: row.seoDescription } : {}),
       }
     }
 

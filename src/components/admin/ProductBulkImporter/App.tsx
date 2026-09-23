@@ -83,9 +83,14 @@ export const ProductBulkImporterApp: React.FC<Props> = ({ categories, tags, pack
 
   return (
     <div className="pbi">
-      <a className="pbi__button" href="/api/product-bulk-import/sample" download>
-        Download sample spreadsheet
-      </a>
+      <div className="pbi__actions">
+        <a className="pbi__button" href="/api/product-bulk-import/sample" download>
+          Download sample spreadsheet
+        </a>
+        <a className="pbi__button" href="/api/product-bulk-import/export" download>
+          Export all products
+        </a>
+      </div>
 
       <div className="pbi__reference">
         <ReferenceList title="Existing Categories" items={categories} />

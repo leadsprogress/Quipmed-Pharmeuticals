@@ -197,6 +197,13 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
               },
             },
             {
+              name: 'vendor',
+              type: 'text',
+              admin: {
+                description: 'Manufacturer / brand name — optional.',
+              },
+            },
+            {
               name: 'packing',
               type: 'text',
               admin: {

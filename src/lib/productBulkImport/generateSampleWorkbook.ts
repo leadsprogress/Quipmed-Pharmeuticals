@@ -61,7 +61,7 @@ export async function generateSampleWorkbook({ categoryTitles, tagLabels }: Live
   })
 
   if (categoryTitles.length > 0) {
-    addListValidation(sheet, COLUMNS.categories, [`Lists!$A$1:$A$${categoryTitles.length}`], {
+    addListValidation(sheet, COLUMNS.productCategory, [`Lists!$A$1:$A$${categoryTitles.length}`], {
       strict: false,
     })
   }
@@ -69,7 +69,7 @@ export async function generateSampleWorkbook({ categoryTitles, tagLabels }: Live
     addListValidation(sheet, COLUMNS.tags, [`Lists!$B$1:$B$${tagLabels.length}`], { strict: false })
   }
   addListValidation(sheet, COLUMNS.status, [`"${STATUS_OPTIONS.join(',')}"`], { strict: true })
-  addListValidation(sheet, COLUMNS.packType, [`"${PACK_TYPE_OPTIONS.join(',')}"`], { strict: true })
+  addListValidation(sheet, COLUMNS.type, [`"${PACK_TYPE_OPTIONS.join(',')}"`], { strict: true })
 
   const guideSheet = workbook.addWorksheet('Column Guide')
   guideSheet.columns = [

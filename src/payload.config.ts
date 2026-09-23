@@ -27,11 +27,10 @@ import { fileURLToPath } from 'url'
 import { Categories } from '@/collections/Categories'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
-import { ProductImageImports } from '@/collections/ProductImageImports'
 import { ProductTags } from '@/collections/ProductTags'
 import { Users } from '@/collections/Users'
 import { customerSearchEndpoints } from '@/endpoints/customerSearch'
-import { productImageImporterEndpoints } from '@/endpoints/productImageImporter'
+import { productBulkImportEndpoints } from '@/endpoints/productBulkImport'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
 import { Settings } from '@/globals/Settings'
@@ -51,28 +50,28 @@ export default buildConfig({
       beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard'],
       beforeNavLinks: [
         '@/components/admin/CustomersNavLink#CustomersNavLink',
-        '@/components/admin/ProductImageImporterNavLink#ProductImageImporterNavLink',
+        '@/components/admin/ProductBulkImporterNavLink#ProductBulkImporterNavLink',
       ],
       views: {
         customers: {
           Component: '@/components/admin/CustomersView#CustomersView',
           path: '/customers',
         },
-        productImageImporter: {
-          Component: '@/components/admin/ProductImageImporter/View#ProductImageImporterView',
-          path: '/product-image-importer',
+        productBulkImporter: {
+          Component: '@/components/admin/ProductBulkImporter/View#ProductBulkImporterView',
+          path: '/product-bulk-importer',
         },
       },
     },
     user: Users.slug,
   },
-  collections: [Users, Pages, Categories, Media, ProductImageImports, ProductTags],
+  collections: [Users, Pages, Categories, Media, ProductTags],
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
   }),
-  endpoints: [...customerSearchEndpoints, ...productImageImporterEndpoints],
+  endpoints: [...customerSearchEndpoints, ...productBulkImportEndpoints],
   editor: lexicalEditor({
     features: () => {
       return [

@@ -6,10 +6,10 @@ import React from 'react'
 
 import { checkRole } from '@/access/utilities'
 import type { User } from '@/payload-types'
-import { ProductImageImporterApp } from './App'
+import { ProductBulkImporterApp } from './App'
 import './index.css'
 
-export const ProductImageImporterView: React.FC<AdminViewServerProps> = (props) => {
+export const ProductBulkImporterView: React.FC<AdminViewServerProps> = (props) => {
   const { initPageResult, params, searchParams } = props
   const { req, visibleEntities } = initPageResult
   const isAdmin = checkRole(['admin'], req.user as User | undefined)
@@ -24,16 +24,17 @@ export const ProductImageImporterView: React.FC<AdminViewServerProps> = (props) 
       user={req.user || undefined}
       visibleEntities={visibleEntities}
     >
-      <Gutter className="product-image-importer-view">
-        <h1>Product Image Importer</h1>
-        <p className="product-image-importer-view__intro">
-          Import product photos from a PDF catalog — one product per page. Dry-run by default; you
-          review and approve before anything is written to a product.
+      <Gutter className="product-bulk-importer-view">
+        <h1>Bulk Import Products</h1>
+        <p className="product-bulk-importer-view__intro">
+          Fill in the sample spreadsheet with your products and drop it here. Existing products
+          (matched by Slug, or by an exact Title match) are updated — only the columns you filled
+          in are changed. Anything new is created.
         </p>
         {isAdmin ? (
-          <ProductImageImporterApp />
+          <ProductBulkImporterApp />
         ) : (
-          <p className="product-image-importer-view__forbidden">You do not have access to this page.</p>
+          <p className="product-bulk-importer-view__forbidden">You do not have access to this page.</p>
         )}
       </Gutter>
     </DefaultTemplate>

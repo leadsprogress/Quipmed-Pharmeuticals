@@ -1,0 +1,112 @@
+@layer payload-default {
+  .product-bulk-importer-view__intro {
+    color: var(--theme-elevation-500, var(--color-text));
+    margin-bottom: var(--spacer-3, 20px);
+    max-width: 48rem;
+  }
+
+  .product-bulk-importer-view__forbidden {
+    color: var(--theme-error-500, #d0021b);
+  }
+
+  .pbi {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-3, 20px);
+    max-width: 72rem;
+  }
+
+  .pbi__button {
+    align-self: flex-start;
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: var(--radius-medium, 4px);
+    border: var(--stroke-width-small, 1px) solid var(--color-border, #ccc);
+    background: var(--color-bg-secondary, #f7f7f7);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .pbi__button:hover {
+    background: var(--color-bg-secondary-hover, #ececec);
+  }
+
+  .pbi__dropzone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 24px;
+    border: 2px dashed var(--color-border, #ccc);
+    border-radius: var(--radius-medium, 4px);
+    cursor: pointer;
+    color: var(--theme-elevation-500, #666);
+  }
+
+  .pbi__dropzone--active {
+    border-color: var(--theme-success-500, #2b8a3e);
+    background: var(--color-bg-secondary, #f7f7f7);
+  }
+
+  .pbi__error {
+    color: var(--theme-error-500, #d0021b);
+    font-size: 13px;
+  }
+
+  .pbi__results {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pbi__summary {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .pbi__summary-item--created {
+    color: var(--theme-success-500, #2b8a3e);
+  }
+
+  .pbi__summary-item--updated {
+    color: var(--theme-warning-500, #b98900);
+  }
+
+  .pbi__summary-item--error {
+    color: var(--theme-error-500, #d0021b);
+  }
+
+  .pbi__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .pbi__table th {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: var(--stroke-width-small, 1px) solid var(--color-border, #ccc);
+    color: var(--theme-elevation-500, #666);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .pbi__row td {
+    padding: 8px 10px;
+    border-bottom: var(--stroke-width-small, 1px) solid var(--color-border, #eee);
+    vertical-align: top;
+  }
+
+  .pbi__row--error {
+    color: var(--theme-error-500, #d0021b);
+  }
+
+  .pbi__warnings {
+    margin: 0;
+    padding-left: 16px;
+    color: var(--theme-warning-500, #b98900);
+  }
+}

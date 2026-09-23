@@ -24,7 +24,6 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",
     "@fontsource-variable/google-sans-flex": "^5.3.1",
-    "@napi-rs/canvas": "^1.0.8",
     "@payloadcms/admin-bar": "4.0.0-canary.29",
     "@payloadcms/db-postgres": "4.0.0-canary.29",
     "@payloadcms/email-nodemailer": "4.0.0-canary.29",
@@ -61,7 +60,6 @@
     "next": "16.3.3",
     "next-themes": "0.4.6",
     "payload": "4.0.0-canary.29",
-    "pdfjs-dist": "^6.3.289",
     "pg": "^8.13.1",
     "prism-react-renderer": "^2.3.1",
     "qs-esm": "8.0.1",

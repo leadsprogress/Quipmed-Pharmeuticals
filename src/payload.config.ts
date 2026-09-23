@@ -60,6 +60,7 @@ export default buildConfig({
         productBulkImporter: {
           Component: '@/components/admin/ProductBulkImporter/View#ProductBulkImporterView',
           path: '/product-bulk-importer',
+          meta: { title: 'Import and Export Products' },
         },
       },
     },

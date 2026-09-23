@@ -8,7 +8,7 @@ export const ProductBulkImporterNavLink: React.FC = () => {
         href="/admin/product-bulk-importer"
         style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
       >
-        Bulk Import Products
+        Import and Export Products
       </a>
     </div>
   )

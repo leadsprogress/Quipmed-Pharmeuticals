@@ -33,7 +33,7 @@ export const ProductBulkImporterView: React.FC<AdminViewServerProps> = async (pr
       visibleEntities={visibleEntities}
     >
       <Gutter className="product-bulk-importer-view">
-        <h1>Bulk Import Products</h1>
+        <h1>Import and Export Products</h1>
         <p className="product-bulk-importer-view__intro">
           Fill in the sample spreadsheet with your products and drop it here. A row matching an
           existing product's exact Title updates it — only the columns you filled in are changed.
@@ -41,8 +41,8 @@ export const ProductBulkImporterView: React.FC<AdminViewServerProps> = async (pr
         </p>
         {isAdmin ? (
           <ProductBulkImporterApp
-            categories={(categories?.docs ?? []).map((c) => c.title)}
-            tags={(tags?.docs ?? []).map((t) => t.label)}
+            categories={(categories?.docs ?? []).map((c) => ({ id: c.id, label: c.title }))}
+            tags={(tags?.docs ?? []).map((t) => ({ id: t.id, label: t.label }))}
             packTypes={PACK_TYPE_OPTIONS}
           />
         ) : (

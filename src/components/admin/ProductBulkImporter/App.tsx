@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useCallback, useRef, useState } from 'react'
+import { toast } from '@payloadcms/ui'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 
 type RowResult = {
   rowNumber: number
@@ -17,6 +18,8 @@ type UploadResponse = {
   errorCount: number
 }
 
+type NamedOption = { id: number; label: string }
+
 function statusIcon(action: RowResult['action']) {
   switch (action) {
     case 'created':
@@ -28,9 +31,18 @@ function statusIcon(action: RowResult['action']) {
   }
 }
 
+async function copyToClipboard(text: string) {
+  try {
+    await navigator.clipboard.writeText(text)
+    toast.success(`Copied "${text}"`)
+  } catch {
+    toast.error('Could not copy to clipboard.')
+  }
+}
+
 type Props = {
-  categories: string[]
-  tags: string[]
+  categories: NamedOption[]
+  tags: NamedOption[]
   packTypes: string[]
 }
 
@@ -40,6 +52,10 @@ export const ProductBulkImporterApp: React.FC<Props> = ({ categories, tags, pack
   const [error, setError] = useState<string | null>(null)
   const [response, setResponse] = useState<UploadResponse | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const [filterCategoryIds, setFilterCategoryIds] = useState<Set<number>>(new Set())
+  const [filterTagIds, setFilterTagIds] = useState<Set<number>>(new Set())
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'draft'>('all')
 
   const uploadFile = useCallback(async (file: File) => {
     setIsUploading(true)
@@ -81,20 +97,35 @@ export const ProductBulkImporterApp: React.FC<Props> = ({ categories, tags, pack
     onFileSelected(e.dataTransfer.files?.[0])
   }
 
+  const toggleFilter = (set: Set<number>, setSet: (s: Set<number>) => void, id: number) => {
+    const next = new Set(set)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    setSet(next)
+  }
+
+  const hasFilters = filterCategoryIds.size > 0 || filterTagIds.size > 0 || filterStatus !== 'all'
+
+  const exportUrl = useMemo(() => {
+    const params = new URLSearchParams()
+    if (filterCategoryIds.size > 0) params.set('categories', [...filterCategoryIds].join(','))
+    if (filterTagIds.size > 0) params.set('tags', [...filterTagIds].join(','))
+    if (filterStatus !== 'all') params.set('status', filterStatus)
+    const query = params.toString()
+    return `/api/product-bulk-import/export${query ? `?${query}` : ''}`
+  }, [filterCategoryIds, filterTagIds, filterStatus])
+
   return (
     <div className="pbi">
       <div className="pbi__actions">
         <a className="pbi__button" href="/api/product-bulk-import/sample" download>
           Download sample spreadsheet
         </a>
-        <a className="pbi__button" href="/api/product-bulk-import/export" download>
-          Export all products
-        </a>
       </div>
 
       <div className="pbi__reference">
-        <ReferenceList title="Existing Categories" items={categories} />
-        <ReferenceList title="Existing Tags" items={tags} />
+        <ReferenceList title="Existing Categories" items={categories.map((c) => c.label)} />
+        <ReferenceList title="Existing Tags" items={tags.map((t) => t.label)} />
         <ReferenceList title="Pack Types" items={packTypes} />
       </div>
 
@@ -176,6 +207,45 @@ export const ProductBulkImporterApp: React.FC<Props> = ({ categories, tags, pack
           </table>
         </div>
       ) : null}
+
+      <div className="pbi__export">
+        <h2 className="pbi__section-title">Export Products</h2>
+        <p className="product-bulk-importer-view__intro">
+          Leave everything unselected to export every product, or narrow it down below.
+        </p>
+
+        <div className="pbi__export-filters">
+          <div className="pbi__filter-group">
+            <span className="pbi__reference-title">Status</span>
+            <select
+              className="pbi__select"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as typeof filterStatus)}
+            >
+              <option value="all">All</option>
+              <option value="active">Active (published) only</option>
+              <option value="draft">Draft only</option>
+            </select>
+          </div>
+
+          <FilterChipGroup
+            title="Categories"
+            items={categories}
+            selected={filterCategoryIds}
+            onToggle={(id) => toggleFilter(filterCategoryIds, setFilterCategoryIds, id)}
+          />
+          <FilterChipGroup
+            title="Tags"
+            items={tags}
+            selected={filterTagIds}
+            onToggle={(id) => toggleFilter(filterTagIds, setFilterTagIds, id)}
+          />
+        </div>
+
+        <a className="pbi__button pbi__button--primary" href={exportUrl} download>
+          {hasFilters ? 'Export filtered products' : 'Export all products'}
+        </a>
+      </div>
     </div>
   )
 }
@@ -187,9 +257,42 @@ const ReferenceList: React.FC<{ title: string; items: string[] }> = ({ title, it
       <h3 className="pbi__reference-title">{title}</h3>
       <div className="pbi__reference-chips">
         {items.map((item) => (
-          <span key={item} className="pbi__chip">
+          <button
+            key={item}
+            type="button"
+            className="pbi__chip pbi__chip--copy"
+            onClick={() => void copyToClipboard(item)}
+            title="Click to copy"
+          >
             {item}
-          </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const FilterChipGroup: React.FC<{
+  title: string
+  items: NamedOption[]
+  selected: Set<number>
+  onToggle: (id: number) => void
+}> = ({ title, items, selected, onToggle }) => {
+  if (items.length === 0) return null
+  return (
+    <div className="pbi__filter-group">
+      <span className="pbi__reference-title">{title}</span>
+      <div className="pbi__reference-chips">
+        {items.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className={`pbi__chip pbi__chip--filter${selected.has(item.id) ? ' pbi__chip--selected' : ''}`}
+            onClick={() => onToggle(item.id)}
+          >
+            {selected.has(item.id) ? '✓ ' : ''}
+            {item.label}
+          </button>
         ))}
       </div>
     </div>

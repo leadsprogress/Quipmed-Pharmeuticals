@@ -1,4 +1,4 @@
-import type { Endpoint } from 'payload'
+import type { Endpoint, Where } from 'payload'
 
 import { revalidateTag } from 'next/cache'
 
@@ -40,13 +40,27 @@ const sampleEndpoint: Endpoint = {
   },
 }
 
-// GET /product-bulk-import/export — every product in the store, as an .xlsx using the exact same
-// columns as the import sample, so it can be edited and re-uploaded directly.
+// GET /product-bulk-import/export — every product in the store (optionally narrowed by
+// ?categories=id,id&tags=id,id&status=active|draft), as an .xlsx using the exact same columns as
+// the import sample, so it can be edited and re-uploaded directly.
 const exportEndpoint: Endpoint = {
   path: '/product-bulk-import/export',
   method: 'get',
   handler: async (req) => {
     if (!requireAdmin(req)) return forbidden()
+
+    const categoryIds = String(req.query.categories ?? '')
+      .split(',')
+      .filter(Boolean)
+    const tagIds = String(req.query.tags ?? '')
+      .split(',')
+      .filter(Boolean)
+    const status = req.query.status === 'active' || req.query.status === 'draft' ? req.query.status : undefined
+
+    const filters: Where[] = []
+    if (categoryIds.length > 0) filters.push({ categories: { in: categoryIds } })
+    if (tagIds.length > 0) filters.push({ tags: { in: tagIds } })
+    if (status) filters.push({ _status: { equals: status === 'active' ? 'published' : 'draft' } })
 
     const { docs: products } = await req.payload.find({
       collection: 'products',
@@ -55,6 +69,7 @@ const exportEndpoint: Endpoint = {
       depth: 2,
       overrideAccess: true,
       sort: 'title',
+      where: filters.length > 0 ? { and: filters } : undefined,
     })
 
     const buffer = await generateExportWorkbook(products)

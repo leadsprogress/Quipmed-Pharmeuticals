@@ -60,7 +60,7 @@ const fulfillmentLabel = (status?: string | null) =>
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
   cod: 'Cash on Delivery',
-  stripe: 'Card (Stripe)',
+  payu: 'PayU (Online)',
 }
 
 const PAYMENT_STATUS_LABELS: Record<string, string> = {

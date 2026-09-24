@@ -3,13 +3,12 @@ import type { PaymentAdapter } from '@payloadcms/plugin-ecommerce/types'
 
 // `transactionsSlug`/`ordersSlug`/`cartsSlug` are typed as plain `string` by the plugin (they're
 // configurable), so Payload's generated per-collection types can't be resolved from them —
-// same reason the plugin's own Stripe adapter is plain JS rather than typed TS. Cast at the call
+// same reason the plugin's own payment adapters are plain JS rather than typed TS. Cast at the call
 // site instead of loosening every field access below.
 const asSlug = (slug: string) => slug as CollectionSlug
 
 /**
- * Cash on Delivery — a mock "payment provider" for when Stripe isn't (yet) how a customer wants
- * to pay. There's no external gateway: `initiatePayment` records a pending transaction from the
+ * Cash on Delivery — a mock "payment provider" for customers who'd rather pay in cash. There's no external gateway: `initiatePayment` records a pending transaction from the
  * cart, and `confirmOrder` (called immediately after, in the same checkout step — no redirect to
  * wait on) turns that into a real order. The transaction is deliberately left `pending` (unpaid)
  * after confirmation — COD isn't paid until the driver collects cash on delivery. Staff flip it

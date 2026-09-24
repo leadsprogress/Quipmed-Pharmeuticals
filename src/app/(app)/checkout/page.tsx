@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import React, { Fragment } from 'react'
+import React, { Fragment, Suspense } from 'react'
 
 import { CheckoutPage } from '@/components/checkout/CheckoutPage'
+import { PaymentOutcomeToast } from '@/components/checkout/PaymentOutcomeToast'
 
 export default function Checkout() {
   return (
@@ -34,6 +35,9 @@ export default function Checkout() {
 
       <h1 className="sr-only">Checkout</h1>
 
+      <Suspense fallback={null}>
+        <PaymentOutcomeToast />
+      </Suspense>
       <CheckoutPage />
     </div>
   )

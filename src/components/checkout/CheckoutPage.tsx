@@ -48,6 +48,7 @@ export const CheckoutPage: React.FC = () => {
   const [billingAddressSameAsShipping, setBillingAddressSameAsShipping] = useState(true)
   const [isProcessingPayment, setProcessingPayment] = useState(false)
   const [isPlacingCodOrder, setIsPlacingCodOrder] = useState(false)
+  const [isRedirectingToPayu, setIsRedirectingToPayu] = useState(false)
 
   const cartIsEmpty = !cart || !cart.items || !cart.items.length
 
@@ -148,6 +149,52 @@ export const CheckoutPage: React.FC = () => {
       setIsPlacingCodOrder(false)
     }
   }, [billingAddress, billingAddressSameAsShipping, confirmOrder, email, initiatePayment, router, shippingAddress])
+
+  // PayU is a redirect flow: the server returns a signed set of form fields, and the browser
+  // POSTs them to PayU's hosted page. PayU sends the customer back to our callback endpoint,
+  // which verifies the result and creates the order.
+  const payWithPayu = useCallback(async () => {
+    setIsRedirectingToPayu(true)
+    setError(null)
+    try {
+      const result = (await initiatePayment('payu', {
+        additionalData: {
+          ...(email ? { customerEmail: email } : {}),
+          billingAddress,
+          shippingAddress: billingAddressSameAsShipping ? billingAddress : shippingAddress,
+        },
+      })) as { payuParams?: Record<string, string>; payuUrl?: string }
+
+      if (!result?.payuUrl || !result.payuParams) {
+        throw new Error('Could not start the payment. Please try again.')
+      }
+
+      const form = document.createElement('form')
+      form.method = 'POST'
+      form.action = result.payuUrl
+      Object.entries(result.payuParams).forEach(([name, value]) => {
+        const input = document.createElement('input')
+        input.type = 'hidden'
+        input.name = name
+        input.value = value
+        form.appendChild(input)
+      })
+      document.body.appendChild(form)
+      form.submit()
+    } catch (err) {
+      let message = 'An error occurred while starting the payment.'
+      try {
+        const parsed = err instanceof Error ? JSON.parse(err.message) : null
+        if (parsed?.cause?.code === 'OutOfStock') message = 'One or more items in your cart are out of stock.'
+      } catch {
+        if (err instanceof Error && err.message) message = err.message
+      }
+      setError(message)
+      toast.error(message)
+      setIsRedirectingToPayu(false)
+    }
+  }, [billingAddress, billingAddressSameAsShipping, email, initiatePayment, shippingAddress])
+
 
   if (!stripe) return null
 
@@ -317,18 +364,18 @@ export const CheckoutPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-4">
             <Button
               className="self-start"
-              disabled={!canGoToPayment || isPlacingCodOrder}
+              disabled={!canGoToPayment || isPlacingCodOrder || isRedirectingToPayu}
               onClick={(e) => {
                 e.preventDefault()
-                void initiatePaymentIntent('stripe')
+                void payWithPayu()
               }}
             >
-              Pay Online
+              {isRedirectingToPayu ? 'Redirecting to PayU…' : 'Pay Online (UPI / Card / Netbanking)'}
             </Button>
             <Button
               className="self-start"
               variant="outline"
-              disabled={!canGoToPayment || isPlacingCodOrder}
+              disabled={!canGoToPayment || isPlacingCodOrder || isRedirectingToPayu}
               onClick={(e) => {
                 e.preventDefault()
                 void placeCodOrder()

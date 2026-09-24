@@ -8,6 +8,7 @@ import { ecommercePlugin } from '@payloadcms/plugin-ecommerce'
 import { stripeAdapter } from '@payloadcms/plugin-ecommerce/payments/stripe'
 
 import { codAdapter } from '@/payments/codAdapter'
+import { payuAdapter } from '@/payments/payuAdapter'
 
 import { Page, Product } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -152,6 +153,7 @@ export const plugins: Plugin[] = [
           publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
           webhookSecret: process.env.STRIPE_WEBHOOKS_SIGNING_SECRET!,
         }),
+        payuAdapter(),
         codAdapter(),
       ],
     },

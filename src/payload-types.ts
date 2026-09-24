@@ -1337,10 +1337,27 @@ export interface Transaction {
         id?: string | null;
       }[]
     | null;
-  paymentMethod?: ('stripe' | 'cod') | null;
+  paymentMethod?: ('stripe' | 'payu' | 'cod') | null;
   stripe?: {
     customerID?: string | null;
     paymentIntentID?: string | null;
+  };
+  payu?: {
+    txnid?: string | null;
+    paymentId?: string | null;
+    failureReason?: string | null;
+    /**
+     * Held until the payment succeeds, then copied onto the order.
+     */
+    shippingAddress?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   /**
    * No online payment was taken for this order — cash is collected on delivery. Change status to "Succeeded" once the payment has been collected.
@@ -2473,6 +2490,14 @@ export interface TransactionsSelect<T extends boolean = true> {
     | {
         customerID?: T;
         paymentIntentID?: T;
+      };
+  payu?:
+    | T
+    | {
+        txnid?: T;
+        paymentId?: T;
+        failureReason?: T;
+        shippingAddress?: T;
       };
   cod?: T | {};
   billingAddress?:

@@ -15,6 +15,10 @@ import { getPayload } from 'payload'
 import { OrderStatus } from '@/components/OrderStatus'
 import { FulfillmentTimeline } from '@/components/OrderStatus/FulfillmentTimeline'
 import { AddressItem } from '@/components/addresses/AddressItem'
+import { ClearCartOnPlaced } from '@/components/checkout/ClearCartOnPlaced'
+import { describePayment } from '@/components/OrderStatus/PaymentSummary'
+import { Suspense } from 'react'
+import { cn } from '@/utilities/cn'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,7 +44,8 @@ export default async function Order({ params, searchParams }: PageProps) {
       collection: 'orders',
       user,
       overrideAccess: !Boolean(user),
-      depth: 2,
+      // items.product (1) -> gallery.image (2) -> the media doc itself needs one more level.
+      depth: 3,
       where: {
         and: [
           {
@@ -86,6 +91,7 @@ export default async function Order({ params, searchParams }: PageProps) {
         createdAt: true,
         updatedAt: true,
         shippingAddress: true,
+        transactions: true,
       },
     })
 
@@ -115,76 +121,101 @@ export default async function Order({ params, searchParams }: PageProps) {
     notFound()
   }
 
+  const payment = describePayment(order.transactions)
+  const label = 'mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground'
+  const sectionTitle = 'mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground'
+
   return (
-    <div className="">
-      <div className="flex gap-8 justify-between items-center mb-6">
+    <div>
+      <Suspense fallback={null}>
+        <ClearCartOnPlaced />
+      </Suspense>
+
+      <div className="mb-6 flex items-center justify-between gap-8">
         {user ? (
-          <div className="flex gap-4">
-            <Button asChild variant="ghost">
-              <Link href="/orders">
-                <ChevronLeftIcon />
-                All orders
-              </Link>
-            </Button>
-          </div>
+          <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground">
+            <Link href="/orders">
+              <ChevronLeftIcon />
+              All orders
+            </Link>
+          </Button>
         ) : (
-          <div></div>
+          <div />
         )}
 
-        <h1 className="text-sm uppercase font-mono px-2 bg-primary/10 rounded tracking-[0.07em]">
-          <span className="">{`Order #${order.id}`}</span>
+        <h1 className="rounded-full bg-primary px-3 py-1 font-mono text-sm uppercase tracking-[0.07em] text-primary-foreground">
+          {`Order #${order.id}`}
         </h1>
       </div>
 
-      <div className="bg-card border rounded-lg px-6 py-4 flex flex-col gap-12">
-        <div className="flex flex-col gap-6 lg:flex-row lg:justify-between">
-          <div className="">
-            <p className="font-mono uppercase text-primary/50 mb-1 text-sm">Order Date</p>
-            <p className="text-lg">
+      <div className="flex flex-col gap-10 rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p className={label}>Order date</p>
+            <p className="text-lg font-medium text-foreground">
               <time dateTime={order.createdAt}>
                 {formatDateTime({ date: order.createdAt, format: 'MMMM dd, yyyy' })}
               </time>
             </p>
           </div>
 
-          <div className="">
-            <p className="font-mono uppercase text-primary/50 mb-1 text-sm">Total</p>
-            {order.amount && <Price className="text-lg" amount={order.amount} />}
+          <div>
+            <p className={label}>Total</p>
+            {order.amount ? <Price className="text-lg font-semibold text-foreground" amount={order.amount} /> : null}
           </div>
 
           {order.status && (
-            <div className="grow max-w-1/3">
-              <p className="font-mono uppercase text-primary/50 mb-1 text-sm">Status</p>
+            <div>
+              <p className={label}>Status</p>
               <OrderStatus className="text-sm" status={order.status} />
+            </div>
+          )}
+
+          {payment && (
+            <div>
+              <p className={label}>Payment</p>
+              <p
+                className={cn('text-sm font-medium', {
+                  'text-primary': payment.tone === 'paid',
+                  'text-foreground': payment.tone === 'pending',
+                  'text-destructive': payment.tone === 'failed',
+                })}
+              >
+                {payment.label}
+              </p>
             </div>
           )}
         </div>
 
         {order.fulfillmentEvents && order.fulfillmentEvents.length > 0 && (
           <div>
-            <h2 className="font-mono text-primary/50 mb-4 uppercase text-sm">Order Status</h2>
+            <h2 className={sectionTitle}>Order status</h2>
             <FulfillmentTimeline events={order.fulfillmentEvents} />
           </div>
         )}
 
         {order.items && (
           <div>
-            <h2 className="font-mono text-primary/50 mb-4 uppercase text-sm">Items</h2>
-            <ul className="flex flex-col gap-6">
+            <h2 className={sectionTitle}>Items</h2>
+            <ul className="flex flex-col divide-y divide-border">
               {order.items?.map((item, index) => {
                 if (typeof item.product === 'string') {
                   return null
                 }
 
                 if (!item.product || typeof item.product !== 'object') {
-                  return <div key={index}>This item is no longer available.</div>
+                  return (
+                    <li key={index} className="py-4 text-sm text-muted-foreground">
+                      This item is no longer available.
+                    </li>
+                  )
                 }
 
                 const variant =
                   item.variant && typeof item.variant === 'object' ? item.variant : undefined
 
                 return (
-                  <li key={item.id}>
+                  <li key={item.id} className="py-4 first:pt-0 last:pb-0">
                     <ProductItem
                       product={item.product}
                       quantity={item.quantity}
@@ -199,7 +230,7 @@ export default async function Order({ params, searchParams }: PageProps) {
 
         {order.shippingAddress && (
           <div>
-            <h2 className="font-mono text-primary/50 mb-4 uppercase text-sm">Shipping Address</h2>
+            <h2 className={sectionTitle}>Shipping address</h2>
 
             {/* @ts-expect-error - some kind of type hell */}
             <AddressItem address={order.shippingAddress} hideActions />

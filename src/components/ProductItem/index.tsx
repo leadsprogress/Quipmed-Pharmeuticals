@@ -60,20 +60,23 @@ export const ProductItem: React.FC<Props> = ({
 
   return (
     <div className="flex items-center gap-4">
-      <div className="flex items-stretch justify-stretch h-20 w-20 p-2 rounded-lg border">
-        <div className="relative w-full h-full">
-          {image && typeof image !== 'string' && (
-            <Media className="" fill imgClassName="rounded-lg object-cover" resource={image} />
-          )}
-        </div>
-      </div>
+      <Link
+        href={itemURL}
+        className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted text-muted-foreground"
+      >
+        {image && typeof image === 'object' ? (
+          <Media fill imgClassName="object-cover" resource={image} />
+        ) : (
+          <i className="fa-solid fa-capsules text-2xl" />
+        )}
+      </Link>
       <div className="flex grow justify-between items-center">
         <div className="flex flex-col gap-1">
           <p className="font-medium text-lg">
             <Link href={itemURL}>{title}</Link>
           </p>
           {variant && (
-            <p className="text-sm font-mono text-primary/50 tracking-widest">
+            <p className="text-sm font-mono text-muted-foreground tracking-widest">
               {variant.options
                 ?.map((option) => {
                   if (typeof option === 'object') return option.label
@@ -82,8 +85,8 @@ export const ProductItem: React.FC<Props> = ({
                 .join(', ')}
             </p>
           )}
-          <div>
-            {'x'}
+          <div className="text-sm text-muted-foreground">
+            {'Qty: '}
             {quantity}
           </div>
         </div>
@@ -92,7 +95,7 @@ export const ProductItem: React.FC<Props> = ({
           <div className="text-right">
             <p className="font-medium text-lg">Subtotal</p>
             <Price
-              className="font-mono text-primary/50 text-sm"
+              className="font-mono text-muted-foreground text-sm"
               amount={itemPrice * quantity}
               currencyCode={currencyCode}
             />

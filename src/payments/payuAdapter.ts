@@ -341,6 +341,9 @@ export const payuAdapter = (): PaymentAdapter => ({
           const q = new URLSearchParams()
           if (transaction.customerEmail) q.set('email', transaction.customerEmail)
           if (order.accessToken) q.set('accessToken', order.accessToken)
+          // placed=1 tells the order page to empty the customer's cart (first success only —
+          // a replayed callback above deliberately omits it so it can't wipe a newer cart).
+          q.set('placed', '1')
           return redirectTo(`/orders/${order.id}?${q.toString()}`)
         } catch (err) {
           payload.logger.error({ err }, 'PayU callback failed')

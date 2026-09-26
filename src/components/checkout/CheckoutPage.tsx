@@ -24,7 +24,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 export const CheckoutPage: React.FC = () => {
   const { user } = useAuth()
   const router = useRouter()
-  const { cart } = useCart()
+  const { cart, clearCart } = useCart()
   const [error, setError] = useState<null | string>(null)
   /**
    * State to manage the email input for guest checkout.
@@ -38,6 +38,7 @@ export const CheckoutPage: React.FC = () => {
   const [billingAddressSameAsShipping, setBillingAddressSameAsShipping] = useState(true)
   const [isPlacingCodOrder, setIsPlacingCodOrder] = useState(false)
   const [isRedirectingToPayu, setIsRedirectingToPayu] = useState(false)
+  const [payOnDelivery, setPayOnDelivery] = useState(false)
 
   const cartIsEmpty = !cart || !cart.items || !cart.items.length
 
@@ -94,6 +95,8 @@ export const CheckoutPage: React.FC = () => {
       })) as Record<string, unknown>
 
       if (confirmResult && 'orderID' in confirmResult && confirmResult['orderID']) {
+        // The order is placed — empty the cart so the items don't linger in it.
+        await clearCart().catch(() => {})
         const accessToken = 'accessToken' in confirmResult ? (confirmResult['accessToken'] as string) : ''
         const queryParams = new URLSearchParams()
         if (email) queryParams.set('email', email)
@@ -108,7 +111,7 @@ export const CheckoutPage: React.FC = () => {
       toast.error(errorMessage)
       setIsPlacingCodOrder(false)
     }
-  }, [billingAddress, billingAddressSameAsShipping, confirmOrder, email, initiatePayment, router, shippingAddress])
+  }, [billingAddress, billingAddressSameAsShipping, clearCart, confirmOrder, email, initiatePayment, router, shippingAddress])
 
   // PayU is a redirect flow: the server returns a signed set of form fields, and the browser
   // POSTs them to PayU's hosted page. PayU sends the customer back to our callback endpoint,
@@ -305,28 +308,48 @@ export const CheckoutPage: React.FC = () => {
           </>
         )}
 
+        <h2 className="font-medium text-2xl sm:text-3xl">Payment</h2>
+
+        <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
+          <Checkbox
+            id="payOnDelivery"
+            checked={payOnDelivery}
+            disabled={isPlacingCodOrder || isRedirectingToPayu}
+            onCheckedChange={(state) => setPayOnDelivery(state === true)}
+          />
+          <div>
+            <Label htmlFor="payOnDelivery" className="text-foreground">
+              Pay with Cash on Delivery
+            </Label>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Tick this to pay in cash when your order arrives. Online payment is switched off
+              while this is ticked.
+            </p>
+          </div>
+        </div>
+
         <div className="flex flex-wrap items-center gap-4">
-            <Button
-              className="self-start"
-              disabled={!canGoToPayment || isPlacingCodOrder || isRedirectingToPayu}
-              onClick={(e) => {
-                e.preventDefault()
-                void payWithPayu()
-              }}
-            >
-              {isRedirectingToPayu ? 'Redirecting to PayU…' : 'Pay Online (UPI / Card / Netbanking)'}
-            </Button>
-            <Button
-              className="self-start"
-              variant="outline"
-              disabled={!canGoToPayment || isPlacingCodOrder || isRedirectingToPayu}
-              onClick={(e) => {
-                e.preventDefault()
-                void placeCodOrder()
-              }}
-            >
-              {isPlacingCodOrder ? 'Placing Order…' : 'Cash on Delivery'}
-            </Button>
+          <Button
+            className="self-start"
+            disabled={!canGoToPayment || payOnDelivery || isPlacingCodOrder || isRedirectingToPayu}
+            onClick={(e) => {
+              e.preventDefault()
+              void payWithPayu()
+            }}
+          >
+            {isRedirectingToPayu ? 'Redirecting to PayU…' : 'Pay Online (UPI / Card / Netbanking)'}
+          </Button>
+          <Button
+            className="self-start"
+            variant="outline"
+            disabled={!canGoToPayment || !payOnDelivery || isPlacingCodOrder || isRedirectingToPayu}
+            onClick={(e) => {
+              e.preventDefault()
+              void placeCodOrder()
+            }}
+          >
+            {isPlacingCodOrder ? 'Placing Order…' : 'Place Order (Cash on Delivery)'}
+          </Button>
         </div>
 
         {error && (
@@ -403,7 +426,7 @@ export const CheckoutPage: React.FC = () => {
                     <div className="flex flex-col gap-1">
                       <p className="font-medium text-lg">{title}</p>
                       {variant && typeof variant === 'object' && (
-                        <p className="text-sm font-mono text-primary/50 tracking-widest">
+                        <p className="text-sm font-mono text-muted-foreground tracking-widest">
                           {variant.options
                             ?.map((option: any) => {
                               if (typeof option === 'object') return option.label

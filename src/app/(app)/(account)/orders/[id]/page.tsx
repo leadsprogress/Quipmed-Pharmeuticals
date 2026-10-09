@@ -17,6 +17,7 @@ import { FulfillmentTimeline } from '@/components/OrderStatus/FulfillmentTimelin
 import { AddressItem } from '@/components/addresses/AddressItem'
 import { ClearCartOnPlaced } from '@/components/checkout/ClearCartOnPlaced'
 import { describePayment } from '@/components/OrderStatus/PaymentSummary'
+import { TrackingLinkBox } from '@/components/OrderStatus/TrackingLinkBox'
 import { Suspense } from 'react'
 import { cn } from '@/utilities/cn'
 
@@ -94,16 +95,18 @@ export default async function Order({ params, searchParams }: PageProps) {
         transactions: true,
         paymentMethod: true,
         paymentReviewStatus: true,
+        accessToken: true,
       },
     })
 
+    // The `where` clause above already matched on accessToken (optionally narrowed by email when
+    // provided) — this is just confirming that match, not re-deriving authorization. Email is
+    // optional: a guest with only the tracking code must still get in.
     const canAccessAsGuest =
       !user &&
-      email &&
       accessToken &&
       orderResult &&
-      orderResult.customerEmail &&
-      orderResult.customerEmail === email
+      (!email || orderResult.customerEmail === email)
     const canAccessAsUser =
       user &&
       orderResult &&
@@ -152,6 +155,10 @@ export default async function Order({ params, searchParams }: PageProps) {
           {`Order #${order.id}`}
         </h1>
       </div>
+
+      {!user && order.accessToken && (
+        <TrackingLinkBox orderId={order.id} accessToken={order.accessToken} />
+      )}
 
       {awaitingUpiReview && (
         <div className="mb-6 rounded-2xl border border-primary/30 bg-primary/10 p-6">

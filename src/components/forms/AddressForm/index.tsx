@@ -130,8 +130,13 @@ export const AddressForm: React.FC<Props> = ({
         </div>
 
         <FormItem>
-          <Label htmlFor="phone">Phone</Label>
-          <Input type="tel" id="phone" autoComplete="mobile tel" {...register('phone')} />
+          <Label htmlFor="phone">Phone*</Label>
+          <Input
+            type="tel"
+            id="phone"
+            autoComplete="mobile tel"
+            {...register('phone', { required: 'Phone number is required.' })}
+          />
           {errors.phone && <FormError message={errors.phone.message} />}
         </FormItem>
 

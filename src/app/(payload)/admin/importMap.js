@@ -23,6 +23,7 @@ import { PriceInput as PriceInput_b91672ccd6e8b071c11142ab941fedfb } from '@payl
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { CompareAtPriceField as CompareAtPriceField_95a861ffbe44758031f978b05bd521b0 } from '@/components/admin/CompareAtPriceField'
 import { DiscountPercentField as DiscountPercentField_7e55843354c2b7e6dd05f87f03c3bb5c } from '@/components/admin/DiscountPercentField'
+import { ApproveUpiPayment as ApproveUpiPayment_e6749600a3536c64c6ee71e5a98ab92d } from '@/components/admin/ApproveUpiPayment'
 import { BeforeDashboard as BeforeDashboard_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
 import { BeforeLogin as BeforeLogin_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
 import { CustomersNavLink as CustomersNavLink_5f7002d62d13bfd5fc43bf61cb1bd75d } from '@/components/admin/CustomersNavLink'
@@ -63,6 +64,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/components/admin/CompareAtPriceField#CompareAtPriceField": CompareAtPriceField_95a861ffbe44758031f978b05bd521b0,
   "@/components/admin/DiscountPercentField#DiscountPercentField": DiscountPercentField_7e55843354c2b7e6dd05f87f03c3bb5c,
+  "@/components/admin/ApproveUpiPayment#ApproveUpiPayment": ApproveUpiPayment_e6749600a3536c64c6ee71e5a98ab92d,
   "@/components/BeforeDashboard#BeforeDashboard": BeforeDashboard_1a7510af427896d367a49dbf838d2de6,
   "@/components/BeforeLogin#BeforeLogin": BeforeLogin_8a7ab0eb7ab5c511aba12e68480bfe5e,
   "@/components/admin/CustomersNavLink#CustomersNavLink": CustomersNavLink_5f7002d62d13bfd5fc43bf61cb1bd75d,

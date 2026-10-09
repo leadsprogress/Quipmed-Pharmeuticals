@@ -92,6 +92,8 @@ export default async function Order({ params, searchParams }: PageProps) {
         updatedAt: true,
         shippingAddress: true,
         transactions: true,
+        paymentMethod: true,
+        paymentReviewStatus: true,
       },
     })
 
@@ -125,6 +127,9 @@ export default async function Order({ params, searchParams }: PageProps) {
   const label = 'mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground'
   const sectionTitle = 'mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground'
 
+  const awaitingUpiReview =
+    order.paymentMethod === 'upi_manual' && order.paymentReviewStatus !== 'approved'
+
   return (
     <div>
       <Suspense fallback={null}>
@@ -147,6 +152,18 @@ export default async function Order({ params, searchParams }: PageProps) {
           {`Order #${order.id}`}
         </h1>
       </div>
+
+      {awaitingUpiReview && (
+        <div className="mb-6 rounded-2xl border border-primary/30 bg-primary/10 p-6">
+          <p className="font-medium text-foreground">
+            Order received — we&apos;re verifying your payment.
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            If you&apos;ve already sent us your payment screenshot on WhatsApp, we&apos;ll message
+            you there once it&apos;s confirmed. Tracking details will appear here after that.
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-col gap-10 rounded-2xl border border-border bg-card p-6 shadow-sm">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -187,7 +204,7 @@ export default async function Order({ params, searchParams }: PageProps) {
           )}
         </div>
 
-        {order.fulfillmentEvents && order.fulfillmentEvents.length > 0 && (
+        {!awaitingUpiReview && order.fulfillmentEvents && order.fulfillmentEvents.length > 0 && (
           <div>
             <h2 className={sectionTitle}>Order status</h2>
             <FulfillmentTimeline events={order.fulfillmentEvents} />

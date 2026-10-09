@@ -20,6 +20,9 @@ import { AddressItem } from '@/components/addresses/AddressItem'
 import { FormItem } from '@/components/forms/FormItem'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { UpiManualPayment } from '@/components/checkout/UpiManualPayment'
+
+const PAYU_ENABLED = process.env.NEXT_PUBLIC_PAYU_ENABLED === 'true'
 
 export const CheckoutPage: React.FC = () => {
   const { user } = useAuth()
@@ -37,8 +40,9 @@ export const CheckoutPage: React.FC = () => {
   const [billingAddress, setBillingAddress] = useState<Partial<Address>>()
   const [billingAddressSameAsShipping, setBillingAddressSameAsShipping] = useState(true)
   const [isPlacingCodOrder, setIsPlacingCodOrder] = useState(false)
+  const [isPlacingUpiOrder, setIsPlacingUpiOrder] = useState(false)
   const [isRedirectingToPayu, setIsRedirectingToPayu] = useState(false)
-  const [payOnDelivery, setPayOnDelivery] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'upi' | 'payu'>('upi')
 
   const cartIsEmpty = !cart || !cart.items || !cart.items.length
 
@@ -112,6 +116,55 @@ export const CheckoutPage: React.FC = () => {
       setIsPlacingCodOrder(false)
     }
   }, [billingAddress, billingAddressSameAsShipping, clearCart, confirmOrder, email, initiatePayment, router, shippingAddress])
+
+  // Same back-to-back initiate+confirm shape as COD — the difference is the order comes back
+  // with paymentReviewStatus: 'pending' (set server-side), which the order page reads to show a
+  // "verifying your payment" banner until staff approve it in the admin.
+  const placeUpiOrder = useCallback(
+    async (reference: string) => {
+      setIsPlacingUpiOrder(true)
+      setError(null)
+      try {
+        const resolvedShippingAddress = billingAddressSameAsShipping ? billingAddress : shippingAddress
+
+        const initiateResult = (await initiatePayment('upi_manual', {
+          additionalData: {
+            ...(email ? { customerEmail: email } : {}),
+            billingAddress,
+            reference,
+            shippingAddress: resolvedShippingAddress,
+          },
+        })) as Record<string, unknown>
+
+        const transactionID = initiateResult?.['transactionID']
+
+        const confirmResult = (await confirmOrder('upi_manual', {
+          additionalData: {
+            ...(email ? { customerEmail: email } : {}),
+            transactionID,
+            shippingAddress: resolvedShippingAddress,
+          },
+        })) as Record<string, unknown>
+
+        if (confirmResult && 'orderID' in confirmResult && confirmResult['orderID']) {
+          await clearCart().catch(() => {})
+          const accessToken = 'accessToken' in confirmResult ? (confirmResult['accessToken'] as string) : ''
+          const queryParams = new URLSearchParams()
+          if (email) queryParams.set('email', email)
+          if (accessToken) queryParams.set('accessToken', accessToken)
+          const queryString = queryParams.toString()
+          router.push(`/orders/${confirmResult['orderID']}${queryString ? `?${queryString}` : ''}`)
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'An error occurred while placing your order.'
+        setError(errorMessage)
+        toast.error(errorMessage)
+        setIsPlacingUpiOrder(false)
+      }
+    },
+    [billingAddress, billingAddressSameAsShipping, clearCart, confirmOrder, email, initiatePayment, router, shippingAddress],
+  )
 
   // PayU is a redirect flow: the server returns a signed set of form fields, and the browser
   // POSTs them to PayU's hosted page. PayU sends the customer back to our callback endpoint,
@@ -310,39 +363,51 @@ export const CheckoutPage: React.FC = () => {
 
         <h2 className="font-medium text-2xl sm:text-3xl">Payment</h2>
 
-        <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
-          <Checkbox
-            id="payOnDelivery"
-            checked={payOnDelivery}
-            disabled={isPlacingCodOrder || isRedirectingToPayu}
-            onCheckedChange={(state) => setPayOnDelivery(state === true)}
-          />
-          <div>
-            <Label htmlFor="payOnDelivery" className="text-foreground">
-              Pay with Cash on Delivery
-            </Label>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Tick this to pay in cash when your order arrives. Online payment is switched off
-              while this is ticked.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Payment method">
+          {PAYU_ENABLED && (
+            <Button
+              type="button"
+              variant={paymentMethod === 'payu' ? 'default' : 'outline'}
+              aria-pressed={paymentMethod === 'payu'}
+              disabled={isPlacingCodOrder || isPlacingUpiOrder || isRedirectingToPayu}
+              onClick={() => setPaymentMethod('payu')}
+            >
+              Card / Netbanking
+            </Button>
+          )}
           <Button
-            className="self-start"
-            disabled={!canGoToPayment || payOnDelivery || isPlacingCodOrder || isRedirectingToPayu}
-            onClick={(e) => {
-              e.preventDefault()
-              void payWithPayu()
-            }}
+            type="button"
+            variant={paymentMethod === 'upi' ? 'default' : 'outline'}
+            aria-pressed={paymentMethod === 'upi'}
+            disabled={isPlacingCodOrder || isPlacingUpiOrder || isRedirectingToPayu}
+            onClick={() => setPaymentMethod('upi')}
           >
-            {isRedirectingToPayu ? 'Redirecting to PayU…' : 'Pay Online (UPI / Card / Netbanking)'}
+            Pay via UPI
           </Button>
           <Button
+            type="button"
+            variant={paymentMethod === 'cod' ? 'default' : 'outline'}
+            aria-pressed={paymentMethod === 'cod'}
+            disabled={isPlacingCodOrder || isPlacingUpiOrder || isRedirectingToPayu}
+            onClick={() => setPaymentMethod('cod')}
+          >
+            Cash on Delivery
+          </Button>
+        </div>
+
+        {paymentMethod === 'upi' && (
+          <UpiManualPayment
+            amountInRupees={(cart?.subtotal ?? 0) / 100}
+            disabled={!canGoToPayment}
+            isPlacing={isPlacingUpiOrder}
+            onPlaceOrder={(reference) => void placeUpiOrder(reference)}
+          />
+        )}
+
+        {paymentMethod === 'cod' && (
+          <Button
             className="self-start"
-            variant="outline"
-            disabled={!canGoToPayment || !payOnDelivery || isPlacingCodOrder || isRedirectingToPayu}
+            disabled={!canGoToPayment || isPlacingCodOrder}
             onClick={(e) => {
               e.preventDefault()
               void placeCodOrder()
@@ -350,7 +415,20 @@ export const CheckoutPage: React.FC = () => {
           >
             {isPlacingCodOrder ? 'Placing Order…' : 'Place Order (Cash on Delivery)'}
           </Button>
-        </div>
+        )}
+
+        {paymentMethod === 'payu' && PAYU_ENABLED && (
+          <Button
+            className="self-start"
+            disabled={!canGoToPayment || isRedirectingToPayu}
+            onClick={(e) => {
+              e.preventDefault()
+              void payWithPayu()
+            }}
+          >
+            {isRedirectingToPayu ? 'Redirecting to PayU…' : 'Pay Online (UPI / Card / Netbanking)'}
+          </Button>
+        )}
 
         {error && (
           <div className="my-8">

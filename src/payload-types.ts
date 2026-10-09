@@ -334,6 +334,11 @@ export interface Order {
   amount?: number | null;
   currency?: 'INR' | null;
   accessToken?: string | null;
+  paymentMethod?: string | null;
+  /**
+   * Manual-UPI orders only — approve once you’ve matched the WhatsApp screenshot to this order in your own UPI app.
+   */
+  paymentReviewStatus?: ('pending' | 'approved') | null;
   /**
    * Automatically set from the latest entry in the fulfillment timeline below.
    */
@@ -1337,7 +1342,7 @@ export interface Transaction {
         id?: string | null;
       }[]
     | null;
-  paymentMethod?: ('payu' | 'cod') | null;
+  paymentMethod?: ('payu' | 'upi_manual' | 'cod') | null;
   payu?: {
     txnid?: string | null;
     paymentId?: string | null;
@@ -1354,6 +1359,9 @@ export interface Transaction {
       | number
       | boolean
       | null;
+  };
+  upiManual?: {
+    reference?: string | null;
   };
   /**
    * No online payment was taken for this order — cash is collected on delivery. Change status to "Succeeded" once the payment has been collected.
@@ -2455,6 +2463,8 @@ export interface OrdersSelect<T extends boolean = true> {
   amount?: T;
   currency?: T;
   accessToken?: T;
+  paymentMethod?: T;
+  paymentReviewStatus?: T;
   currentFulfillmentStatus?: T;
   fulfillmentEvents?:
     | T
@@ -2488,6 +2498,11 @@ export interface TransactionsSelect<T extends boolean = true> {
         paymentId?: T;
         failureReason?: T;
         shippingAddress?: T;
+      };
+  upiManual?:
+    | T
+    | {
+        reference?: T;
       };
   cod?: T | {};
   billingAddress?:

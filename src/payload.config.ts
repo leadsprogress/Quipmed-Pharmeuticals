@@ -30,6 +30,7 @@ import { Pages } from '@/collections/Pages'
 import { ProductTags } from '@/collections/ProductTags'
 import { Users } from '@/collections/Users'
 import { customerSearchEndpoints } from '@/endpoints/customerSearch'
+import { ordersAdminEndpoints } from '@/endpoints/orders'
 import { productBulkImportEndpoints } from '@/endpoints/productBulkImport'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
@@ -72,7 +73,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || '',
     },
   }),
-  endpoints: [...customerSearchEndpoints, ...productBulkImportEndpoints],
+  endpoints: [...customerSearchEndpoints, ...ordersAdminEndpoints, ...productBulkImportEndpoints],
   editor: lexicalEditor({
     features: () => {
       return [

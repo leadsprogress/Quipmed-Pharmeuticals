@@ -8,6 +8,7 @@ import { ecommercePlugin } from '@payloadcms/plugin-ecommerce'
 
 import { codAdapter } from '@/payments/codAdapter'
 import { payuAdapter } from '@/payments/payuAdapter'
+import { upiManualAdapter } from '@/payments/upiManualAdapter'
 
 import { Page, Product } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -106,6 +107,17 @@ export const plugins: Plugin[] = [
     orders: {
       ordersCollectionOverride: ({ defaultCollection }) => ({
         ...defaultCollection,
+        admin: {
+          ...defaultCollection.admin,
+          defaultColumns: [
+            'createdAt',
+            'customerEmail',
+            'paymentMethod',
+            'paymentReviewStatus',
+            'status',
+            'amount',
+          ],
+        },
         fields: [
           ...defaultCollection.fields,
           {
@@ -128,6 +140,32 @@ export const plugins: Plugin[] = [
               ],
             },
           },
+          // A plain copy of the triggering transaction's paymentMethod, written by the payment
+          // adapters at order-creation time. Orders don't otherwise carry this directly (only
+          // their related Transactions do), and reading it off a relationship from an admin
+          // condition/custom field is awkward — this keeps it a one-hop lookup everywhere.
+          {
+            name: 'paymentMethod',
+            type: 'text',
+            admin: { position: 'sidebar', readOnly: true },
+          },
+          {
+            name: 'paymentReviewStatus',
+            type: 'select',
+            options: [
+              { label: 'Pending verification', value: 'pending' },
+              { label: 'Approved', value: 'approved' },
+            ],
+            admin: {
+              position: 'sidebar',
+              description:
+                'Manual-UPI orders only — approve once you’ve matched the WhatsApp screenshot to this order in your own UPI app.',
+              condition: (data) => data?.paymentMethod === 'upi_manual',
+              components: {
+                Field: '@/components/admin/ApproveUpiPayment#ApproveUpiPayment',
+              },
+            },
+          },
           ...fulfillmentFields,
         ],
         hooks: {
@@ -147,7 +185,11 @@ export const plugins: Plugin[] = [
     },
     payments: {
       paymentMethods: [
+        // Registered but hidden from checkout (see CheckoutPage.tsx / NEXT_PUBLIC_PAYU_ENABLED)
+        // while the PayU account is mid-KYC — left wired up so switching it back on is a single
+        // env var, not a rebuild of this integration.
         payuAdapter(),
+        upiManualAdapter(),
         codAdapter(),
       ],
     },

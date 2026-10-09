@@ -18,6 +18,11 @@ export function describePayment(transactions: Order['transactions']): {
       ? { label: 'Cash on Delivery — paid', tone: 'paid' }
       : { label: 'Cash on Delivery — pay when delivered', tone: 'pending' }
   }
+  if (method === 'upi_manual') {
+    return status === 'succeeded'
+      ? { label: 'Paid via UPI — verified', tone: 'paid' }
+      : { label: 'Paid via UPI — awaiting verification', tone: 'pending' }
+  }
   if (status === 'succeeded') return { label: 'Paid online (PayU)', tone: 'paid' }
   if (status === 'failed') return { label: 'Payment failed', tone: 'failed' }
   return { label: 'Payment pending', tone: 'pending' }

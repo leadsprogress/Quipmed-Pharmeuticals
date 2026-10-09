@@ -47,6 +47,12 @@ export const Providers: React.FC<{
             }}
             paymentMethods={[
               { name: 'payu', label: 'PayU (UPI, Cards, Netbanking)', initiatePayment: true, confirmOrder: true },
+              {
+                name: 'upi_manual',
+                label: 'UPI (Pay & send screenshot on WhatsApp)',
+                initiatePayment: true,
+                confirmOrder: true,
+              },
               { name: 'cod', label: 'Cash on Delivery', initiatePayment: true, confirmOrder: true },
             ]}
           >

@@ -10,6 +10,7 @@ import { useAuth } from '@/providers/Auth'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
+import { CheckCircle2Icon } from 'lucide-react'
 
 import { useAddresses, useCart, usePayments } from '@payloadcms/plugin-ecommerce/client/react'
 import { CheckoutAddresses } from '@/components/checkout/CheckoutAddresses'
@@ -250,6 +251,26 @@ export const CheckoutPage: React.FC = () => {
               </p>
             </div>
           </div>
+        ) : !emailEditable ? (
+          <div className="bg-primary/10 border border-primary/30 rounded-lg p-4 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <CheckCircle2Icon className="size-5 text-primary shrink-0" />
+              <div>
+                <p className="font-medium text-foreground">Continuing as guest</p>
+                <p className="text-sm text-muted-foreground">{email}</p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault()
+                setEmailEditable(true)
+              }}
+            >
+              Change
+            </Button>
+          </div>
         ) : (
           <div className="bg-accent dark:bg-black rounded-lg p-4 ">
             <div>
@@ -272,6 +293,7 @@ export const CheckoutPage: React.FC = () => {
                 onClick={(e) => {
                   e.preventDefault()
                   setEmailEditable(false)
+                  toast.success('Continuing as guest')
                 }}
                 variant="default"
               >
